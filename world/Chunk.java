@@ -1,5 +1,9 @@
 package world;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.FloatBuffer;
 
 import org.lwjgl.BufferUtils;
@@ -10,9 +14,9 @@ import world.Block.BlockType;
 
 public class Chunk {
 
-	static final int CHUNK_SIZE = 128;
+	static final int CHUNK_SIZE = 16;
 	static final int CUBE_LENGTH = 2;
-	private Block[][][] Blocks;
+	private Block[][][] Blocks = new Block[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE];
 	private int VBOVertexHandle;
 	private int VBOColorHandle;
 	private int x, y, z;
@@ -32,14 +36,83 @@ public class Chunk {
 	}
 
 	public Boolean Save() {
-		// Save the chunk to file
+		try(FileOutputStream file = new FileOutputStream(worldLocation +"\\" + x+y+z)){
+			for(int x = 0; x < CHUNK_SIZE; x++){
+				for(int y = 0; y < CHUNK_SIZE; y++){
+					for(int z = 0; z < CHUNK_SIZE; z++){
+						file.write(Blocks[x][y][z].GetType());				
+					}
+				}
+			}	
+			file.close();
+			return true;
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return false;
+	}
+	
+	public Boolean Load() {		
+		try(FileInputStream file = new FileInputStream(worldLocation +"\\" + x+y+z)){
+			byte fileContent[] = new byte[CHUNK_SIZE*CHUNK_SIZE*CHUNK_SIZE];
+			file.read(fileContent);
+			int i = 0;
+			for(int x = 0; x < CHUNK_SIZE; x++){
+				for(int y = 0; y < CHUNK_SIZE; y++){
+					for(int z = 0; z < CHUNK_SIZE; z++){
+						//Blocks[x][y][z] = new Block(BlockType.fromByte(fileContent[i]));
+						//
+						if(Blocks[x][y][z].GetType() == BlockType.BlockType_Air.GetType()) {
+							System.out.println(Blocks[x][y][z].GetType());
+							System.out.println("Found");
+							System.out.println(i);
+							System.out.println(" " + x  +" " + y + " " +z);
+						}
+					
+						i++;
+					}
+				}
+			}	
+			file.close();
+			return true;
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return false;		
+	}
+	
+	public static void main(String[] args){
+		Chunk c = new Chunk(0,0,0, "C:\\eclipse\\workspace\\Infinigen\\test");
+		c.init(true);
+		c.Save();
+		Chunk s = new Chunk(0,0,0,"C:\\eclipse\\workspace\\Infinigen\\test");
+		s.init(false);
+		s.Load();
 	}
 
-	public Boolean Load() {
-		// Load the chunk from the file
-		return false;
+	//Initiate the chunk to all dirt
+	private void init(Boolean check) {
+		for(int x = 0; x < CHUNK_SIZE; x++){
+			for(int y = 0; y < CHUNK_SIZE; y++){
+				for(int z = 0; z < CHUNK_SIZE; z++){
+					Blocks[x][y][z] = new Block(BlockType.BlockType_Dirt);
+				}
+			}
+		}
+		if(check){
+		Blocks[5][5][5].setType(BlockType.BlockType_Air);
+		}
 	}
+
+	
 
 	public Chunk(int x, int y, int z, String worldLocation) {
 		this.x = x;
@@ -115,17 +188,17 @@ public class Chunk {
 	public Boolean NeighboorAir(int x, int y, int z) {
 		// We put y+1 first since it is the most likely block to have air above
 		// it
-		if (Blocks[x][y + 1][z].GetID() == BlockType.BlockType_Air.GetID())
+		if (Blocks[x][y + 1][z].GetType() == BlockType.BlockType_Air.GetType())
 			return true;
-		if (Blocks[x][y - 1][z].GetID() == BlockType.BlockType_Air.GetID())
+		if (Blocks[x][y - 1][z].GetType() == BlockType.BlockType_Air.GetType())
 			return true;
-		if (Blocks[x + 1][y][z].GetID() == BlockType.BlockType_Air.GetID())
+		if (Blocks[x + 1][y][z].GetType() == BlockType.BlockType_Air.GetType())
 			return true;
-		if (Blocks[x - 1][y][z].GetID() == BlockType.BlockType_Air.GetID())
+		if (Blocks[x - 1][y][z].GetType() == BlockType.BlockType_Air.GetType())
 			return true;
-		if (Blocks[x][y][z + 1].GetID() == BlockType.BlockType_Air.GetID())
+		if (Blocks[x][y][z + 1].GetType() == BlockType.BlockType_Air.GetType())
 			return true;
-		if (Blocks[x][y][z - 1].GetID() == BlockType.BlockType_Air.GetID())
+		if (Blocks[x][y][z - 1].GetType() == BlockType.BlockType_Air.GetType())
 			return true;
 		return false;
 
@@ -183,7 +256,7 @@ public class Chunk {
 	}
 
 	private float[] GetCubeColor(Block block) {
-		switch (block.GetID()) {
+		switch (block.GetType()) {
 		case 1:
 			return new float[] { 0, 1, 0 };
 		case 2:
