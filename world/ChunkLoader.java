@@ -1,10 +1,15 @@
 package world;
 
+import java.io.File;
+
+//Loader for chunks, which executes on a new thread
 public class ChunkLoader {
 	
 	private Chunk chunk;
+	private String worldLocation;
 
-	public ChunkLoader() {
+	public ChunkLoader(String worldLocation) {
+		this.worldLocation = worldLocation;
 		// TODO Auto-generated constructor stub
 	}
 	
@@ -13,7 +18,7 @@ public class ChunkLoader {
 	}
 	
 	public void Save(){
-		
+		//TODO: save chunk
 	}
 
 }
