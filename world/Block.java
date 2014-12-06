@@ -1,12 +1,12 @@
 package world;
 
 public class Block {
-	private boolean IsActive;
+	
+	private boolean IsVisible;
 	private BlockType Type;
 
 	public enum BlockType {
-		BlockType_Grass(0), BlockType_Dirt(1), BlockType_Water(
-				2), BlockType_Stone(3), BlockType_Wood(4), BlockType_Sand(5);
+		BlockType_Air(0), BlockType_Dirt(1), BlockType_Stone(2);
 		private int BlockID;
 
 		BlockType(int i) {
@@ -22,12 +22,12 @@ public class Block {
 		Type = type;
 	}
 
-	public boolean IsActive() {
-		return IsActive;
+	public boolean IsVisible() {
+		return IsVisible;
 	}
 
-	public void SetActive(boolean active) {
-		IsActive = active;
+	public void SetVisible(boolean visible) {
+		IsVisible = visible;
 	}
 
 	public int GetID() {
