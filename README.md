@@ -16,35 +16,44 @@ Spring:
 
 drawing on map, adding points, markers etc.
 projectiles are all physics based.
+
 Rome Total war
 
 Battle view, time acceleration, unit groups.
+
 Civilization V
 
 Empire view
 Tech system
+
 Europa Universalis
 
 Advanced Diplomacy.
+
 Age of empires
 
 Normal game screen
+
 Populous
 
 population retraining (people spawn and then can be retrained into different types
+
 Minecraft
 
 Real resources
 Voxel Engine
 Texture packs
+
 Supreme commander 2
 
 Ultra high unit counts
 Animations for everything
 Really nice graphics
+
 Planetary annihilation
 
 Client server re-joinable games, no desyncs.
+
 Robocraft
 
 Voxel based units
