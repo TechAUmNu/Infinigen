@@ -5,7 +5,7 @@ import java.io.File;
 //Loader for chunks, which executes on a new thread
 public class ChunkLoader {
 	
-	private Chunk chunk;
+	
 	private String worldLocation;
 
 	public ChunkLoader(String worldLocation) {
@@ -14,7 +14,9 @@ public class ChunkLoader {
 	}
 	
 	public Chunk Load(int x, int y, int z){
-		return chunk;
+		Chunk c = new Chunk(x, y, z, worldLocation);
+		c.Load();
+		return c;
 	}
 	
 	public void Save(){
