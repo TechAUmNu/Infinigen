@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.FloatBuffer;
+import java.util.ArrayList;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
@@ -14,6 +15,7 @@ import world.Block.BlockType;
 
 public class Chunk {
 
+	//Chunks are 16*16*16 cubes
 	static final int CHUNK_SIZE = 16;
 	static final int CUBE_LENGTH = 2;
 	private Block[][][] Blocks = new Block[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE];
@@ -64,15 +66,7 @@ public class Chunk {
 			for(int x = 0; x < CHUNK_SIZE; x++){
 				for(int y = 0; y < CHUNK_SIZE; y++){
 					for(int z = 0; z < CHUNK_SIZE; z++){
-						//Blocks[x][y][z] = new Block(BlockType.fromByte(fileContent[i]));
-						//
-						if(Blocks[x][y][z].GetType() == BlockType.BlockType_Air.GetType()) {
-							System.out.println(Blocks[x][y][z].GetType());
-							System.out.println("Found");
-							System.out.println(i);
-							System.out.println(" " + x  +" " + y + " " +z);
-						}
-					
+						Blocks[x][y][z] = new Block(BlockType.fromByte(fileContent[i]));
 						i++;
 					}
 				}
@@ -90,12 +84,41 @@ public class Chunk {
 	}
 	
 	public static void main(String[] args){
-		Chunk c = new Chunk(0,0,0, "C:\\eclipse\\workspace\\Infinigen\\test");
-		c.init(true);
-		c.Save();
-		Chunk s = new Chunk(0,0,0,"C:\\eclipse\\workspace\\Infinigen\\test");
-		s.init(false);
-		s.Load();
+		
+		//This is used for speed testing
+		ArrayList<Chunk> chunks = new ArrayList<Chunk>();
+		
+		//Chunk c = new Chunk(0,0,0, "C:\\eclipse\\workspace\\Infinigen\\test");
+		//c.init(true);
+		//c.Save();
+		
+
+		
+		for(int x = 0; x < 22; x++){
+			for(int y = 0; y < 22; y++){
+				for(int z = 0; z < 22; z++){
+					 Chunk c = new Chunk(x,y,z,"C:\\eclipse\\workspace\\Infinigen\\test");
+					 c.init(false);					 
+					 chunks.add(c);
+				}
+			}
+		}
+		
+		double startTime = System.nanoTime();
+		
+		
+		//Time to save 10648 chunks (43.6M blocks): 62.349352231
+		//Time to load 10648 chunks (43.6M blocks): 10.985546624
+
+		for(Chunk c : chunks){
+			c.Load();
+		}
+		double Time = System.nanoTime() - startTime;
+		System.out.println(Time /1000000000); //Convert to seconds
+		
+		//Chunk s = new Chunk(0,0,0,"C:\\eclipse\\workspace\\Infinigen\\test");
+		//s.init(false);
+		//s.Load();	
 	}
 
 	//Initiate the chunk to all dirt
@@ -108,7 +131,7 @@ public class Chunk {
 			}
 		}
 		if(check){
-		Blocks[5][5][5].setType(BlockType.BlockType_Air);
+			Blocks[5][5][5].setType(BlockType.BlockType_Air);
 		}
 	}
 
