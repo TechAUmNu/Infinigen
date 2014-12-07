@@ -19,8 +19,8 @@ public class ChunkLoader {
 		return c;
 	}
 	
-	public void Save(){
-		//TODO: save chunk
+	public void Unload(Chunk c){
+		c.Save();
 	}
 
 }

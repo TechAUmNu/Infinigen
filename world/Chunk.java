@@ -38,7 +38,7 @@ public class Chunk {
 	}
 
 	public Boolean Save() {
-		try(FileOutputStream file = new FileOutputStream(worldLocation +"\\" + x+y+z)){
+		try(FileOutputStream file = new FileOutputStream(worldLocation +"\\" + x+y+z+ ".chunk")){
 			for(int x = 0; x < CHUNK_SIZE; x++){
 				for(int y = 0; y < CHUNK_SIZE; y++){
 					for(int z = 0; z < CHUNK_SIZE; z++){
@@ -59,7 +59,7 @@ public class Chunk {
 	}
 	
 	public Boolean Load() {		
-		try(FileInputStream file = new FileInputStream(worldLocation +"\\" + x+y+z)){
+		try(FileInputStream file = new FileInputStream(worldLocation +"\\" + x+y+z + ".chunk")){
 			byte fileContent[] = new byte[CHUNK_SIZE*CHUNK_SIZE*CHUNK_SIZE];
 			file.read(fileContent);
 			int i = 0;
@@ -74,8 +74,7 @@ public class Chunk {
 			file.close();
 			return true;
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			init();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -88,33 +87,34 @@ public class Chunk {
 		//This is used for speed testing
 		ArrayList<Chunk> chunks = new ArrayList<Chunk>();
 		
-		//Chunk c = new Chunk(0,0,0, "C:\\eclipse\\workspace\\Infinigen\\test");
-		//c.init(true);
-		//c.Save();
 		
-
-		
+		//Generate an array of initialized chunks to test with
 		for(int x = 0; x < 22; x++){
 			for(int y = 0; y < 22; y++){
 				for(int z = 0; z < 22; z++){
 					 Chunk c = new Chunk(x,y,z,"C:\\eclipse\\workspace\\Infinigen\\test");
-					 c.init(false);					 
+					 c.init();					 
 					 chunks.add(c);
 				}
 			}
 		}
 		
+		//Start timing
 		double startTime = System.nanoTime();
 		
 		
-		//Time to save 10648 chunks (43.6M blocks): 62.349352231
-		//Time to load 10648 chunks (43.6M blocks): 10.985546624
-
+		//Time to save 10648 chunks (43.6M blocks): 62.349352231 seconds (170.7 Chunks/s)
+		//Time to load 10648 chunks (43.6M blocks): 10.985546624 seconds (969.7 Chunks/s)
+		
+		//These tests show that we are much better off keeping as many chunks loaded as possible
+		
+		//Loop through the list of chunks and save or load them
 		for(Chunk c : chunks){
 			c.Load();
+			//c.Save();
 		}
 		double Time = System.nanoTime() - startTime;
-		System.out.println(Time /1000000000); //Convert to seconds
+		System.out.println(Time / 1000000000); //Convert to seconds
 		
 		//Chunk s = new Chunk(0,0,0,"C:\\eclipse\\workspace\\Infinigen\\test");
 		//s.init(false);
@@ -122,17 +122,14 @@ public class Chunk {
 	}
 
 	//Initiate the chunk to all dirt
-	private void init(Boolean check) {
+	private void init() {
 		for(int x = 0; x < CHUNK_SIZE; x++){
 			for(int y = 0; y < CHUNK_SIZE; y++){
 				for(int z = 0; z < CHUNK_SIZE; z++){
 					Blocks[x][y][z] = new Block(BlockType.BlockType_Dirt);
 				}
 			}
-		}
-		if(check){
-			Blocks[5][5][5].setType(BlockType.BlockType_Air);
-		}
+		}		
 	}
 
 	
@@ -294,4 +291,6 @@ public class Chunk {
 	 * 1, 0, 0, 1, 0, 0, 1, // LEFT QUAD 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, //
 	 * RIGHT QUAD -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, }; }
 	 */
+
+
 }
