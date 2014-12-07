@@ -15,15 +15,32 @@ import world.Block.BlockType;
 
 public class Chunk {
 
-	//Chunks are 16*16*16 cubes
+	/**
+	 * The size of a chunk
+	 */
 	static final int CHUNK_SIZE = 16;
+
+	/**
+	 * The number of 'pixels' a block is on each axis
+	 */
 	static final int CUBE_LENGTH = 2;
+
+	/**
+	 * The multiplier to find the world position
+	 */
+	static final int MULTIPLIER = CHUNK_SIZE * CUBE_LENGTH;
+	/**
+	 * 3d array to hold blocks
+	 */
 	private Block[][][] Blocks = new Block[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE];
 	private int VBOVertexHandle;
 	private int VBOColorHandle;
 	private int x, y, z;
 	private String worldLocation;
 
+	/**
+	 * Renders this chunk
+	 */
 	public void Render() {
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, VBOVertexHandle);
 		GL11.glVertexPointer(3, GL11.GL_FLOAT, 0, 0L);
@@ -33,19 +50,28 @@ public class Chunk {
 				* CHUNK_SIZE * 24);
 	}
 
+	/**
+	 * Updates this chunk
+	 */
 	public void Update() {
 		// Update the chunk
 	}
 
+	/**
+	 * Saves this chunk
+	 * 
+	 * @return If the save was successful
+	 */
 	public Boolean Save() {
-		try(FileOutputStream file = new FileOutputStream(worldLocation +"\\" + x+y+z+ ".chunk")){
-			for(int x = 0; x < CHUNK_SIZE; x++){
-				for(int y = 0; y < CHUNK_SIZE; y++){
-					for(int z = 0; z < CHUNK_SIZE; z++){
-						file.write(Blocks[x][y][z].GetType());				
+		try (FileOutputStream file = new FileOutputStream(worldLocation + "\\"
+				+ x + y + z + ".chunk")) {
+			for (int x = 0; x < CHUNK_SIZE; x++) {
+				for (int y = 0; y < CHUNK_SIZE; y++) {
+					for (int z = 0; z < CHUNK_SIZE; z++) {
+						file.write(Blocks[x][y][z].GetType());
 					}
 				}
-			}	
+			}
 			file.close();
 			return true;
 		} catch (FileNotFoundException e) {
@@ -57,20 +83,27 @@ public class Chunk {
 		}
 		return false;
 	}
-	
-	public Boolean Load() {		
-		try(FileInputStream file = new FileInputStream(worldLocation +"\\" + x+y+z + ".chunk")){
-			byte fileContent[] = new byte[CHUNK_SIZE*CHUNK_SIZE*CHUNK_SIZE];
+
+	/**
+	 * Loads this chunk
+	 * 
+	 * @return If the load was successful
+	 */
+	public Boolean Load() {
+		try (FileInputStream file = new FileInputStream(worldLocation + "\\"
+				+ x + y + z + ".chunk")) {
+			byte fileContent[] = new byte[CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE];
 			file.read(fileContent);
 			int i = 0;
-			for(int x = 0; x < CHUNK_SIZE; x++){
-				for(int y = 0; y < CHUNK_SIZE; y++){
-					for(int z = 0; z < CHUNK_SIZE; z++){
-						Blocks[x][y][z] = new Block(BlockType.fromByte(fileContent[i]));
+			for (int x = 0; x < CHUNK_SIZE; x++) {
+				for (int y = 0; y < CHUNK_SIZE; y++) {
+					for (int z = 0; z < CHUNK_SIZE; z++) {
+						Blocks[x][y][z] = new Block(
+								BlockType.fromByte(fileContent[i]));
 						i++;
 					}
 				}
-			}	
+			}
 			file.close();
 			return true;
 		} catch (FileNotFoundException e) {
@@ -79,61 +112,34 @@ public class Chunk {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return false;		
-	}
-	
-	public static void main(String[] args){
-		
-		//This is used for speed testing
-		ArrayList<Chunk> chunks = new ArrayList<Chunk>();
-		
-		
-		//Generate an array of initialized chunks to test with
-		for(int x = 0; x < 22; x++){
-			for(int y = 0; y < 22; y++){
-				for(int z = 0; z < 22; z++){
-					 Chunk c = new Chunk(x,y,z,"C:\\eclipse\\workspace\\Infinigen\\test");
-					 c.init();					 
-					 chunks.add(c);
-				}
-			}
-		}
-		
-		//Start timing
-		double startTime = System.nanoTime();
-		
-		
-		//Time to save 10648 chunks (43.6M blocks): 62.349352231 seconds (170.7 Chunks/s)
-		//Time to load 10648 chunks (43.6M blocks): 10.985546624 seconds (969.7 Chunks/s)
-		
-		//These tests show that we are much better off keeping as many chunks loaded as possible
-		
-		//Loop through the list of chunks and save or load them
-		for(Chunk c : chunks){
-			c.Load();
-			//c.Save();
-		}
-		double Time = System.nanoTime() - startTime;
-		System.out.println(Time / 1000000000); //Convert to seconds
-		
-		//Chunk s = new Chunk(0,0,0,"C:\\eclipse\\workspace\\Infinigen\\test");
-		//s.init(false);
-		//s.Load();	
+		return false;
 	}
 
-	//Initiate the chunk to all dirt
+	/**
+	 * Initiates the blocks in the chunk
+	 */
 	private void init() {
-		for(int x = 0; x < CHUNK_SIZE; x++){
-			for(int y = 0; y < CHUNK_SIZE; y++){
-				for(int z = 0; z < CHUNK_SIZE; z++){
+		for (int x = 0; x < CHUNK_SIZE; x++) {
+			for (int y = 0; y < CHUNK_SIZE; y++) {
+				for (int z = 0; z < CHUNK_SIZE; z++) {
 					Blocks[x][y][z] = new Block(BlockType.BlockType_Dirt);
 				}
 			}
-		}		
+		}
 	}
 
-	
-
+	/**
+	 * Creates a new chunk
+	 * 
+	 * @param x
+	 *            X position of the chunk
+	 * @param y
+	 *            Y position of the chunk
+	 * @param z
+	 *            Z position of the chunk
+	 * @param worldLocation
+	 *            Location of the world on disk
+	 */
 	public Chunk(int x, int y, int z, String worldLocation) {
 		this.x = x;
 		this.y = y;
@@ -141,23 +147,28 @@ public class Chunk {
 		this.worldLocation = worldLocation;
 	}
 
-	// This method makes sure we only draw visible blocks
-	public void RebuildChunk(){
-		for(int x = 0; x < CHUNK_SIZE; x++){
-			for(int y = 0; y < CHUNK_SIZE; y++){
-				for(int z = 0; z < CHUNK_SIZE; z++){
-					if(NeighboorAir(x,y,z)){
+	/**
+	 * Checks the visibility of blocks, only blocks with air as a neighbour are
+	 * visible
+	 */
+	public void RebuildChunk() {
+		for (int x = 0; x < CHUNK_SIZE; x++) {
+			for (int y = 0; y < CHUNK_SIZE; y++) {
+				for (int z = 0; z < CHUNK_SIZE; z++) {
+					if (NeighbourAir(x, y, z)) {
 						Blocks[x][y][z].SetVisible(true);
-					}else{
+					} else {
 						Blocks[x][y][z].SetVisible(false);
-					}					
+					}
 				}
 			}
 		}
 		RebuildMesh();
 	}
 
-	// This method creates the visible mesh
+	/**
+	 * Creates the visible mesh for the chunk
+	 */
 	public void RebuildMesh() {
 		// Rebuild the view mesh of the chunk
 		FloatBuffer VertexPositionData = BufferUtils
@@ -170,10 +181,10 @@ public class Chunk {
 				for (float z = 0; z < CHUNK_SIZE; z++) {
 					if (Blocks[(int) x][(int) y][(int) z].IsVisible()) {
 
-						VertexPositionData.put(CreateCube((float) this.x + x
-								* CUBE_LENGTH,
-								(float) this.y + y * CUBE_LENGTH,
-								(float) this.z + z * CUBE_LENGTH));
+						VertexPositionData.put(CreateCube((float) this.x
+								* MULTIPLIER + x * CUBE_LENGTH, (float) this.y
+								* MULTIPLIER + y * CUBE_LENGTH, (float) this.z
+								* MULTIPLIER + z * CUBE_LENGTH));
 						VertexColorData
 								.put(CreateCubeVertexCol(GetCubeColor(Blocks[(int) x][(int) y][(int) z])));
 
@@ -204,8 +215,18 @@ public class Chunk {
 		return cubeColors;
 	}
 
-	// This method checks if any blocks next to the position are air blocks.
-	public Boolean NeighboorAir(int x, int y, int z) {
+	/**
+	 * Checks if any neighbour blocks are air
+	 * 
+	 * @param x
+	 *            X position of the block in the chunk
+	 * @param y
+	 *            Y position of the block in the chunk
+	 * @param z
+	 *            Z position of the block in the chunk
+	 * @return If any neighbours are air
+	 */
+	public Boolean NeighbourAir(int x, int y, int z) {
 		// We put y+1 first since it is the most likely block to have air above
 		// it
 		if (Blocks[x][y + 1][z].GetType() == BlockType.BlockType_Air.GetType())
@@ -224,6 +245,17 @@ public class Chunk {
 
 	}
 
+	/**
+	 * Creates a float array defining a block.
+	 * 
+	 * @param x
+	 *            X world position of the block
+	 * @param y
+	 *            Y world position of the block
+	 * @param z
+	 *            Z world position of the block
+	 * @return The float array defining the block
+	 */
 	public static float[] CreateCube(float x, float y, float z) {
 		int offset = CUBE_LENGTH / 2;
 		return new float[] {
@@ -284,13 +316,22 @@ public class Chunk {
 		}
 		return new float[] { 1, 1, 1 };
 	}
-	/*
-	 * private float[] GetNormalVector() { return new float[] { // BOTTOM 0, 1,
-	 * 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, // TOP 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1,
-	 * 0, // FRONT 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, // BOTTOM 0, 0, 1, 0, 0,
-	 * 1, 0, 0, 1, 0, 0, 1, // LEFT QUAD 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, //
-	 * RIGHT QUAD -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, }; }
-	 */
 
+	
+	private float[] GetNormalVector() {
+		return new float[] {
+				// BOTTOM
+				0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0,
+				// TOP
+				0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0,
+				// FRONT
+				0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1,
+				// BOTTOM
+				0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1,
+				// LEFT QUAD
+				1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0,
+				// RIGHT QUAD
+				-1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0 };
+	}
 
 }
