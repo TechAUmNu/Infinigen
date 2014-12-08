@@ -35,8 +35,10 @@ import org.lwjgl.util.vector.Vector3f;
 
 
 
+
 import utility.BufferTools;
 import utility.EulerCamera;
+import world.ChunkManager;
 
 
 public class OpenGLCamera implements Runnable {
@@ -59,7 +61,7 @@ public class OpenGLCamera implements Runnable {
     private static int heightmapDisplayList;
     private static int fps;
     private static long lastFPS;
-
+    private ChunkManager chunkManager;
 
 
 
@@ -75,7 +77,7 @@ public class OpenGLCamera implements Runnable {
         glLight(GL_LIGHT0, GL_POSITION, BufferTools.asFlippedFloatBuffer(76f, 5000f, 222f, 1));
         //Draw all the batches. There should be less than 10,000 for optimal performance.
         //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-        
+       chunkManager.Render();
        //System.out.println(camera.toString());
 
     }
@@ -188,11 +190,11 @@ public class OpenGLCamera implements Runnable {
     private void setUpDisplay() {
         try {
             //Display.setDisplayMode(new DisplayMode(WINDOW_DIMENSIONS[0], WINDOW_DIMENSIONS[1]));
-            //Display.setVSyncEnabled(true);
+            Display.setVSyncEnabled(true);
             Display.setFullscreen(false);
             
             Display.setTitle(WINDOW_TITLE);
-            Display.create(/*new PixelFormat(4,0,0,4)*/);
+            Display.create(new PixelFormat(4,0,0,4));
             
         
            
@@ -209,7 +211,7 @@ public class OpenGLCamera implements Runnable {
 	
 		setUpDisplay();
         setUpStates(); 
-        
+        setUpChunks();
         setUpMatrices();
        
        
@@ -217,6 +219,14 @@ public class OpenGLCamera implements Runnable {
         cleanUp(false);
 		
 	}
+
+	private void setUpChunks() {
+		chunkManager = new ChunkManager();
+		chunkManager.genTest(20, 20, 20);
+		
+	}
+
+
 
 	public static void main(String[] args){
 		(new Thread(new OpenGLCamera())).start();

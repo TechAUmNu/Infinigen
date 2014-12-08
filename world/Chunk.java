@@ -5,12 +5,9 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.FloatBuffer;
-import java.util.ArrayList;
-
 import org.lwjgl.BufferUtils;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL15;
-
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL15.*;
 import world.Block.BlockType;
 
 public class Chunk {
@@ -35,19 +32,23 @@ public class Chunk {
 	private Block[][][] Blocks = new Block[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE];
 	private int VBOVertexHandle;
 	private int VBOColorHandle;
+	private int visibleBlocks;
 	private int x, y, z;
 	private String worldLocation;
+	private Boolean test = false;
 
 	/**
 	 * Renders this chunk
 	 */
 	public void Render() {
-		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, VBOVertexHandle);
-		GL11.glVertexPointer(3, GL11.GL_FLOAT, 0, 0L);
-		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, VBOColorHandle);
-		GL11.glColorPointer(3, GL11.GL_FLOAT, 0, 0L);
-		GL11.glDrawArrays(GL11.GL_QUADS, 0, CHUNK_SIZE * CHUNK_SIZE
-				* CHUNK_SIZE * 24);
+		//System.out.println(visibleBlocks);
+		if(visibleBlocks > 0){ //No point in rendering nothing!
+			glBindBuffer(GL_ARRAY_BUFFER, VBOVertexHandle);
+			glVertexPointer(3, GL_FLOAT, 0, 0L);
+			glBindBuffer(GL_ARRAY_BUFFER, VBOColorHandle);
+			glColorPointer(3, GL_FLOAT, 0, 0L);
+			glDrawArrays(GL_QUADS, 0, visibleBlocks * 24);
+		}
 	}
 
 	/**
@@ -55,6 +56,8 @@ public class Chunk {
 	 */
 	public void Update() {
 		// Update the chunk
+		// If something changed then
+		// RebuildChunk();
 	}
 
 	/**
@@ -105,6 +108,7 @@ public class Chunk {
 				}
 			}
 			file.close();
+			RebuildChunk();
 			return true;
 		} catch (FileNotFoundException e) {
 			init();
@@ -126,6 +130,15 @@ public class Chunk {
 				}
 			}
 		}
+		Blocks[0][0][0].setType(BlockType.BlockType_Air);
+		Blocks[3][3][3].setType(BlockType.BlockType_Air);
+		
+		System.out.println(Blocks[3][3][3].GetType());
+		System.out.println(Blocks[0][0][0].GetType());
+		System.out.println(Blocks[3][2][3].GetType());
+		
+		RebuildChunk();
+		
 	}
 
 	/**
@@ -145,6 +158,13 @@ public class Chunk {
 		this.y = y;
 		this.z = z;
 		this.worldLocation = worldLocation;
+		VBOVertexHandle = glGenBuffers();
+		VBOColorHandle = glGenBuffers();
+	}
+	
+	public void CleanUp(){
+		glDeleteBuffers(VBOVertexHandle);
+		glDeleteBuffers(VBOColorHandle);
 	}
 
 	/**
@@ -152,14 +172,17 @@ public class Chunk {
 	 * visible
 	 */
 	public void RebuildChunk() {
+		visibleBlocks = 0;
 		for (int x = 0; x < CHUNK_SIZE; x++) {
 			for (int y = 0; y < CHUNK_SIZE; y++) {
 				for (int z = 0; z < CHUNK_SIZE; z++) {
 					if (NeighbourAir(x, y, z)) {
 						Blocks[x][y][z].SetVisible(true);
+						visibleBlocks++;
 					} else {
 						Blocks[x][y][z].SetVisible(false);
 					}
+					//System.out.println(Blocks[x][y][z].GetType());
 				}
 			}
 		}
@@ -172,9 +195,8 @@ public class Chunk {
 	public void RebuildMesh() {
 		// Rebuild the view mesh of the chunk
 		FloatBuffer VertexPositionData = BufferUtils
-				.createFloatBuffer((CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE) * 6 * 12);
-		FloatBuffer VertexColorData = BufferUtils.createFloatBuffer((CHUNK_SIZE
-				* CHUNK_SIZE * CHUNK_SIZE) * 6 * 12);
+				.createFloatBuffer(visibleBlocks * 6 * 12);
+		FloatBuffer VertexColorData = BufferUtils.createFloatBuffer(visibleBlocks * 6 * 12);
 
 		for (float x = 0; x < CHUNK_SIZE; x++) {
 			for (float y = 0; y < CHUNK_SIZE; y++) {
@@ -196,14 +218,12 @@ public class Chunk {
 
 		VertexColorData.flip();
 		VertexPositionData.flip();
-		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, VBOVertexHandle);
-		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, VertexPositionData,
-				GL15.GL_STATIC_DRAW);
-		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
-		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, VBOColorHandle);
-		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, VertexColorData,
-				GL15.GL_STATIC_DRAW);
-		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
+		glBindBuffer(GL_ARRAY_BUFFER, VBOVertexHandle);
+		glBufferData(GL_ARRAY_BUFFER, VertexPositionData, GL_STATIC_DRAW);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindBuffer(GL_ARRAY_BUFFER, VBOColorHandle);
+		glBufferData(GL_ARRAY_BUFFER, VertexColorData, GL_STATIC_DRAW);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	}
 
@@ -229,18 +249,30 @@ public class Chunk {
 	public Boolean NeighbourAir(int x, int y, int z) {
 		// We put y+1 first since it is the most likely block to have air above
 		// it
-		if (Blocks[x][y + 1][z].GetType() == BlockType.BlockType_Air.GetType())
-			return true;
-		if (Blocks[x][y - 1][z].GetType() == BlockType.BlockType_Air.GetType())
-			return true;
-		if (Blocks[x + 1][y][z].GetType() == BlockType.BlockType_Air.GetType())
-			return true;
-		if (Blocks[x - 1][y][z].GetType() == BlockType.BlockType_Air.GetType())
-			return true;
-		if (Blocks[x][y][z + 1].GetType() == BlockType.BlockType_Air.GetType())
-			return true;
-		if (Blocks[x][y][z - 1].GetType() == BlockType.BlockType_Air.GetType())
-			return true;
+		if (y < 15)
+			if (Blocks[x][y + 1][z].GetType() == BlockType.BlockType_Air
+					.GetType())
+				return true;
+		if (y > 0)
+			if (Blocks[x][y - 1][z].GetType() == BlockType.BlockType_Air
+					.GetType())
+				return true;
+		if (x < 15)
+			if (Blocks[x + 1][y][z].GetType() == BlockType.BlockType_Air
+					.GetType())
+				return true;
+		if (x > 0)
+			if (Blocks[x - 1][y][z].GetType() == BlockType.BlockType_Air
+					.GetType())
+				return true;
+		if (z < 15)
+			if (Blocks[x][y][z + 1].GetType() == BlockType.BlockType_Air
+					.GetType())
+				return true;
+		if (z > 0)
+			if (Blocks[x][y][z - 1].GetType() == BlockType.BlockType_Air
+					.GetType())
+				return true;
 		return false;
 
 	}
@@ -317,7 +349,6 @@ public class Chunk {
 		return new float[] { 1, 1, 1 };
 	}
 
-	
 	private float[] GetNormalVector() {
 		return new float[] {
 				// BOTTOM

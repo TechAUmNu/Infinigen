@@ -83,7 +83,7 @@ public class ChunkManager {
 		for(int x = 0; x<xL; x++){
 			for(int y = 0; y<yL; y++){
 				for(int z = 0; z<zL; z++){
-					GenerateChunk(x, y, z);					
+					System.out.println(GenerateChunk(x, y, z));					
 				}
 			}
 		}	

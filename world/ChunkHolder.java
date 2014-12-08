@@ -70,6 +70,7 @@ public class ChunkHolder {
 	public void UnloadChunk(int x, int y, int z){
 		new ChunkLoader("").Unload(chunks[x][y][z]);
 		loadedChunks.remove(chunks[x][y][z]);
+		chunks[x][y][z].CleanUp();
 		chunks[x][y][z] = null;
 	}
 	
