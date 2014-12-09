@@ -74,7 +74,7 @@ public class OpenGLCamera implements Runnable {
         glLoadIdentity();
         // Apply the camera position and orientation to the scene
         camera.applyTranslations();
-        glLight(GL_LIGHT0, GL_POSITION, BufferTools.asFlippedFloatBuffer(76f, 5000f, 222f, 1));
+        glLight(GL_LIGHT0, GL_POSITION, BufferTools.asFlippedFloatBuffer(0f, 0f, 0f, 1));
         //Draw all the batches. There should be less than 10,000 for optimal performance.
         //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
        chunkManager.Render();
@@ -116,30 +116,29 @@ public class OpenGLCamera implements Runnable {
     private  void setUpStates() {
     	glShadeModel(GL_SMOOTH);
     	glEnable(GL_DEPTH_TEST);
-    	//glEnable(GL_LIGHTING);
-    	//glEnable(GL_LIGHT0);
-   	 	//glLightModel(GL_LIGHT_MODEL_AMBIENT, BufferTools.asFlippedFloatBuffer(new float[]{0.005f, 0.005f, 0.005f, 0.01f}));
-   	 	//glLight(GL_LIGHT0, GL_POSITION, BufferTools.asFlippedFloatBuffer(new float[]{255, 216, 191, 1}));
-   	 	//glLight(GL_LIGHT0, GL_CONSTANT_ATTENUATION,BufferTools.asFlippedFloatBuffer(new float[]{1, 1, 1, 1}) );
+    	glEnable(GL_LIGHTING);
+    	glEnable(GL_LIGHT0);
+   	 	glLightModel(GL_LIGHT_MODEL_AMBIENT, BufferTools.asFlippedFloatBuffer(new float[]{0.005f, 0.005f, 0.005f, 0.01f}));
+   	 	glLight(GL_LIGHT0, GL_POSITION, BufferTools.asFlippedFloatBuffer(new float[]{255, 216, 191, 1}));
+   	 	glLight(GL_LIGHT0, GL_CONSTANT_ATTENUATION,BufferTools.asFlippedFloatBuffer(new float[]{1, 1, 1, 1}) );
    	 	
-   	 	//glEnable(GL_COLOR_MATERIAL);
-   	 	//glColorMaterial(GL_FRONT, GL_DIFFUSE);
+   	 	glEnable(GL_COLOR_MATERIAL);
+   	 	glColorMaterial(GL_FRONT, GL_DIFFUSE);
    	 //glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
-   	 	//glColor3f(0.1f, 0.1f, 0.1f);
-   	 	//glMaterialf(GL_FRONT, GL_SHININESS, 50f);      
+   	 	glColor3f(0.1f, 0.1f, 0.1f);
+   	 	glMaterialf(GL_FRONT, GL_SHININESS, 50f);      
         camera.applyOptimalStates();
         
         // Enable the sorting of shapes from far to near
       
         // Set the background to a blue sky colour
        glClearColor(0, 0.75f, 1, 1);
-        // Remove the back (bottom) faces of shapes for performance
-       // glEnable(GL_CULL_FACE);
+     
        
        
        GL11.glEnable(GL11.GL_TEXTURE_2D);
 		GL11.glShadeModel(GL11.GL_SMOOTH);
-		GL11.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+		//GL11.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 		GL11.glClearDepth(1.0);
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		GL11.glDepthFunc(GL11.GL_LEQUAL);

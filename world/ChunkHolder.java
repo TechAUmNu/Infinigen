@@ -49,6 +49,7 @@ public class ChunkHolder {
 	public Chunk LoadChunk(int x, int y, int z, String worldLocation){
 		chunks[x][y][z] = new ChunkLoader(worldLocation).Load(x, y, z);
 		loadedChunks.add(new ChunkID(x,y,z));
+		//chunks[x][y][z].Save();
 		return chunks[x][y][z];
 	}
 	
@@ -85,20 +86,5 @@ public class ChunkHolder {
 		}	
 		loadedChunks.clear();
 	}
-	
-	/**
-	 * Main method for testing
-	 *
-	 * @param args
-	 */
-	public static void main(String[] args){
-		ChunkHolder c = new ChunkHolder();
-		
-		System.out.println(c.chunkLoaded(0, 0, 0));
-		c.LoadChunk(0, 0, 0, "C:\\Testing\\ChunkTesting");
-		System.out.println(c.chunkLoaded(0, 0, 0));
-		c.UnloadChunk(0, 0, 0);
-		System.out.println(c.chunkLoaded(0, 0, 0));
-		
-	}
+
 }

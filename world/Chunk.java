@@ -342,7 +342,7 @@ public class Chunk {
 	private float[] GetCubeColor(Block block) {
 		switch (block.GetType()) {
 		case 1:
-			return new float[] { 0, 1, 0 };
+			return new float[] { 0.55f, 0.27f, 0.074f };
 		case 2:
 			return new float[] { 1, 0.5f, 0 };
 		}
