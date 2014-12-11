@@ -1,6 +1,6 @@
 package threading;
 
-import graphics.Batch;
+import graphics.ChunkBatch;
 
 
 
@@ -10,7 +10,7 @@ public class InterthreadHolder {
 	private static InterthreadHolder instance;
 	
 	
-	private GapList<Batch> batches;
+	private GapList<ChunkBatch> batches;
 	
 
 	static {
@@ -18,7 +18,7 @@ public class InterthreadHolder {
 	}	
 	
 	public void initBatches(){
-		batches = new GapList<Batch>();
+		batches = new GapList<ChunkBatch>();
 	}
 
 	//Initialise variables.
@@ -26,14 +26,17 @@ public class InterthreadHolder {
 		initBatches();
 	}	
 
-	public GapList<Batch> getBatches() {
+	public GapList<ChunkBatch> getBatches() {
 		return batches;
 	}
 
-	public void addBatch(Batch batch) {
+	public void addBatch(ChunkBatch batch) {
 		batches.add(batch);
 	}
 	
+	public void removeBatch(ChunkBatch batch){
+		batches.remove(batch);
+	}
 	public void resetBatches(){
 		batches.clear();
 	}

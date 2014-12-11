@@ -15,7 +15,7 @@ void main() {
     varyingNormal = gl_Normal;
     
     varyingVertex = gl_Vertex;
-    varyingHeight = gl_Vertex.y / (255.0 * 5);
+    //varyingHeight = gl_Vertex.y / (255.0 * 5);
     
     gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
 }

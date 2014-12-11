@@ -2,6 +2,7 @@ package main;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL20.*;
+import graphics.ChunkBatch;
 
 import java.util.ArrayList;
 
@@ -36,6 +37,9 @@ import org.lwjgl.util.vector.Vector3f;
 
 
 
+
+
+import threading.InterthreadHolder;
 import utility.BufferTools;
 import utility.EulerCamera;
 import world.ChunkManager;
@@ -74,10 +78,12 @@ public class OpenGLCamera implements Runnable {
         glLoadIdentity();
         // Apply the camera position and orientation to the scene
         camera.applyTranslations();
-        glLight(GL_LIGHT0, GL_POSITION, BufferTools.asFlippedFloatBuffer(0f, 0f, 0f, 1));
+        //glLight(GL_LIGHT0, GL_POSITION, BufferTools.asFlippedFloatBuffer(20f, 20f, 20f, 1));
         //Draw all the batches. There should be less than 10,000 for optimal performance.
         //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-       chunkManager.Render();
+        for(ChunkBatch cb : InterthreadHolder.getInstance().getBatches()){
+        	cb.draw(camera.x(), camera.y(), camera.z());
+        }
        //System.out.println(camera.toString());
 
     }
@@ -116,44 +122,44 @@ public class OpenGLCamera implements Runnable {
     private  void setUpStates() {
     	glShadeModel(GL_SMOOTH);
     	glEnable(GL_DEPTH_TEST);
-    	glEnable(GL_LIGHTING);
-    	glEnable(GL_LIGHT0);
-   	 	glLightModel(GL_LIGHT_MODEL_AMBIENT, BufferTools.asFlippedFloatBuffer(new float[]{0.005f, 0.005f, 0.005f, 0.01f}));
-   	 	glLight(GL_LIGHT0, GL_POSITION, BufferTools.asFlippedFloatBuffer(new float[]{255, 216, 191, 1}));
-   	 	glLight(GL_LIGHT0, GL_CONSTANT_ATTENUATION,BufferTools.asFlippedFloatBuffer(new float[]{1, 1, 1, 1}) );
+    	//glEnable(GL_LIGHTING);
+    	//glEnable(GL_LIGHT0);
+   	 	//glLightModel(GL_LIGHT_MODEL_AMBIENT, BufferTools.asFlippedFloatBuffer(new float[]{0.005f, 0.005f, 0.005f, 0.01f}));
+   	 	//glLight(GL_LIGHT0, GL_POSITION, BufferTools.asFlippedFloatBuffer(new float[]{255, 216, 191, 1}));
+   	 	//glLight(GL_LIGHT0, GL_CONSTANT_ATTENUATION,BufferTools.asFlippedFloatBuffer(new float[]{1, 1, 1, 1}) );
    	 	
-   	 	glEnable(GL_COLOR_MATERIAL);
-   	 	glColorMaterial(GL_FRONT, GL_DIFFUSE);
-   	 //glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
-   	 	glColor3f(0.1f, 0.1f, 0.1f);
-   	 	glMaterialf(GL_FRONT, GL_SHININESS, 50f);      
+   	 	//glEnable(GL_COLOR_MATERIAL);
+   	 	//glColorMaterial(GL_FRONT, GL_DIFFUSE);
+   	 glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+   	 	//glColor3f(0.1f, 0.1f, 0.1f);
+   	 	//glMaterialf(GL_FRONT, GL_SHININESS, 5f);      
         camera.applyOptimalStates();
         
         // Enable the sorting of shapes from far to near
-      
+        
         // Set the background to a blue sky colour
-       glClearColor(0, 0.75f, 1, 1);
+       //glClearColor(0, 0.75f, 1, 1);
      
        
        
-       GL11.glEnable(GL11.GL_TEXTURE_2D);
-		GL11.glShadeModel(GL11.GL_SMOOTH);
-		//GL11.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-		GL11.glClearDepth(1.0);
-		GL11.glEnable(GL11.GL_DEPTH_TEST);
-		GL11.glDepthFunc(GL11.GL_LEQUAL);
-		GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
-		glEnable(GL_CULL_FACE);
-  	 	glCullFace(GL_BACK);
-		GL11.glEnableClientState(GL11.GL_COLOR_ARRAY);
-
-		GL11.glMatrixMode(GL11.GL_PROJECTION);
-		GL11.glLoadIdentity();
+       //glEnable(GL_TEXTURE_2D);
+		//glShadeModel(GL_SMOOTH);
+		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+		//glClearDepth(1.0);
+		
+		glDepthFunc(GL_LEQUAL);
+		glEnableClientState(GL_VERTEX_ARRAY);
+		//glEnable(GL_CULL_FACE);
+  	 	//glCullFace(GL_BACK);
+		glEnableClientState(GL_COLOR_ARRAY);
+		
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
 
 		
-		GL11.glMatrixMode(GL11.GL_MODELVIEW);
+		glMatrixMode(GL_MODELVIEW);
 
-		GL11.glHint(GL11.GL_PERSPECTIVE_CORRECTION_HINT, GL11.GL_NICEST);
+		glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
     }
 
     private void update() {
@@ -221,13 +227,14 @@ public class OpenGLCamera implements Runnable {
 
 	private void setUpChunks() {
 		chunkManager = new ChunkManager();
-		chunkManager.genTest(20, 20, 20);
+		chunkManager.genTest(1, 1, 1);
 		
 	}
 
 
 
 	public static void main(String[] args){
+		InterthreadHolder.getInstance();
 		(new Thread(new OpenGLCamera())).start();
 	}
 	

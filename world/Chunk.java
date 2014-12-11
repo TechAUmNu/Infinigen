@@ -1,13 +1,18 @@
 package world;
 
+import graphics.ChunkBatch;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.FloatBuffer;
+
 import org.lwjgl.BufferUtils;
+
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL15.*;
+import threading.InterthreadHolder;
 import world.Block.BlockType;
 
 public class Chunk {
@@ -36,6 +41,7 @@ public class Chunk {
 	private int x, y, z;
 	private String worldLocation;
 	private Boolean test = false;
+	private ChunkBatch batch;
 
 	/**
 	 * Renders this chunk
@@ -130,12 +136,12 @@ public class Chunk {
 				}
 			}
 		}
-		Blocks[0][0][0].setType(BlockType.BlockType_Air);
-		Blocks[3][3][3].setType(BlockType.BlockType_Air);
-		
-		System.out.println(Blocks[3][3][3].GetType());
-		System.out.println(Blocks[0][0][0].GetType());
-		System.out.println(Blocks[3][2][3].GetType());
+		for(int i = 0; i < 16; i++){
+			//Blocks[i][0][0].setType(BlockType.BlockType_Air);
+			for(int j = 0; j < 16; j++){
+				Blocks[i][15][j].setType(BlockType.BlockType_Air);
+			}
+		}
 		
 		RebuildChunk();
 		
@@ -203,10 +209,11 @@ public class Chunk {
 				for (float z = 0; z < CHUNK_SIZE; z++) {
 					if (Blocks[(int) x][(int) y][(int) z].IsVisible()) {
 
-						VertexPositionData.put(CreateCube((float) this.x
-								* MULTIPLIER + x * CUBE_LENGTH, (float) this.y
-								* MULTIPLIER + y * CUBE_LENGTH, (float) this.z
-								* MULTIPLIER + z * CUBE_LENGTH));
+						VertexPositionData.put(CreateCube(
+								(float) this.x * MULTIPLIER + x * CUBE_LENGTH, 
+								(float) this.y * MULTIPLIER + y * CUBE_LENGTH, 
+								(float) this.z * MULTIPLIER + z * CUBE_LENGTH
+								));
 						VertexColorData
 								.put(CreateCubeVertexCol(GetCubeColor(Blocks[(int) x][(int) y][(int) z])));
 
@@ -224,6 +231,14 @@ public class Chunk {
 		glBindBuffer(GL_ARRAY_BUFFER, VBOColorHandle);
 		glBufferData(GL_ARRAY_BUFFER, VertexColorData, GL_STATIC_DRAW);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		
+		if(batch != null){
+			InterthreadHolder.getInstance().removeBatch(batch);
+		}
+		ChunkBatch b = new ChunkBatch("shaders/landscape.vs","shaders/landscape.fs");
+		b.addVBO(VBOVertexHandle, VBOColorHandle, VertexPositionData.capacity(), VertexColorData.capacity(), visibleBlocks);
+		batch = b;
+		InterthreadHolder.getInstance().addBatch(b);
 
 	}
 
@@ -291,51 +306,49 @@ public class Chunk {
 	public static float[] CreateCube(float x, float y, float z) {
 		int offset = CUBE_LENGTH / 2;
 		return new float[] {
-				// BOTTOM QUAD(DOWN=+Y)
-				x + offset, y + offset,
-				z,
-				x - offset,
-				y + offset,
-				z,
-				x - offset,
-				y + offset,
-				z - CUBE_LENGTH,
-				x + offset,
-				y + offset,
-				z - CUBE_LENGTH,
-				// TOP!
-				x + offset, y - offset, z - CUBE_LENGTH, x - offset,
-				y - offset,
-				z - CUBE_LENGTH,
-				x - offset,
-				y - offset,
-				z,
-				x + offset,
-				y - offset,
-				z,
-				// FRONT QUAD
-				x + offset, y + offset, z - CUBE_LENGTH, x - offset,
-				y + offset, z - CUBE_LENGTH, x - offset,
-				y - offset,
-				z - CUBE_LENGTH,
-				x + offset,
-				y - offset,
-				z - CUBE_LENGTH,
-				// BACK QUAD
-				x + offset, y - offset, z, x - offset, y - offset, z,
-				x - offset, y + offset, z,
-				x + offset,
-				y + offset,
-				z,
+				
+				
+				
+								// BOTTOM
+								x + offset,	y - offset,	z,
+								x + offset,	y - offset,	z - CUBE_LENGTH,
+								x - offset,	y - offset,	z - CUBE_LENGTH,
+								x - offset, y - offset, z,
+				
+				
+				
+				
+								// TOP
+								x - offset, y + offset,	z - CUBE_LENGTH,
+								x + offset,	y + offset,	z - CUBE_LENGTH,
+								x + offset,	y + offset,	z,
+								x - offset,	y + offset,	z,
+				
+								// FRONT
+								x - offset,	y + offset,	z,
+								x + offset, y + offset, z,
+								x + offset, y - offset, z,
+								x - offset, y - offset, z,
+				
+				// BACK
+				x + offset, y + offset, z - CUBE_LENGTH,
+				x - offset,	y + offset, z - CUBE_LENGTH,
+				x - offset,	y - offset,	z - CUBE_LENGTH,
+				x + offset,	y - offset,	z - CUBE_LENGTH,
+				
 				// LEFT QUAD
-				x - offset, y + offset, z - CUBE_LENGTH, x - offset,
-				y + offset, z, x - offset, y - offset, z, x - offset,
-				y - offset,
-				z - CUBE_LENGTH,
+				x - offset, y + offset, z - CUBE_LENGTH, 
+				x - offset, y + offset, z, 
+				x - offset, y - offset, z, 
+				x - offset,	y - offset,	z - CUBE_LENGTH,
+				
 				// RIGHT QUAD
-				x + offset, y + offset, z, x + offset, y + offset,
-				z - CUBE_LENGTH, x + offset, y - offset, z - CUBE_LENGTH,
-				x + offset, y - offset, z };
+				x + offset, y + offset, z, 
+				x + offset, y + offset,	z - CUBE_LENGTH,
+				x + offset, y - offset, z - CUBE_LENGTH,
+				x + offset, y - offset, z 
+			
+		};
 
 	}
 
