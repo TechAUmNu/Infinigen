@@ -12,7 +12,7 @@ There are absolutely 0 premade units. Players can build almost anything out of t
 
 <h2>Ideas have been taken from these games:</h2>
 
-<h3>Spring:</h3>
+<h3>Spring</h3>
 
 drawing on map, adding points, markers etc.
 projectiles are all physics based.
