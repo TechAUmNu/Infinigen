@@ -10,7 +10,7 @@ Infinigen is a unique 3D OpenGL Java Game/Engine. The engine is based on Voxels 
 
 There are absolutely 0 premade units. Players can build almost anything out of the prebuilt community made blocks and modules which are available from the steam workshop.
 
-<b>Ideas have been taken from these games:</b>
+<h2>Ideas have been taken from these games:</h2>
 
 <h3>Spring:</h3>
 
@@ -50,7 +50,7 @@ Battle view, time acceleration, unit groups.
 <ul>
 <li>Client server re-joinable games, no desyncs.</li>
 </ul>
-<h3>Robocraft<\h3>
+<h3>Robocraft</h3>
 
 <ul>
 <li>Voxel based units</li>
@@ -58,7 +58,7 @@ Battle view, time acceleration, unit groups.
 
 
 
-<b>Some more unique features have been included as well:</b>
+<h2>Some more unique features have been included as well:</h2>
 
 
 <ul>
