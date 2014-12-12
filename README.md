@@ -18,8 +18,10 @@ drawing on map, adding points, markers etc.
 projectiles are all physics based.
 
 <h3>Rome Total war</h3>
-
-Battle view, time acceleration, unit groups.
+<ul>
+<li>Battle view</li>
+<li>Time acceleration</li>
+<li>Unit groups.</li>
 </ul>
 <h3>Civilization V</h3>
 <ul>
