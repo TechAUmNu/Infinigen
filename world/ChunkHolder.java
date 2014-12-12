@@ -52,16 +52,7 @@ public class ChunkHolder {
 		//chunks[x][y][z].Save();
 		return chunks[x][y][z];
 	}
-	
-	/**
-	 * Renders all loaded chunks
-	 */
-	public void Render(){
-		for(ChunkID c : loadedChunks){
-			chunks[c.x][c.y][c.z].Render();
-		}		
-	}
-	
+
 	/**
 	 * Unloads a specific chunk
 	 * @param x X chunk location

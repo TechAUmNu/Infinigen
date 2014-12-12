@@ -4,6 +4,7 @@ public class Block {
 	
 	private boolean IsVisible;
 	private BlockType Type;
+	private VisibleFaces vf;
 
 	public enum BlockType {
 		BlockType_Air((byte) 0), BlockType_Dirt((byte) 1), BlockType_Stone((byte) 2);
@@ -46,6 +47,14 @@ public class Block {
 	}
 	public void setType(BlockType b){
 		Type = b;
+	}
+
+	public VisibleFaces getVf() {
+		return vf;
+	}
+
+	public void setVf(VisibleFaces vf) {
+		this.vf = vf;
 	}
 		
 }

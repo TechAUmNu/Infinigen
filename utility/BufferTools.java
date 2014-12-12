@@ -35,6 +35,7 @@ import org.lwjgl.util.vector.Vector3f;
 
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
+import java.util.Arrays;
 
 public class BufferTools {
 
@@ -139,5 +140,21 @@ public class BufferTools {
         buffer.put(values);
         buffer.flip();
         return buffer;
+    }
+    
+    public static float[] concat(float[]... arrays) {
+        int length = 0;
+        for (float[] array : arrays) {
+            length += array.length;
+        }
+        float[] result = new float[length];
+        int pos = 0;
+        for (float[] array : arrays) {
+            for (float element : array) {
+                result[pos] = element;
+                pos++;
+            }
+        }
+        return result;
     }
 }

@@ -21,6 +21,7 @@ public class ChunkLoader {
 	
 	public void Unload(Chunk c){
 		c.Save();
+		c.CleanUp();
 	}
 
 }

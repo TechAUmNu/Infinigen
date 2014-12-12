@@ -52,12 +52,7 @@ public class ChunkManager {
 		chunks.UnloadChunks();		
 	}
 
-	/**
-	 * Renders all loaded chunks
-	 */
-	public void Render(){
-		chunks.Render();
-	}
+	
 	
 	/**
 	 * Generates a chunk if it is not already generated

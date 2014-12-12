@@ -39,6 +39,7 @@ import org.lwjgl.util.vector.Vector3f;
 
 
 
+
 import threading.InterthreadHolder;
 import utility.BufferTools;
 import utility.EulerCamera;
@@ -52,7 +53,7 @@ public class OpenGLCamera implements Runnable {
     
 	
     private static final EulerCamera camera = new EulerCamera.Builder().setPosition(0f, 0f,
-            0f).setRotation(50, 12, 0).setAspectRatio(ASPECT_RATIO).setFieldOfView(60).setFarClippingPane(100000f).setNearClippingPane(1f).build();
+            0f).setRotation(50, 12, 0).setAspectRatio(ASPECT_RATIO).setFieldOfView(60).setFarClippingPane(100f).setNearClippingPane(1f).build();
         
 
     
@@ -78,9 +79,11 @@ public class OpenGLCamera implements Runnable {
         glLoadIdentity();
         // Apply the camera position and orientation to the scene
         camera.applyTranslations();
-        //glLight(GL_LIGHT0, GL_POSITION, BufferTools.asFlippedFloatBuffer(20f, 20f, 20f, 1));
+        glLight(GL_LIGHT0, GL_POSITION, BufferTools.asFlippedFloatBuffer(20f, 20f, 20f, 1));
         //Draw all the batches. There should be less than 10,000 for optimal performance.
-        //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        //glMatrixMode(GL_MODELVIEW);
+        //glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
         for(ChunkBatch cb : InterthreadHolder.getInstance().getBatches()){
         	cb.draw(camera.x(), camera.y(), camera.z());
         }
@@ -105,11 +108,7 @@ public class OpenGLCamera implements Runnable {
   }
 
     private  void cleanUp(boolean asCrash) {
-        glUseProgram(0);
-        glDeleteProgram(shaderProgram);
-        glDeleteLists(heightmapDisplayList, 1);
-        //glBindTexture(GL_TEXTURE_2D, 0);
-        //glDeleteTextures(lookupTexture);
+       
         System.err.println(GLU.gluErrorString(glGetError()));
         Display.destroy();
         System.exit(asCrash ? 1 : 0);
@@ -120,44 +119,43 @@ public class OpenGLCamera implements Runnable {
     }
 
     private  void setUpStates() {
-    	glShadeModel(GL_SMOOTH);
+    	//glShadeModel(GL_SMOOTH);
     	glEnable(GL_DEPTH_TEST);
-    	//glEnable(GL_LIGHTING);
-    	//glEnable(GL_LIGHT0);
-   	 	//glLightModel(GL_LIGHT_MODEL_AMBIENT, BufferTools.asFlippedFloatBuffer(new float[]{0.005f, 0.005f, 0.005f, 0.01f}));
-   	 	//glLight(GL_LIGHT0, GL_POSITION, BufferTools.asFlippedFloatBuffer(new float[]{255, 216, 191, 1}));
-   	 	//glLight(GL_LIGHT0, GL_CONSTANT_ATTENUATION,BufferTools.asFlippedFloatBuffer(new float[]{1, 1, 1, 1}) );
+    	glDepthFunc(GL_LEQUAL);
+    	glEnable(GL_LIGHTING);
+    	glEnable(GL_LIGHT0);
+    	//glFrontFace(GL_CW);
+   	 	glLightModel(GL_LIGHT_MODEL_AMBIENT, BufferTools.asFlippedFloatBuffer(new float[]{0.5f, 0.5f, 0.5f, 0.1f}));
+   	 	glLight(GL_LIGHT0, GL_POSITION, BufferTools.asFlippedFloatBuffer(new float[]{5, 2, 1, 1}));
+   	 	glLight(GL_LIGHT0, GL_CONSTANT_ATTENUATION,BufferTools.asFlippedFloatBuffer(new float[]{1, 1, 1, 1}) );
    	 	
-   	 	//glEnable(GL_COLOR_MATERIAL);
-   	 	//glColorMaterial(GL_FRONT, GL_DIFFUSE);
-   	 glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
-   	 	//glColor3f(0.1f, 0.1f, 0.1f);
-   	 	//glMaterialf(GL_FRONT, GL_SHININESS, 5f);      
+   	 	glEnable(GL_COLOR_MATERIAL);
+   	 	glColorMaterial(GL_FRONT, GL_DIFFUSE);
+   	 //glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+   	 	glColor3f(0.1f, 0.1f, 0.1f);
+   	 	glMaterialf(GL_FRONT, GL_SHININESS, 5f);      
         camera.applyOptimalStates();
         
-        // Enable the sorting of shapes from far to near
+      
+        glEnable(GL_CULL_FACE);
+        glCullFace(GL_BACK);
         
-        // Set the background to a blue sky colour
-       //glClearColor(0, 0.75f, 1, 1);
-     
        
        
-       //glEnable(GL_TEXTURE_2D);
-		//glShadeModel(GL_SMOOTH);
+       
+      glEnable(GL_TEXTURE_2D);
+		
 		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-		//glClearDepth(1.0);
 		
-		glDepthFunc(GL_LEQUAL);
-		glEnableClientState(GL_VERTEX_ARRAY);
-		//glEnable(GL_CULL_FACE);
-  	 	//glCullFace(GL_BACK);
+		
+		
+		glEnableClientState(GL_VERTEX_ARRAY);		
 		glEnableClientState(GL_COLOR_ARRAY);
+		glEnableClientState(GL_NORMAL_ARRAY);
 		
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-
-		
-		glMatrixMode(GL_MODELVIEW);
+		//glMatrixMode(GL_PROJECTION);
+		///glLoadIdentity();		
+		//glMatrixMode(GL_MODELVIEW);
 
 		glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
     }
@@ -195,7 +193,7 @@ public class OpenGLCamera implements Runnable {
     private void setUpDisplay() {
         try {
             //Display.setDisplayMode(new DisplayMode(WINDOW_DIMENSIONS[0], WINDOW_DIMENSIONS[1]));
-            Display.setVSyncEnabled(true);
+            Display.setVSyncEnabled(false);
             Display.setFullscreen(false);
             
             Display.setTitle(WINDOW_TITLE);

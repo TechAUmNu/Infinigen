@@ -3,21 +3,16 @@ package graphics;
 public class ChunkVBO {
 	int vertexid;
 	int normalid;
-	int colorid;
-	int noVertices;
-	int noNormals;
-	int noColors;
+	int colorid;	
 	int visibleBlocks;
 	
 	
 	
-	public ChunkVBO(int vertexid, int colorid, int noVertices, int noColors, int visibleBlocks){
-		this.vertexid = vertexid;
-		//this.normalid = normalid;
-		this.colorid = colorid;
-		this.noVertices = noVertices;
-		//this.noNormals = noNormals;
-		this.noColors = noColors;
+	public ChunkVBO(int vertexid, int colorid, int normalid, int visibleBlocks){
+		this.vertexid = vertexid;		
+		this.colorid = colorid;		
+		this.normalid = normalid;
 		this.visibleBlocks = visibleBlocks;
+		System.out.println("VISIBLE : " + visibleBlocks);
 	}
 }
