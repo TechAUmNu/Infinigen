@@ -10,89 +10,87 @@ Infinigen is a unique 3D OpenGL Java Game/Engine. The engine is based on Voxels 
 
 There are absolutely 0 premade units. Players can build almost anything out of the prebuilt community made blocks and modules which are available from the steam workshop.
 
-Ideas have been taken from these games:
+<b>Ideas have been taken from these games:</b>
 
-Spring:
+<h3>Spring:</h3>
 
 drawing on map, adding points, markers etc.
 projectiles are all physics based.
 
-Rome Total war
+<h3>Rome Total war</h3>
 
 Battle view, time acceleration, unit groups.
+</ul>
+<h3>Civilization V</h3>
+<ul>
+<li>Empire view</li>
+<li>Tech system</li>
+</ul>
+<h3>Europa Universalis</h3>
+<ul>
+<li>Advanced Diplomacy.</li>
+</ul>
+<h3>Age of empires</h3>
+<ul>
+<li>Normal game screen</li>
+</ul>
+<h3>Minecraft</h3>
+<ul>
+<li>Real resources</li>
+<li>Voxel Engine</li>
+<li>Texture packs</li>
+</ul>
+<h3>Supreme commander 2</h3>
+<ul>
+<li>Ultra high unit counts</li>
+<li>Animations for everything</li>
+<li>Really nice graphics</li>
+</ul>
+<h3>Planetary annihilation</h3>
+<ul>
+<li>Client server re-joinable games, no desyncs.</li>
+</ul>
+<h3>Robocraft<\h3>
 
-Civilization V
-
-Empire view
-Tech system
-
-Europa Universalis
-
-Advanced Diplomacy.
-
-Age of empires
-
-Normal game screen
-
-Populous
-
-population retraining (people spawn and then can be retrained into different types
-
-Minecraft
-
-Real resources
-Voxel Engine
-Texture packs
-
-Supreme commander 2
-
-Ultra high unit counts
-Animations for everything
-Really nice graphics
-
-Planetary annihilation
-
-Client server re-joinable games, no desyncs.
-
-Robocraft
-
-Voxel based units
- 
+<ul>
+<li>Voxel based units</li>
+</ul>
 
 
 
 <b>Some more unique features have been included as well:</b>
 
 
+<ul>
+<li>Physical constraint based vehicles and buildings (Things break when bent too far, etc)</li>
 
-Physical constraint based vehicles and buildings (Things break when bent too far, etc)
+<li>Voxel Blurring (Makes the game look smoother in appearance)</li>
 
-Voxel Blurring (Makes the game look smoother in appearance)
+<li>Dynamic UI (The whole UI changes based on zoom level and which view you are in)</li>
 
-Dynamic UI (The whole UI changes based on zoom level and which view you are in)
+<li>Unlimited thread usage (If your machine has 6000 cores it can use all of them)</li>
 
-Unlimited thread usage (If your machine has 6000 cores it can use all of them)
+<li>Community made parts on steam workshop</li>
 
-Community made parts on steam workshop
+<li>No such thing as “Health” of a unit wherein the unit disappears when it hits 0 (If a shell hits a tank it simulates the explosion on the parts of the tank to give realistic damage)</li>
 
-No such thing as “Health” of a unit wherein the unit disappears when it hits 0 (If a shell hits a tank it simulates the explosion on the parts of the tank to give realistic damage)
+<li>User and official hosted servers (CloudServers)</li>
 
-User and official hosted servers (CloudServers)
+<li>Written in java and OpenGL to ensure best portability across all platforms.</li>
 
-Written in java and OpenGL to ensure best portability across all platforms.
+<li>Designed to run on even the slowest machine.</li>
 
-Designed to run on even the slowest machine.
+<li>2D mode available, which doesn’t use OpenGL</li>
 
-2D mode available, which doesn’t use OpenGL
+<li>Bullet Physics engine integrated</li>
 
-Bullet Physics engine integrated
+<li>Improved A* pathing</li>
 
-Improved A* pathing
+<li>All units powered by advanced AI techniques - work together to achieve a common goal</li>
 
-All units powered by advanced AI techniques - work together to achieve a common goal
+<li>OpenAL audio</li>
 
-OpenAL audio
+<li>Map editor and real time fractal world generator for MMO games.</li>
 
-Map editor and real time fractal world generator for MMO games.
-
-Support for community quests and campaigns (Make your own MMORPG).
+<li>Support for community quests and campaigns (Make your own MMORPG).</li>
+</ul>
