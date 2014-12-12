@@ -6,7 +6,7 @@ import org.magicwerk.brownies.collections.GapList;
 public class ChunkHolder {
 	
 	//The max number of chunks that can be loaded in each axis
-	private int MAX_CHUNKS = 20;
+	private int MAX_CHUNKS = 50;
 	
 	//3d array of chunks for fast access
 	private Chunk[][][] chunks = new Chunk[MAX_CHUNKS][MAX_CHUNKS][MAX_CHUNKS];

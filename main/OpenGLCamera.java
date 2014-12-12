@@ -79,7 +79,7 @@ public class OpenGLCamera implements Runnable {
         glLoadIdentity();
         // Apply the camera position and orientation to the scene
         camera.applyTranslations();
-        glLight(GL_LIGHT0, GL_POSITION, BufferTools.asFlippedFloatBuffer(20f, 20f, 20f, 1));
+        //glLight(GL_LIGHT0, GL_POSITION, BufferTools.asFlippedFloatBuffer(20f, 2f, 20f, 1));
         //Draw all the batches. There should be less than 10,000 for optimal performance.
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         //glMatrixMode(GL_MODELVIEW);
@@ -122,18 +122,18 @@ public class OpenGLCamera implements Runnable {
     	//glShadeModel(GL_SMOOTH);
     	glEnable(GL_DEPTH_TEST);
     	glDepthFunc(GL_LEQUAL);
-    	glEnable(GL_LIGHTING);
-    	glEnable(GL_LIGHT0);
+    	//glEnable(GL_LIGHTING);
+    	//glEnable(GL_LIGHT0);
     	//glFrontFace(GL_CW);
-   	 	glLightModel(GL_LIGHT_MODEL_AMBIENT, BufferTools.asFlippedFloatBuffer(new float[]{0.5f, 0.5f, 0.5f, 0.1f}));
-   	 	glLight(GL_LIGHT0, GL_POSITION, BufferTools.asFlippedFloatBuffer(new float[]{5, 2, 1, 1}));
-   	 	glLight(GL_LIGHT0, GL_CONSTANT_ATTENUATION,BufferTools.asFlippedFloatBuffer(new float[]{1, 1, 1, 1}) );
+   	 	//glLightModel(GL_LIGHT_MODEL_AMBIENT, BufferTools.asFlippedFloatBuffer(new float[]{0.5f, 0.5f, 0.5f, 0.1f}));
+   	 	//glLight(GL_LIGHT0, GL_POSITION, BufferTools.asFlippedFloatBuffer(new float[]{5, 2, 1, 1}));
+   	 	//glLight(GL_LIGHT0, GL_CONSTANT_ATTENUATION,BufferTools.asFlippedFloatBuffer(new float[]{1, 1, 1, 1}) );
    	 	
-   	 	glEnable(GL_COLOR_MATERIAL);
-   	 	glColorMaterial(GL_FRONT, GL_DIFFUSE);
+   	 	//glEnable(GL_COLOR_MATERIAL);
+   	 	//glColorMaterial(GL_FRONT, GL_DIFFUSE);
    	 //glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
-   	 	glColor3f(0.1f, 0.1f, 0.1f);
-   	 	glMaterialf(GL_FRONT, GL_SHININESS, 5f);      
+   	 	//glColor3f(0.1f, 0.1f, 0.1f);
+   	 	//glMaterialf(GL_FRONT, GL_SHININESS, 5f);      
         camera.applyOptimalStates();
         
       
@@ -162,7 +162,7 @@ public class OpenGLCamera implements Runnable {
 
     private void update() {
        Display.update();
-       Display.sync(60);
+       //Display.sync(60);
     }
 
     private void enterGameLoop() {
@@ -225,7 +225,7 @@ public class OpenGLCamera implements Runnable {
 
 	private void setUpChunks() {
 		chunkManager = new ChunkManager();
-		chunkManager.genTest(1, 1, 1);
+		chunkManager.genTest(49, 1, 49);
 		
 	}
 

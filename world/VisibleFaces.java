@@ -10,8 +10,14 @@ public class VisibleFaces {
 	boolean left;
 	boolean right;
 
-	//TODO: make this work
+	int x, y, z, CUBE_LENGTH, offset;
+
 	public float[] genVertexes(int x, int y, int z, int CUBE_LENGTH) {
+		this.x = x;
+		this.y = y;
+		this.z = z;
+		this.CUBE_LENGTH = CUBE_LENGTH;
+		offset = CUBE_LENGTH / 2;
 		float[] vertexes = new float[0];
 		if (bottom)
 			vertexes = BufferTools.concat(vertexes, genBottom());
@@ -28,41 +34,41 @@ public class VisibleFaces {
 
 		return vertexes;
 	}
-	
-	//TODO: make this work
-	public float[] genColors(){
+
+	// TODO: make this work
+	public float[] genColors() {
 		float[] colors = new float[0];
 		if (bottom)
-			colors = BufferTools.concat(colors, genBottom());
+			colors = BufferTools.concat(colors, genBottomColors());
 		if (top)
-			colors = BufferTools.concat(colors, genTop());
+			colors = BufferTools.concat(colors, genTopColors());
 		if (front)
-			colors = BufferTools.concat(colors, genFront());
+			colors = BufferTools.concat(colors, genFrontColors());
 		if (back)
-			colors = BufferTools.concat(colors, genBack());
+			colors = BufferTools.concat(colors, genBackColors());
 		if (left)
-			colors = BufferTools.concat(colors, genLeft());
+			colors = BufferTools.concat(colors, genLeftColors());
 		if (right)
-			colors = BufferTools.concat(colors, genRight());
+			colors = BufferTools.concat(colors, genRightColors());
 
 		return colors;
 	}
-	
-	//TODO: make this work
-	public float[] genNormals(){
+
+	// TODO: make this work
+	public float[] genNormals() {
 		float[] normals = new float[0];
 		if (bottom)
-			normals = BufferTools.concat(normals, genBottom());
+			normals = BufferTools.concat(normals, genBottomNormals());
 		if (top)
-			normals = BufferTools.concat(normals, genTop());
+			normals = BufferTools.concat(normals, genTopNormals());
 		if (front)
-			normals = BufferTools.concat(normals, genFront());
+			normals = BufferTools.concat(normals, genFrontNormals());
 		if (back)
-			normals = BufferTools.concat(normals, genBack());
+			normals = BufferTools.concat(normals, genBackNormals());
 		if (left)
-			normals = BufferTools.concat(normals, genLeft());
+			normals = BufferTools.concat(normals, genLeftNormals());
 		if (right)
-			normals = BufferTools.concat(normals, genRight());
+			normals = BufferTools.concat(normals, genRightNormals());
 
 		return normals;
 	}
@@ -112,6 +118,78 @@ public class VisibleFaces {
 				x + offset, y + offset, z - CUBE_LENGTH, x + offset,
 				y + offset, z, x + offset, y - offset, z, x + offset,
 				y - offset, z - CUBE_LENGTH };
+	}
+
+	private float[] genBottomColors() {
+		return new float[] {
+
+		0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1 };
+	}
+
+	private float[] genTopColors() {
+		return new float[] {
+
+		0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1 };
+	}
+
+	private float[] genFrontColors() {
+		return new float[] {
+
+		0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1 };
+	}
+
+	private float[] genBackColors() {
+		return new float[] {
+
+		0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1 };
+	}
+
+	private float[] genLeftColors() {
+		return new float[] {
+
+		0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1 };
+	}
+
+	private float[] genRightColors() {
+		return new float[] {
+
+		0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1 };
+	}
+
+	private float[] genBottomNormals() {
+		return new float[] {
+
+		0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0 };
+	}
+
+	private float[] genTopNormals() {
+		return new float[] {
+
+		0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0 };
+	}
+
+	private float[] genFrontNormals() {
+		return new float[] {
+
+		0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1 };
+	}
+
+	private float[] genBackNormals() {
+		return new float[] {
+
+		0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1 };
+	}
+
+	private float[] genLeftNormals() {
+		return new float[] {
+
+		-1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0 };
+	}
+
+	private float[] genRightNormals() {
+		return new float[] {
+
+		1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0 };
 	}
 
 }

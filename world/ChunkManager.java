@@ -23,7 +23,7 @@ public class ChunkManager {
 	private String worldLocation = "C:\\Testing\\ChunkTesting";
 	
 	/**
-	 * Can store 8000 chunks (about 1.2GB)
+	 * Can store 125000 chunks (about 1.2GB)
 	 */
 	private ChunkHolder chunks = new ChunkHolder();
 

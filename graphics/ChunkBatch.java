@@ -48,8 +48,8 @@ public class ChunkBatch {
     		glColorPointer(3, GL_FLOAT, 0, 0L);
     		glBindBuffer(GL_ARRAY_BUFFER, c.normalid);
     		glNormalPointer(GL_FLOAT, 0, 0L);
-    		glDrawArrays(GL_QUADS, 0, c.visibleBlocks * 24);
-    		System.out.println(c.visibleBlocks);
+    		glDrawArrays(GL_QUADS, 0, c.visibleFaces * 6);
+    		
         }
         
         

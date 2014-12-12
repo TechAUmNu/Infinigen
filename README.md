@@ -59,20 +59,40 @@ Robocraft
 Voxel based units
  
 
-Some more unique features have been included as well:
+
+
+<b>Some more unique features have been included as well:</b>
+
+
 
 Physical constraint based vehicles and buildings (Things break when bent too far, etc)
+
 Voxel Blurring (Makes the game look smoother in appearance)
+
 Dynamic UI (The whole UI changes based on zoom level and which view you are in)
+
 Unlimited thread usage (If your machine has 6000 cores it can use all of them)
+
 Community made parts on steam workshop
+
 No such thing as “Health” of a unit wherein the unit disappears when it hits 0 (If a shell hits a tank it simulates the explosion on the parts of the tank to give realistic damage)
+
 User and official hosted servers (CloudServers)
+
 Written in java and OpenGL to ensure best portability across all platforms.
+
 Designed to run on even the slowest machine.
+
 2D mode available, which doesn’t use OpenGL
+
 Bullet Physics engine integrated
+
 Improved A* pathing
+
+All units powered by advanced AI techniques - work together to achieve a common goal
+
 OpenAL audio
+
 Map editor and real time fractal world generator for MMO games.
+
 Support for community quests and campaigns (Make your own MMORPG).

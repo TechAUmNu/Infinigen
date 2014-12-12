@@ -38,7 +38,7 @@ public class Chunk {
 	private int VBOVertexHandle;
 	private int VBOColorHandle;
 	private int VBONormalHandle;
-	private int visibleBlocks;
+	private int visibleFaces;
 	private int x, y, z;
 	private String worldLocation;
 	private Boolean test = false;
@@ -119,17 +119,18 @@ public class Chunk {
 		for (int x = 0; x < CHUNK_SIZE; x++) {
 			for (int y = 0; y < CHUNK_SIZE; y++) {
 				for (int z = 0; z < CHUNK_SIZE; z++) {
-					Blocks[x][y][z] = new Block(BlockType.BlockType_Dirt);
+					Blocks[x][y][z] = new Block(BlockType.BlockType_Air);
 				}
 			}
 		}
-		// Blocks[0][15][0].setType(BlockType.BlockType_Air);
-		for (int i = 0; i < 16; i++) {
-			// Blocks[i][0][0].setType(BlockType.BlockType_Air);
-			for (int j = 0; j < 16; j++) {
-				Blocks[i][15][j].setType(BlockType.BlockType_Air);
-			}
+		 
+		 //Blocks[10][10][10].setType(BlockType.BlockType_Dirt);
+	for (int i = 0; i < 16; i++) {
+		
+		for (int j = 0; j < 16; j++) {
+		Blocks[i][13][j].setType(BlockType.BlockType_Dirt);
 		}
+}
 
 		RebuildChunk();
 
@@ -168,13 +169,11 @@ public class Chunk {
 	 * visible
 	 */
 	public void RebuildChunk() {
-		visibleBlocks = 0;
+		visibleFaces = 0;
 		for (int x = 0; x < CHUNK_SIZE; x++) {
 			for (int y = 0; y < CHUNK_SIZE; y++) {
-				for (int z = 0; z < CHUNK_SIZE; z++) {
-						CheckFaces(x, y, z);					
-						visibleBlocks++;
-					//TODO: work out how many faces are visible					
+				for (int z = 0; z < CHUNK_SIZE; z++) {							
+						visibleFaces += CheckFaces(x, y, z);							
 				}
 			}
 		}
@@ -185,21 +184,26 @@ public class Chunk {
 	 * Creates the visible mesh for the chunk
 	 */
 	public void RebuildMesh() {
+		FloatBuffer VertexPositionData = BufferUtils
+				.createFloatBuffer(visibleFaces * 12);
+		FloatBuffer VertexColorData = BufferUtils
+				.createFloatBuffer(visibleFaces * 12);
+		FloatBuffer VertexNormalData = BufferUtils
+				.createFloatBuffer(visibleFaces * 12);
 		
-//TODO: create float arrays for the following
+
 		for (int x = 0; x < CHUNK_SIZE; x++) {
 			for (int y = 0; y < CHUNK_SIZE; y++) {
 				for (int z = 0; z < CHUNK_SIZE; z++) {
-					if (Blocks[(int) x][(int) y][(int) z].IsVisible()) {
-						//TODO: make this work
-						Blocks[x][y][z].getVf().genVertexes(
+					if (Blocks[(int) x][(int) y][(int) z].IsVisible()) {						
+						VertexPositionData.put(Blocks[x][y][z].getVf().genVertexes(
 								this.x * MULTIPLIER + x	* CUBE_LENGTH,
 								this.y * MULTIPLIER + y * CUBE_LENGTH,
 								this.z * MULTIPLIER + z	* CUBE_LENGTH,
 								CUBE_LENGTH
-								);						
-						Blocks[x][y][z].getVf().genColors();						
-						Blocks[x][y][z].getVf().genNormals();						
+								));						
+						VertexColorData.put(Blocks[x][y][z].getVf().genColors());						
+						VertexNormalData.put(Blocks[x][y][z].getVf().genNormals());						
 					}
 				}
 			}
@@ -220,26 +224,20 @@ public class Chunk {
 		glBindBuffer(GL_ARRAY_BUFFER, VBONormalHandle);
 		glBufferData(GL_ARRAY_BUFFER, VertexNormalData, GL_STATIC_DRAW);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		System.out.println(visibleBlocks);
+		System.out.println(visibleFaces);
 		if (batch != null) {
 			InterthreadHolder.getInstance().removeBatch(batch);
 		}
 		ChunkBatch b = new ChunkBatch("shaders/landscape.vs",
 				"shaders/landscape.fs");
 		b.addVBO(VBOVertexHandle, VBOColorHandle, VBONormalHandle,
-				visibleBlocks);
+				visibleFaces);
 		batch = b;
 		InterthreadHolder.getInstance().addBatch(b);
 
 	}
 
-	private float[] CreateCubeVertexCol(float[] CubeColorArray) {
-		float[] cubeColors = new float[CubeColorArray.length * 4 * 6];
-		for (int i = 0; i < cubeColors.length; i++) {
-			cubeColors[i] = CubeColorArray[i % CubeColorArray.length];
-		}
-		return cubeColors;
-	}
+	
 
 	/**
 	 * Checks if any neighbour blocks are air
@@ -252,16 +250,22 @@ public class Chunk {
 	 *            Z position of the block in the chunk
 	 * @return If any neighbours are air
 	 */
-	public void CheckFaces(int x, int y, int z) {
+	public int CheckFaces(int x, int y, int z) {
+		if(Blocks[x][y][z].GetType() == BlockType.BlockType_Air.GetType()){
+			return 0;
+		}
 		VisibleFaces vf = new VisibleFaces();
 		Blocks[x][y][z].SetVisible(false);
+		int visible = 0;
 		if (y < 15)
 			if (Blocks[x][y + 1][z].GetType() == BlockType.BlockType_Air
 					.GetType()) {
 				vf.top = true;
 				Blocks[x][y][z].SetVisible(true);
+				visible++;
 			}else{
 				vf.top = false;
+				
 			}
 
 		if (y > 0)
@@ -269,9 +273,10 @@ public class Chunk {
 					.GetType()) {
 				vf.bottom = true;
 				Blocks[x][y][z].SetVisible(true);
-
+				visible++;
 			}else{
 				vf.bottom = false;
+				
 			}
 
 		if (x < 15)
@@ -279,9 +284,10 @@ public class Chunk {
 					.GetType()) {
 				vf.right = true;
 				Blocks[x][y][z].SetVisible(true);
-
+				visible++;
 			}else{
 				vf.right = false;
+				
 			}
 
 		if (x > 0)
@@ -289,8 +295,10 @@ public class Chunk {
 					.GetType()) {
 				vf.left = true;
 				Blocks[x][y][z].SetVisible(true);
+				visible++;
 			}else{
 				vf.left = false;
+				
 			}
 
 		if (z < 15)
@@ -298,8 +306,10 @@ public class Chunk {
 					.GetType()) {
 				vf.front = true;
 				Blocks[x][y][z].SetVisible(true);
+				visible++;
 			}else{
 				vf.front = false;
+				
 			}
 
 		if (z > 0)
@@ -307,40 +317,17 @@ public class Chunk {
 					.GetType()) {
 				vf.back = true;
 				Blocks[x][y][z].SetVisible(true);
+				visible++;
 			}else{
 				vf.back = false;
+				
 			}
 
 		Blocks[x][y][z].setVf(vf);
-
+		return visible;
 	}
+	
 
-	private float[] GetCubeColor(Block block) {
-		switch (block.GetType()) {
-		case 1:
-			return new float[] { 0f, 0f, 1f };
-		case 2:
-			return new float[] { 0, 0f, 1 };
-		}
-		return new float[] { 1, 1, 1 };
-	}
-
-	private float[] GetNormalVector() {
-		return new float[] {
-
-				// BOTTOM QUAD
-				0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0,
-				// TOP
-
-				0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0,
-				// FRONT QUAD
-				0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1,
-				// BACK QUAD
-				0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1,
-				// LEFT QUAD
-				-1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0,
-				// RIGHT QUAD
-				1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0 };
-	}
+	
 
 }
