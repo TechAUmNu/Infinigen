@@ -55,7 +55,7 @@ public class OpenGLCamera implements Runnable {
     
 	
     private static final EulerCamera camera = new EulerCamera.Builder().setPosition(0f, 0f,
-            0f).setRotation(50, 12, 0).setAspectRatio(ASPECT_RATIO).setFieldOfView(60).setFarClippingPane(100f).setNearClippingPane(1f).build();
+            0f).setRotation(50, 12, 0).setAspectRatio(ASPECT_RATIO).setFieldOfView(60).setFarClippingPane(10000f).setNearClippingPane(0.1f).build();
         
 
     
@@ -181,8 +181,8 @@ public class OpenGLCamera implements Runnable {
             Display.setFullscreen(false);
             
             Display.setTitle(WINDOW_TITLE);
-            Display.create(new PixelFormat(4,0,0,4));
-                    
+            Display.create(new PixelFormat(4,24,0,4));
+         
            
         } catch (LWJGLException e) {
             e.printStackTrace();
@@ -208,7 +208,7 @@ public class OpenGLCamera implements Runnable {
 
 	private void setUpChunks() {
 		chunkManager = new ChunkManager();
-		chunkManager.genTest(49, 1, 49);
+		chunkManager.genTest(10, 10, 10);
 		
 	}
 
