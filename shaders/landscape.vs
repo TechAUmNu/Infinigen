@@ -6,7 +6,7 @@ varying vec3 varyingNormal;
 
 varying vec4 varyingVertex;
 
-varying float varyingHeight;
+
 
 void main() {
    
@@ -14,8 +14,7 @@ void main() {
  
     varyingNormal = gl_Normal;
     
-    varyingVertex = gl_Vertex;
-    //varyingHeight = gl_Vertex.y / (255.0 * 5);
+    varyingVertex = gl_Vertex;    
     
     gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
 }

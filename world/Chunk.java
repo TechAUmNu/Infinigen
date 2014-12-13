@@ -123,14 +123,15 @@ public class Chunk {
 				}
 			}
 		}
-		 
-		 //Blocks[10][10][10].setType(BlockType.BlockType_Dirt);
-	for (int i = 0; i < 16; i++) {
-		
-		for (int j = 0; j < 16; j++) {
-		Blocks[i][13][j].setType(BlockType.BlockType_Dirt);
+
+		// Blocks[10][10][10].setType(BlockType.BlockType_Dirt);
+		for (int x = 2; x < 14; x++) {
+			for (int y = 2; y < 14; y++) {
+				for (int z = 2; z < 14; z++) {
+					Blocks[x][y][z].setType(BlockType.BlockType_Dirt);
+				}
+			}
 		}
-}
 
 		RebuildChunk();
 
@@ -172,8 +173,8 @@ public class Chunk {
 		visibleFaces = 0;
 		for (int x = 0; x < CHUNK_SIZE; x++) {
 			for (int y = 0; y < CHUNK_SIZE; y++) {
-				for (int z = 0; z < CHUNK_SIZE; z++) {							
-						visibleFaces += CheckFaces(x, y, z);							
+				for (int z = 0; z < CHUNK_SIZE; z++) {
+					visibleFaces += CheckFaces(x, y, z);
 				}
 			}
 		}
@@ -190,28 +191,28 @@ public class Chunk {
 				.createFloatBuffer(visibleFaces * 12);
 		FloatBuffer VertexNormalData = BufferUtils
 				.createFloatBuffer(visibleFaces * 12);
-		
 
 		for (int x = 0; x < CHUNK_SIZE; x++) {
 			for (int y = 0; y < CHUNK_SIZE; y++) {
 				for (int z = 0; z < CHUNK_SIZE; z++) {
-					if (Blocks[(int) x][(int) y][(int) z].IsVisible()) {						
-						VertexPositionData.put(Blocks[x][y][z].getVf().genVertexes(
-								this.x * MULTIPLIER + x	* CUBE_LENGTH,
-								this.y * MULTIPLIER + y * CUBE_LENGTH,
-								this.z * MULTIPLIER + z	* CUBE_LENGTH,
-								CUBE_LENGTH
-								));						
-						VertexColorData.put(Blocks[x][y][z].getVf().genColors());						
-						VertexNormalData.put(Blocks[x][y][z].getVf().genNormals());						
+					if (Blocks[(int) x][(int) y][(int) z].IsVisible()) {
+						VertexPositionData.put(Blocks[x][y][z].getVf()
+								.genVertexes(
+										this.x * MULTIPLIER + x * CUBE_LENGTH,
+										this.y * MULTIPLIER + y * CUBE_LENGTH,
+										this.z * MULTIPLIER + z * CUBE_LENGTH,
+										CUBE_LENGTH));
+						VertexColorData
+								.put(Blocks[x][y][z].getVf().genColors());
+						VertexNormalData.put(Blocks[x][y][z].getVf()
+								.genNormals());
 					}
 				}
 			}
 
 		}
 
-		
-		//TODO: ADD the data created in the above loop
+		// TODO: ADD the data created in the above loop
 		VertexColorData.flip();
 		VertexPositionData.flip();
 		VertexNormalData.flip();
@@ -230,14 +231,11 @@ public class Chunk {
 		}
 		ChunkBatch b = new ChunkBatch("shaders/landscape.vs",
 				"shaders/landscape.fs");
-		b.addVBO(VBOVertexHandle, VBOColorHandle, VBONormalHandle,
-				visibleFaces);
+		b.addVBO(VBOVertexHandle, VBOColorHandle, VBONormalHandle, visibleFaces);
 		batch = b;
 		InterthreadHolder.getInstance().addBatch(b);
 
 	}
-
-	
 
 	/**
 	 * Checks if any neighbour blocks are air
@@ -251,83 +249,99 @@ public class Chunk {
 	 * @return If any neighbours are air
 	 */
 	public int CheckFaces(int x, int y, int z) {
-		if(Blocks[x][y][z].GetType() == BlockType.BlockType_Air.GetType()){
+		if (Blocks[x][y][z].GetType() == BlockType.BlockType_Air.GetType()) {
 			return 0;
 		}
 		VisibleFaces vf = new VisibleFaces();
 		Blocks[x][y][z].SetVisible(false);
 		int visible = 0;
-		if (y < 15)
+		if (y < 15) {
 			if (Blocks[x][y + 1][z].GetType() == BlockType.BlockType_Air
 					.GetType()) {
 				vf.top = true;
 				Blocks[x][y][z].SetVisible(true);
 				visible++;
-			}else{
+			} else {
 				vf.top = false;
-				
-			}
 
-		if (y > 0)
+			}
+		} else {
+			vf.top = true;
+			visible++;
+		}
+		if (y > 0) {
 			if (Blocks[x][y - 1][z].GetType() == BlockType.BlockType_Air
 					.GetType()) {
 				vf.bottom = true;
 				Blocks[x][y][z].SetVisible(true);
 				visible++;
-			}else{
+			} else {
 				vf.bottom = false;
-				
-			}
 
-		if (x < 15)
+			}
+		} else {
+			vf.bottom = true;
+			visible++;
+		}
+		if (x < 15) {
 			if (Blocks[x + 1][y][z].GetType() == BlockType.BlockType_Air
 					.GetType()) {
 				vf.right = true;
 				Blocks[x][y][z].SetVisible(true);
 				visible++;
-			}else{
+			} else {
 				vf.right = false;
-				
-			}
 
-		if (x > 0)
+			}
+		} else {
+			vf.right = true;
+			visible++;
+		}
+
+		if (x > 0) {
 			if (Blocks[x - 1][y][z].GetType() == BlockType.BlockType_Air
 					.GetType()) {
 				vf.left = true;
 				Blocks[x][y][z].SetVisible(true);
 				visible++;
-			}else{
+			} else {
 				vf.left = false;
-				
-			}
 
-		if (z < 15)
+			}
+		} else {
+			vf.left = true;
+			visible++;
+		}
+		if (z < 15) {
 			if (Blocks[x][y][z + 1].GetType() == BlockType.BlockType_Air
 					.GetType()) {
 				vf.front = true;
 				Blocks[x][y][z].SetVisible(true);
 				visible++;
-			}else{
+			} else {
 				vf.front = false;
-				
-			}
 
-		if (z > 0)
+			}
+		} else {
+			vf.front = true;
+			visible++;
+		}
+		if (z > 0) {
 			if (Blocks[x][y][z - 1].GetType() == BlockType.BlockType_Air
 					.GetType()) {
 				vf.back = true;
 				Blocks[x][y][z].SetVisible(true);
 				visible++;
-			}else{
+			} else {
 				vf.back = false;
-				
-			}
 
+			}
+		} else {
+			vf.back = true;
+			visible++;
+		}
 		Blocks[x][y][z].setVf(vf);
 		return visible;
 	}
-	
-
-	
 
 }

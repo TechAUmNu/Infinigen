@@ -4,6 +4,7 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL20.*;
 import graphics.ChunkBatch;
 
+import java.nio.FloatBuffer;
 import java.util.ArrayList;
 
 import org.lwjgl.LWJGLException;
@@ -18,6 +19,7 @@ import org.lwjgl.opengl.GLContext;
 import org.lwjgl.opengl.PixelFormat;
 import org.lwjgl.util.glu.GLU;
 import org.lwjgl.util.vector.Vector3f;
+
 
 
 
@@ -79,20 +81,16 @@ public class OpenGLCamera implements Runnable {
         glLoadIdentity();
         // Apply the camera position and orientation to the scene
         camera.applyTranslations();
-        //glLight(GL_LIGHT0, GL_POSITION, BufferTools.asFlippedFloatBuffer(20f, 2f, 20f, 1));
-        //Draw all the batches. There should be less than 10,000 for optimal performance.
-        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-        //glMatrixMode(GL_MODELVIEW);
-        //glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+        glLight(GL_LIGHT0, GL_POSITION, BufferTools.asFlippedFloatBuffer(500f, 100f, 500f, 1));        
+        //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);       
+      
         for(ChunkBatch cb : InterthreadHolder.getInstance().getBatches()){
         	cb.draw(camera.x(), camera.y(), camera.z());
         }
-       //System.out.println(camera.toString());
+     
 
     }
 
-    
-    
     //Process Input
     private  void input() {		
       if (Mouse.isButtonDown(0)) {
@@ -103,7 +101,7 @@ public class OpenGLCamera implements Runnable {
       if (Mouse.isGrabbed()) {
           camera.processMouse(1, 80, -80);
       }
-      
+      System.out.println(camera.toString());
       camera.processKeyboard(16, 10);
   }
 
@@ -119,31 +117,23 @@ public class OpenGLCamera implements Runnable {
     }
 
     private  void setUpStates() {
-    	//glShadeModel(GL_SMOOTH);
+    	glShadeModel(GL_SMOOTH);
     	glEnable(GL_DEPTH_TEST);
     	glDepthFunc(GL_LEQUAL);
-    	//glEnable(GL_LIGHTING);
-    	//glEnable(GL_LIGHT0);
-    	//glFrontFace(GL_CW);
-   	 	//glLightModel(GL_LIGHT_MODEL_AMBIENT, BufferTools.asFlippedFloatBuffer(new float[]{0.5f, 0.5f, 0.5f, 0.1f}));
-   	 	//glLight(GL_LIGHT0, GL_POSITION, BufferTools.asFlippedFloatBuffer(new float[]{5, 2, 1, 1}));
-   	 	//glLight(GL_LIGHT0, GL_CONSTANT_ATTENUATION,BufferTools.asFlippedFloatBuffer(new float[]{1, 1, 1, 1}) );
+    	glEnable(GL_LIGHTING);
+    	glEnable(GL_LIGHT0);    	
+   	 	glLightModel(GL_LIGHT_MODEL_AMBIENT, BufferTools.asFlippedFloatBuffer(new float[]{0, 0f, 0f, 1f}));   	 	
+   	 	glLight(GL_LIGHT0, GL_CONSTANT_ATTENUATION,BufferTools.asFlippedFloatBuffer(new float[]{1, 1, 1, 1}) );
    	 	
-   	 	//glEnable(GL_COLOR_MATERIAL);
-   	 	//glColorMaterial(GL_FRONT, GL_DIFFUSE);
-   	 //glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
-   	 	//glColor3f(0.1f, 0.1f, 0.1f);
-   	 	//glMaterialf(GL_FRONT, GL_SHININESS, 5f);      
-        camera.applyOptimalStates();
-        
+   	 	glEnable(GL_COLOR_MATERIAL);
+   	 	glColorMaterial(GL_FRONT, GL_DIFFUSE);   
+   	 	glMaterialf(GL_FRONT, GL_SHININESS, 50f);   	 	
+        camera.applyOptimalStates();       
       
         glEnable(GL_CULL_FACE);
         glCullFace(GL_BACK);
-        
        
-       
-       
-      glEnable(GL_TEXTURE_2D);
+        glEnable(GL_TEXTURE_2D);
 		
 		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 		
@@ -153,16 +143,11 @@ public class OpenGLCamera implements Runnable {
 		glEnableClientState(GL_COLOR_ARRAY);
 		glEnableClientState(GL_NORMAL_ARRAY);
 		
-		//glMatrixMode(GL_PROJECTION);
-		///glLoadIdentity();		
-		//glMatrixMode(GL_MODELVIEW);
-
 		glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
     }
 
     private void update() {
-       Display.update();
-       //Display.sync(60);
+       Display.update();      
     }
 
     private void enterGameLoop() {
@@ -191,15 +176,13 @@ public class OpenGLCamera implements Runnable {
     }
     
     private void setUpDisplay() {
-        try {
-            //Display.setDisplayMode(new DisplayMode(WINDOW_DIMENSIONS[0], WINDOW_DIMENSIONS[1]));
+        try {           
             Display.setVSyncEnabled(false);
             Display.setFullscreen(false);
             
             Display.setTitle(WINDOW_TITLE);
             Display.create(new PixelFormat(4,0,0,4));
-            
-        
+                    
            
         } catch (LWJGLException e) {
             e.printStackTrace();

@@ -25,40 +25,18 @@ public class ChunkBatch {
 	
 	
 	public void draw(float x, float y, float z) {
-		
-		// Bind our ShaderProgram
-        //shader.bind();
-        //shader.setUniform("cameraPosition", x,y,z);
-      
-       
-        
-       // glBindBuffer(GL_ARRAY_BUFFER, VBOs);
-       // glVertexPointer(3, GL_FLOAT, 0, 0L);
-       // glBindBuffer(GL_ARRAY_BUFFER, VBOs.get(1).id);
-       // glNormalPointer(GL_FLOAT, 0, 0L);
-		        
-        
-        
-        for(ChunkVBO c : VBOs){
-        
-        	
+        shader.bind();
+        shader.setUniform("cameraPosition", x,y,z);      
+       for(ChunkVBO c : VBOs){  
         	glBindBuffer(GL_ARRAY_BUFFER, c.vertexid);
     		glVertexPointer(3, GL_FLOAT, 0, 0L);
     		glBindBuffer(GL_ARRAY_BUFFER, c.colorid);
     		glColorPointer(3, GL_FLOAT, 0, 0L);
     		glBindBuffer(GL_ARRAY_BUFFER, c.normalid);
     		glNormalPointer(GL_FLOAT, 0, 0L);
-    		glDrawArrays(GL_QUADS, 0, c.visibleFaces * 6);
-    		
+    		glDrawArrays(GL_QUADS, 0, c.visibleFaces * 6);    		
         }
-        
-        
-        
-        
-        
-        // Unbind the ShaderProgram
-        //ShaderProgram.unbind();
-		
+        ShaderProgram.unbind();		
 	}
 	
 	//dispose the VAOs and VBOs
