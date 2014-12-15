@@ -8,20 +8,35 @@ import static org.lwjgl.opengl.GL11.glRotatef;
 import static org.lwjgl.opengl.GL11.glTranslatef;
 import static org.lwjgl.opengl.GL11.glVertex2f;
 
+import java.awt.Font;
+
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
+import org.newdawn.slick.Color;
+import org.newdawn.slick.TrueTypeFont;
 
 public class HUDBuilder {
+	
+	 private TrueTypeFont  font;
+	 
+	public HUDBuilder(){
+		Font awtFont = new Font("Times New Roman", Font.BOLD, 36);
+	    font = new TrueTypeFont(awtFont, false);
+	}
+	
 	float rotation = 0.1f;
-
-	public void render() {
+	int fps = 0;
+	public void render(int fps) {
 		// Change to 2D so we can render the HUD
 		make2D();
 		// TODO:RENDER THE HUD
-		rotation += 0.1f;
+		
+		
+		
+		rotation += 0.4f;
 		//glTranslatef(Display.getWidth() / 2, Display.getHeight() / 2, 0);
 		//glRotatef(rotation, 0f, 0f, 1f);
-		//glTranslatef(-Display.getWidth() / 2, -Display.getHeight() / 2, 0);
+	//glTranslatef(-Display.getWidth() / 2, -Display.getHeight() / 2, 0);
 
 		
 		for(float i = -0.4f; i < 0.4; i += 0.12){
@@ -38,6 +53,7 @@ public class HUDBuilder {
 		// (Display.getHeight() / 1.2), 100);
 
 		// Switch back to 3D
+		font.drawString(100, 50, "THE LIGHTWEIGHT JAVA GAMES LIBRARY", Color.yellow);
 		make3D();
 	}
 
@@ -150,5 +166,7 @@ public class HUDBuilder {
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		GL11.glEnable(GL11.GL_LIGHTING);
 	}
+	
+	
 
 }

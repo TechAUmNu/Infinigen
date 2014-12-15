@@ -225,7 +225,7 @@ public class Chunk {
 		glBindBuffer(GL_ARRAY_BUFFER, VBONormalHandle);
 		glBufferData(GL_ARRAY_BUFFER, VertexNormalData, GL_STATIC_DRAW);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		System.out.println(visibleFaces);
+		//System.out.println(visibleFaces);
 		if (batch != null) {
 			InterthreadHolder.getInstance().removeBatch(batch);
 		}

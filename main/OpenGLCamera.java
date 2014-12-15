@@ -50,6 +50,7 @@ public class OpenGLCamera implements Runnable {
 	/** The display list that will contain the height-map's vertex data. */
 	private static int heightmapDisplayList;
 	private static int fps;
+	private static int fpsCounter;
 	private static long lastFPS;
 	private ChunkManager chunkManager;
 	private HUDBuilder hud;
@@ -70,8 +71,8 @@ public class OpenGLCamera implements Runnable {
 		for (ChunkBatch cb : InterthreadHolder.getInstance().getBatches()) {
 			cb.draw(camera.x(), camera.y(), camera.z());
 		}
-
-		hud.render();
+		System.out.println(fpsCounter);
+		hud.render(fpsCounter);
 	}
 
 	// Process Input
@@ -131,6 +132,7 @@ public class OpenGLCamera implements Runnable {
 
 	private void update() {
 		Display.update();
+		Display.sync(60);
 	}
 
 	private void enterGameLoop() {
@@ -150,8 +152,8 @@ public class OpenGLCamera implements Runnable {
 	private static void updateFPS() {
 		if (getTime() - lastFPS > 1000) {
 
-			System.out.println("FPS: " + fps);
-
+			//System.out.println("FPS: " + fps);
+			fpsCounter = fps;
 			fps = 0;
 			lastFPS += 1000;
 		}
@@ -160,9 +162,9 @@ public class OpenGLCamera implements Runnable {
 
 	private void setUpDisplay() {
 		try {
-			Display.setVSyncEnabled(false);
-			Display.setFullscreen(false);
-			Display.setResizable(true);
+			Display.setVSyncEnabled(true);
+			Display.setFullscreen(true);
+			Display.setResizable(false);
 			Display.setTitle(WINDOW_TITLE);
 			Display.create(new PixelFormat(4, 24, 0, 4));
 
@@ -188,7 +190,7 @@ public class OpenGLCamera implements Runnable {
 
 	private void setUpChunks() {
 		chunkManager = new ChunkManager();
-		chunkManager.genTest(10, 10, 10);
+		chunkManager.genTest(15, 15, 15);
 
 	}
 
