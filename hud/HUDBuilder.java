@@ -39,14 +39,22 @@ public class HUDBuilder {
 	//glTranslatef(-Display.getWidth() / 2, -Display.getHeight() / 2, 0);
 
 		
-		for(float i = -0.4f; i < 0.4; i += 0.12){
-		DrawButton(i, 0.1f, 10);
+		DrawButton(-0.4f, 0.1f, 10);
+		DrawButton(-0.28f, 0.1f, 10);
+		DrawButton(-0.16f, 0.1f, 10);
+		DrawButton(-0.04f, 0.1f, 10);
+		DrawButton(0.08f, 0.1f, 10);
+		DrawButton(0.20f, 0.1f, 10);
+		DrawButton(0.32f, 0.1f, 10);		
 		
-		}
-		for(float i = -3.55f; i < -2.75; i += 0.12){
-			DrawButton(i, 0.1f, 10);
-			
-			}
+		
+		DrawButton(-3.55f, 0.1f, 10);
+		DrawButton(-3.43f, 0.1f, 10);
+		DrawButton(-3.31f, 0.1f, 10);
+		DrawButton(-3.19f, 0.1f, 10);
+		DrawButton(-3.07f, 0.1f, 10);
+		DrawButton(-2.95f, 0.1f, 10);
+		DrawButton(-2.83f, 0.1f, 10);
 		// DrawCircle(Display.getWidth() / 2, Display.getHeight() / 2, (float)
 		// (Display.getHeight() / 1.1), 100);
 		// DrawCircle(Display.getWidth() / 2, Display.getHeight() / 2, (float)
