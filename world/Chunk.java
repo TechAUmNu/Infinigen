@@ -227,13 +227,13 @@ public class Chunk {
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		//System.out.println(visibleFaces);
 		if (batch != null) {
-			InterthreadHolder.getInstance().removeBatch(batch);
+			InterthreadHolder.getInstance().removeChunkBatch(batch);
 		}
 		ChunkBatch b = new ChunkBatch("shaders/landscape.vs",
 				"shaders/landscape.fs");
 		b.addVBO(VBOVertexHandle, VBOColorHandle, VBONormalHandle, visibleFaces);
 		batch = b;
-		InterthreadHolder.getInstance().addBatch(b);
+		InterthreadHolder.getInstance().addChunkBatch(b);
 
 	}
 

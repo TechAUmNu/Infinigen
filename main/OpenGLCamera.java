@@ -2,7 +2,9 @@ package main;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL20.*;
+import entities.Designer;
 import graphics.ChunkBatch;
+import graphics.EntityBatch;
 import hud.HUDBuilder;
 
 import java.nio.FloatBuffer;
@@ -54,6 +56,7 @@ public class OpenGLCamera implements Runnable {
 	private static long lastFPS;
 	private ChunkManager chunkManager;
 	private HUDBuilder hud;
+	private float lastFrame;
 
 	// Render
 	private void render() {
@@ -68,15 +71,20 @@ public class OpenGLCamera implements Runnable {
 				BufferTools.asFlippedFloatBuffer(500f, 100f, 500f, 1));
 		// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-		for (ChunkBatch cb : InterthreadHolder.getInstance().getBatches()) {
+		//Render all chunks
+		for (ChunkBatch cb : InterthreadHolder.getInstance().getChunkBatches()) {
 			cb.draw(camera.x(), camera.y(), camera.z());
+		}
+		//Render all entities
+		for(EntityBatch eb : InterthreadHolder.getInstance().getEntityBatches()){
+			eb.draw(camera.x(), camera.y(), camera.z());
 		}
 		System.out.println(fpsCounter);
 		hud.render(fpsCounter);
 	}
 
 	// Process Input
-	private void input() {
+	private void input(float delta) {
 		if (Mouse.isButtonDown(0)) {
 			Mouse.setGrabbed(true);
 		} else if (Mouse.isButtonDown(1)) {
@@ -84,9 +92,11 @@ public class OpenGLCamera implements Runnable {
 		}
 		if (Mouse.isGrabbed()) {
 			camera.processMouse(1, 80, -80);
+			Designer.processMouse();
 		}
 		// System.out.println(camera.toString());
-		camera.processKeyboard(16, 10);
+		camera.processKeyboard(delta, 10);
+		
 	}
 
 	private void cleanUp(boolean asCrash) {
@@ -128,9 +138,11 @@ public class OpenGLCamera implements Runnable {
 		glEnableClientState(GL_NORMAL_ARRAY);
 
 		glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+		
+		
 	}
 
-	private void update() {
+	private void update(float delta) {
 		Display.update();
 		Display.sync(60);
 	}
@@ -138,13 +150,26 @@ public class OpenGLCamera implements Runnable {
 	private void enterGameLoop() {
 		lastFPS = getTime();
 		while (!Display.isCloseRequested()) {
+			float delta = getDelta();
 			render();
-			input();
-			update();
+			input(delta);
+			update(delta);
 			updateFPS();
 		}
 	}
-
+	/** 
+	 * Calculate how many milliseconds have passed 
+	 * since last frame.
+	 * 
+	 * @return milliseconds passed since last frame 
+	 */
+	public float getDelta() {
+	    float time = getTime();
+	    float delta = (float) (time - lastFrame);
+	    lastFrame = time;
+	    System.out.println(delta);
+	    return delta;
+	}
 	private static long getTime() {
 		return (Sys.getTime() * 1000) / Sys.getTimerResolution();
 	}
@@ -158,11 +183,12 @@ public class OpenGLCamera implements Runnable {
 			lastFPS += 1000;
 		}
 		fps++;
+		
 	}
 
 	private void setUpDisplay() {
 		try {
-			Display.setVSyncEnabled(true);
+			Display.setVSyncEnabled(false);
 			Display.setFullscreen(true);
 			Display.setResizable(false);
 			Display.setTitle(WINDOW_TITLE);

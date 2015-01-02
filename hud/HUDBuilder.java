@@ -1,8 +1,13 @@
 package hud;
 
+import static org.lwjgl.opengl.GL11.GL_BLEND;
 import static org.lwjgl.opengl.GL11.GL_LINE_LOOP;
 import static org.lwjgl.opengl.GL11.GL_LINE_STRIP;
+import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
+import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.glBegin;
+import static org.lwjgl.opengl.GL11.glBlendFunc;
+import static org.lwjgl.opengl.GL11.glEnable;
 import static org.lwjgl.opengl.GL11.glEnd;
 import static org.lwjgl.opengl.GL11.glRotatef;
 import static org.lwjgl.opengl.GL11.glTranslatef;
@@ -33,6 +38,12 @@ public class HUDBuilder {
 		
 		
 		
+		 GL11.glEnable(GL11.GL_BLEND);
+	        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+
+	    font.drawString(1000, 500, "THE LIGHTWEIGHT JAVA GAMES LIBRARY", Color.yellow);
+	    GL11.glLoadIdentity();
+	    GL11.glDisable(GL11.GL_BLEND);
 		rotation += 0.4f;
 		//glTranslatef(Display.getWidth() / 2, Display.getHeight() / 2, 0);
 		//glRotatef(rotation, 0f, 0f, 1f);
@@ -61,7 +72,7 @@ public class HUDBuilder {
 		// (Display.getHeight() / 1.2), 100);
 
 		// Switch back to 3D
-		font.drawString(100, 50, "THE LIGHTWEIGHT JAVA GAMES LIBRARY", Color.yellow);
+		
 		make3D();
 	}
 
@@ -163,10 +174,12 @@ public class HUDBuilder {
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);
 		GL11.glPushMatrix();
 		GL11.glLoadIdentity();
+		
 	}
 
 	protected static void make3D() {
 		// Restore the Z axis
+		
 		GL11.glMatrixMode(GL11.GL_PROJECTION);
 		GL11.glPopMatrix();
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);
