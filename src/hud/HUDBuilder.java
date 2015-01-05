@@ -17,16 +17,12 @@ import java.awt.Font;
 
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
-import org.newdawn.slick.Color;
-import org.newdawn.slick.TrueTypeFont;
 
 public class HUDBuilder {
 	
-	 private TrueTypeFont  font;
-	 
+	
 	public HUDBuilder(){
-		Font awtFont = new Font("Times New Roman", Font.BOLD, 36);
-	    font = new TrueTypeFont(awtFont, false);
+		
 	}
 	
 	float rotation = 0.1f;
@@ -41,7 +37,6 @@ public class HUDBuilder {
 		 GL11.glEnable(GL11.GL_BLEND);
 	        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
-	    font.drawString(1000, 500, "THE LIGHTWEIGHT JAVA GAMES LIBRARY", Color.yellow);
 	    GL11.glLoadIdentity();
 	    GL11.glDisable(GL11.GL_BLEND);
 		rotation += 0.4f;

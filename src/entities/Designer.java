@@ -64,7 +64,7 @@ public class Designer {
 	}
 	
 	
-	public Ray GetPickRay() {
+	/*public Ray GetPickRay() {
 	    int mouseX = Mouse.getX();
 	    int mouseY = WORLD.Byte56Game.getHeight() - Mouse.getY();
 
@@ -162,6 +162,7 @@ public class Designer {
 	    }
 	    return rayDistance;
 	}
+	*/
 	
 	public void addBlock(Position p){
 		//Adds a block to the current entity

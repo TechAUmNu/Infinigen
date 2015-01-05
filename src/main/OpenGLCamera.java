@@ -79,7 +79,7 @@ public class OpenGLCamera implements Runnable {
 		for(EntityBatch eb : InterthreadHolder.getInstance().getEntityBatches()){
 			eb.draw(camera.x(), camera.y(), camera.z());
 		}
-		System.out.println(fpsCounter);
+		System.out.print("FPS: " + fpsCounter);
 		hud.render(fpsCounter);
 	}
 
@@ -167,7 +167,7 @@ public class OpenGLCamera implements Runnable {
 	    float time = getTime();
 	    float delta = (float) (time - lastFrame);
 	    lastFrame = time;
-	    System.out.println(delta);
+	    System.out.println(" Delta: " + delta);
 	    return delta;
 	}
 	private static long getTime() {
