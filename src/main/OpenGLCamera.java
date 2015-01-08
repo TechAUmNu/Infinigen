@@ -206,6 +206,8 @@ public class OpenGLCamera implements Runnable {
 		setUpDisplay();
 		setUpStates();
 		setUpChunks();
+		Designer d = new Designer();
+		d.initDesigner(new ChunkManager(), camera);
 		setUpHUD();
 		setUpMatrices();
 
@@ -216,7 +218,7 @@ public class OpenGLCamera implements Runnable {
 
 	private void setUpChunks() {
 		chunkManager = new ChunkManager();
-		chunkManager.genTest(15, 15, 15);
+		chunkManager.genTest(1, 1, 1);
 
 	}
 

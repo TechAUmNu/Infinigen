@@ -16,11 +16,12 @@ import world.ChunkManager;
  */
 public class Designer {
 	public void initDesigner(ChunkManager cm, EulerCamera camera){
-		//Generate a few chunks for a floor
+		//Generate a few chunks for a floor somewhere that nothing should be
 		cm.GenerateChunk(10000, 10000, 10000);
 		cm.GenerateChunk(10001, 10000, 10000);
 		cm.GenerateChunk(10000, 10001, 10000);
 		cm.GenerateChunk(10001, 10001, 10000);
+		camera.setPosition(320000, 320000, 320000);
 	}
 	
 	

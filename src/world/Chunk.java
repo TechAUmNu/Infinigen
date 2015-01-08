@@ -23,7 +23,7 @@ public class Chunk {
 	static final int CHUNK_SIZE = 16;
 
 	/**
-	 * The number of 'pixels' a block is on each axis
+	 * The number of 'units' a block is on each axis
 	 */
 	static final int CUBE_LENGTH = 2;
 

@@ -1,6 +1,6 @@
 Infinigen
 =========
-An open source voxel game engine
+A voxel game engine
 
 
 
