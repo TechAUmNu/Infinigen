@@ -1,28 +1,37 @@
 package hud;
 
-import static org.lwjgl.opengl.GL11.GL_BLEND;
-import static org.lwjgl.opengl.GL11.GL_LINE_LOOP;
 import static org.lwjgl.opengl.GL11.GL_LINE_STRIP;
-import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
-import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.glBegin;
-import static org.lwjgl.opengl.GL11.glBlendFunc;
-import static org.lwjgl.opengl.GL11.glEnable;
 import static org.lwjgl.opengl.GL11.glEnd;
-import static org.lwjgl.opengl.GL11.glRotatef;
-import static org.lwjgl.opengl.GL11.glTranslatef;
 import static org.lwjgl.opengl.GL11.glVertex2f;
+import hud.FontRender.GLFont;
 
-import java.awt.Font;
+import java.io.IOException;
 
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.util.glu.GLU;
+
+
 
 public class HUDBuilder {
 	
 	
 	public HUDBuilder(){
-		
+		init();
+	}
+	
+	
+	private GLFont font;
+
+	public void init() {
+		try {
+			//font = FontRender.createFont("Dialog", 11, false, true);
+			font = new GLFont(HUDBuilder.class.getResourceAsStream("DejaVu_Sans_11.fnt"));
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	float rotation = 0.1f;
@@ -32,13 +41,7 @@ public class HUDBuilder {
 		make2D();
 		// TODO:RENDER THE HUD
 		
-		
-		
-		 GL11.glEnable(GL11.GL_BLEND);
-	        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-
-	    GL11.glLoadIdentity();
-	    GL11.glDisable(GL11.GL_BLEND);
+	    
 		rotation += 0.4f;
 		//glTranslatef(Display.getWidth() / 2, Display.getHeight() / 2, 0);
 		//glRotatef(rotation, 0f, 0f, 1f);
@@ -60,17 +63,19 @@ public class HUDBuilder {
 		DrawButton(-3.19f, 0.1f, 10);
 		DrawButton(-3.07f, 0.1f, 10);
 		DrawButton(-2.95f, 0.1f, 10);
-		DrawButton(-2.83f, 0.1f, 10);
-		// DrawCircle(Display.getWidth() / 2, Display.getHeight() / 2, (float)
-		// (Display.getHeight() / 1.1), 100);
-		// DrawCircle(Display.getWidth() / 2, Display.getHeight() / 2, (float)
-		// (Display.getHeight() / 1.2), 100);
-
+		DrawButton(-2.83f, 0.1f, 10);		
+		for(int i = 0; i < 10000 ; i = i + 10){
+		DrawText("Hello Test ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd", i, i, 1 ,1, 1);
+		
+		}
+		
 		// Switch back to 3D
 		
 		make3D();
 	}
-
+	void DrawText(CharSequence text, int x, int y, float red, float green, float blue){
+		FontRender.drawString(font, text, x, y, red, green, blue);
+	}
 
 	void DrawButton(float start_angle, float arc_angle, int num_segments) {
 		float theta = arc_angle / (float) (num_segments - 1);// theta is now
@@ -160,29 +165,30 @@ public class HUDBuilder {
 
 	protected static void make2D() {
 		// Remove the Z axis
-		GL11.glDisable(GL11.GL_LIGHTING);
-		GL11.glDisable(GL11.GL_DEPTH_TEST);
+		//GL11.glDisable(GL11.GL_LIGHTING);
+		//GL11.glColor3f(0f, 0f, 0f);
 		GL11.glMatrixMode(GL11.GL_PROJECTION);
 		GL11.glPushMatrix();
 		GL11.glLoadIdentity();
-		GL11.glOrtho(0, Display.getWidth(), 0, Display.getHeight(), -1, 1);
+		GLU.gluOrtho2D(0, Display.getWidth(), Display.getHeight(),0);
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);
 		GL11.glPushMatrix();
 		GL11.glLoadIdentity();
-		
 	}
 
+	
+	
+	
 	protected static void make3D() {
 		// Restore the Z axis
 		
 		GL11.glMatrixMode(GL11.GL_PROJECTION);
 		GL11.glPopMatrix();
-		GL11.glMatrixMode(GL11.GL_MODELVIEW);
+		GL11.glMatrixMode(GL11.GL_MODELVIEW);		
 		GL11.glPopMatrix();
-		GL11.glEnable(GL11.GL_DEPTH_TEST);
-		GL11.glEnable(GL11.GL_LIGHTING);
+		
+		//GL11.glEnable(GL11.GL_DEPTH_TEST);
+		//GL11.glEnable(GL11.GL_LIGHTING);
 	}
 	
-	
-
 }

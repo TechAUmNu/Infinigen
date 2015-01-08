@@ -132,7 +132,7 @@ public class OpenGLCamera implements Runnable {
 
 		glEnable(GL_TEXTURE_2D);
 
-		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+		glClearColor(0.2f, 0.2f, 0.2f, 0f);
 
 		glEnableClientState(GL_VERTEX_ARRAY);
 		glEnableClientState(GL_COLOR_ARRAY);
