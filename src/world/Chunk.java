@@ -43,6 +43,7 @@ public class Chunk {
 	private String worldLocation;
 	private Boolean test = false;
 	private ChunkBatch batch;
+	private BlockType type;
 
 	/**
 	 * Updates this chunk
@@ -119,20 +120,10 @@ public class Chunk {
 		for (int x = 0; x < CHUNK_SIZE; x++) {
 			for (int y = 0; y < CHUNK_SIZE; y++) {
 				for (int z = 0; z < CHUNK_SIZE; z++) {
-					Blocks[x][y][z] = new Block(BlockType.BlockType_Air);
+					Blocks[x][y][z] = new Block(type);
 				}
 			}
 		}
-
-		// Blocks[10][10][10].setType(BlockType.BlockType_Dirt);
-		for (int x = 2; x < 14; x++) {
-			for (int y = 2; y < 14; y++) {
-				for (int z = 2; z < 14; z++) {
-					Blocks[x][y][z].setType(BlockType.BlockType_Dirt);
-				}
-			}
-		}
-
 		RebuildChunk();
 
 	}
@@ -149,7 +140,7 @@ public class Chunk {
 	 * @param worldLocation
 	 *            Location of the world on disk
 	 */
-	public Chunk(int x, int y, int z, String worldLocation) {
+	public Chunk(int x, int y, int z, String worldLocation, BlockType type) {
 		this.x = x;
 		this.y = y;
 		this.z = z;
@@ -157,6 +148,7 @@ public class Chunk {
 		VBOVertexHandle = glGenBuffers();
 		VBOColorHandle = glGenBuffers();
 		VBONormalHandle = glGenBuffers();
+		this.type = type;
 	}
 
 	public void CleanUp() {
@@ -185,13 +177,14 @@ public class Chunk {
 	 * Creates the visible mesh for the chunk
 	 */
 	public void RebuildMesh() {
+		System.out.println(visibleFaces);
 		FloatBuffer VertexPositionData = BufferUtils
 				.createFloatBuffer(visibleFaces * 12);
 		FloatBuffer VertexColorData = BufferUtils
 				.createFloatBuffer(visibleFaces * 12);
 		FloatBuffer VertexNormalData = BufferUtils
 				.createFloatBuffer(visibleFaces * 12);
-
+		int i = 0;
 		for (int x = 0; x < CHUNK_SIZE; x++) {
 			for (int y = 0; y < CHUNK_SIZE; y++) {
 				for (int z = 0; z < CHUNK_SIZE; z++) {
@@ -206,13 +199,15 @@ public class Chunk {
 								.put(Blocks[x][y][z].getVf().genColors());
 						VertexNormalData.put(Blocks[x][y][z].getVf()
 								.genNormals());
+						System.out.println(i);
+						i++;
 					}
 				}
 			}
 
 		}
 
-		// TODO: ADD the data created in the above loop
+		
 		VertexColorData.flip();
 		VertexPositionData.flip();
 		VertexNormalData.flip();
@@ -234,7 +229,7 @@ public class Chunk {
 		b.addVBO(VBOVertexHandle, VBOColorHandle, VBONormalHandle, visibleFaces);
 		batch = b;
 		InterthreadHolder.getInstance().addChunkBatch(b);
-
+		
 	}
 
 	/**
@@ -267,6 +262,7 @@ public class Chunk {
 			}
 		} else {
 			vf.top = true;
+			Blocks[x][y][z].SetVisible(true);
 			visible++;
 		}
 		if (y > 0) {
@@ -281,6 +277,7 @@ public class Chunk {
 			}
 		} else {
 			vf.bottom = true;
+			Blocks[x][y][z].SetVisible(true);
 			visible++;
 		}
 		if (x < 15) {
@@ -295,6 +292,7 @@ public class Chunk {
 			}
 		} else {
 			vf.right = true;
+			Blocks[x][y][z].SetVisible(true);
 			visible++;
 		}
 
@@ -310,6 +308,7 @@ public class Chunk {
 			}
 		} else {
 			vf.left = true;
+			Blocks[x][y][z].SetVisible(true);
 			visible++;
 		}
 		if (z < 15) {
@@ -324,6 +323,7 @@ public class Chunk {
 			}
 		} else {
 			vf.front = true;
+			Blocks[x][y][z].SetVisible(true);
 			visible++;
 		}
 		if (z > 0) {
@@ -338,6 +338,7 @@ public class Chunk {
 			}
 		} else {
 			vf.back = true;
+			Blocks[x][y][z].SetVisible(true);
 			visible++;
 		}
 		Blocks[x][y][z].setVf(vf);

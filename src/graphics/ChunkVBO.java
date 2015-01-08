@@ -13,6 +13,6 @@ public class ChunkVBO {
 		this.colorid = colorid;		
 		this.normalid = normalid;
 		this.visibleFaces = visibleFaces;
-		//System.out.println("VISIBLE : " + visibleFaces);
+		System.out.println("VISIBLE : " + visibleFaces);
 	}
 }

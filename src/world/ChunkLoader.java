@@ -2,6 +2,8 @@ package world;
 
 import java.io.File;
 
+import world.Block.BlockType;
+
 //Loader for chunks, which executes on a new thread
 public class ChunkLoader {
 	
@@ -13,8 +15,8 @@ public class ChunkLoader {
 		// TODO Auto-generated constructor stub
 	}
 	
-	public Chunk Load(int x, int y, int z){
-		Chunk c = new Chunk(x, y, z, worldLocation);
+	public Chunk Load(int x, int y, int z, BlockType type){
+		Chunk c = new Chunk(x, y, z, worldLocation, type);
 		c.Load();
 		return c;
 	}

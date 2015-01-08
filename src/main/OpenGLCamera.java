@@ -26,6 +26,7 @@ import org.lwjgl.util.vector.Vector3f;
 import threading.InterthreadHolder;
 import utility.BufferTools;
 import utility.EulerCamera;
+import world.Block.BlockType;
 import world.ChunkManager;
 
 public class OpenGLCamera implements Runnable {
@@ -67,8 +68,8 @@ public class OpenGLCamera implements Runnable {
 		glLoadIdentity();
 		// Apply the camera position and orientation to the scene
 		camera.applyTranslations();
-		glLight(GL_LIGHT0, GL_POSITION,
-				BufferTools.asFlippedFloatBuffer(500f, 100f, 500f, 1));
+		//glLight(GL_LIGHT0, GL_POSITION,
+		//		BufferTools.asFlippedFloatBuffer(500f, 100f, 500f, 1));
 		// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 		//Render all chunks
@@ -115,11 +116,11 @@ public class OpenGLCamera implements Runnable {
 		glEnable(GL_DEPTH_TEST);
 		glDepthFunc(GL_LEQUAL);
 		glEnable(GL_LIGHTING);
-		glEnable(GL_LIGHT0);
+		//glEnable(GL_LIGHT0);
 		glLightModel(GL_LIGHT_MODEL_AMBIENT,
-				BufferTools.asFlippedFloatBuffer(new float[] { 0, 0f, 0f, 1f }));
-		glLight(GL_LIGHT0, GL_CONSTANT_ATTENUATION,
-				BufferTools.asFlippedFloatBuffer(new float[] { 1, 1, 1, 1 }));
+				BufferTools.asFlippedFloatBuffer(new float[] { 1, 1f, 1f, 1f }));
+		//glLight(GL_LIGHT0, GL_CONSTANT_ATTENUATION,
+		//		BufferTools.asFlippedFloatBuffer(new float[] { 1, 1, 1, 1 }));
 
 		glEnable(GL_COLOR_MATERIAL);
 		glColorMaterial(GL_FRONT, GL_DIFFUSE);
@@ -218,7 +219,7 @@ public class OpenGLCamera implements Runnable {
 
 	private void setUpChunks() {
 		chunkManager = new ChunkManager();
-		chunkManager.genTest(1, 1, 1);
+		//chunkManager.genTest(15, 15, 15, BlockType.BlockType_Dirt);		
 
 	}
 

@@ -1,5 +1,7 @@
 package world;
 
+import world.Block.BlockType;
+
 /**
  * Class to manage loading and rendering of chunks
  * @author Euan
@@ -35,11 +37,11 @@ public class ChunkManager {
 	 * @param load Should the chunk be loaded if it is not already
 	 * @return The chunk
 	 */
-	public Chunk getChunk(int x, int y, int z, Boolean load) {
+	public Chunk getChunk(int x, int y, int z, Boolean load, BlockType type) {
 		if (chunks.chunkLoaded(x, y, z)) {
 			return chunks.GetChunk(x, y, z);
 		} else if(load) {
-			return chunks.LoadChunk(x, y, z, worldLocation);
+			return chunks.LoadChunk(x, y, z, worldLocation, type);
 		}else{
 			return null;
 		}
@@ -61,9 +63,9 @@ public class ChunkManager {
 	 * @param z Z Chunk Location
 	 * @return The generated chunk
 	 */
-	public Chunk GenerateChunk(int x, int y, int z) {
+	public Chunk GenerateChunk(int x, int y, int z, BlockType type) {
 		if (!chunks.chunkLoaded(x, y, z)) {
-			return chunks.LoadChunk(x, y, z, worldLocation);
+			return chunks.LoadChunk(x, y, z, worldLocation, type);
 		}
 		return null;
 	}
@@ -74,11 +76,11 @@ public class ChunkManager {
 	 * @param yL The number of chunks in the y axis to generate
 	 * @param zL The number of chunks in the z axis to generate
 	 */
-	public void genTest(int xL, int yL, int zL){
+	public void genTest(int xL, int yL, int zL, BlockType type){
 		for(int x = 0; x<xL; x++){
 			for(int y = 0; y<yL; y++){
 				for(int z = 0; z<zL; z++){
-					GenerateChunk(x, y, z);	
+					GenerateChunk(x, y, z, type);	
 					
 				}
 			}
