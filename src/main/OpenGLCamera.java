@@ -7,6 +7,7 @@ import graphics.ChunkBatch;
 import graphics.EntityBatch;
 import hud.HUDBuilder;
 
+import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 
@@ -81,7 +82,7 @@ public class OpenGLCamera implements Runnable {
 			eb.draw(camera.x(), camera.y(), camera.z());
 		}
 		System.out.print("FPS: " + fpsCounter);
-		hud.render(fpsCounter);
+		hud.render(fpsCounter,camera);
 	}
 
 	// Process Input
@@ -225,6 +226,12 @@ public class OpenGLCamera implements Runnable {
 
 	private void setUpHUD() {
 		hud = new HUDBuilder();
+		try {
+			hud.setUpTextures();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public static void main(String[] args) {
