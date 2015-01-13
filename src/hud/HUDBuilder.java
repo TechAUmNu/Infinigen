@@ -71,7 +71,7 @@ public class HUDBuilder {
 		GL11.glLoadIdentity();
 		// TODO:RENDER THE HUD
 		
-		renderString("Test", fontTexture, 16, -0.9f, 0, 0.3f, 0.225f);
+		renderString("Test", fontTexture, 16, -1, 0, 0.1f, 0.1f, 1);
 		
 		make2D();
 		rotation += 0.4f;
@@ -240,7 +240,7 @@ public class HUDBuilder {
      * @param characterHeight the height of the character
      */
     private static void renderString(String string, int textureObject, int gridSize, float x, float y,
-                                     float characterWidth, float characterHeight) {
+                                     float characterWidth, float characterHeight, float scale) {
         glPushAttrib(GL_TEXTURE_BIT | GL_ENABLE_BIT | GL_COLOR_BUFFER_BIT);
         glEnable(GL_CULL_FACE);
         glEnable(GL_TEXTURE_2D);
@@ -256,6 +256,7 @@ public class HUDBuilder {
         glPushMatrix();
         // Offset all subsequent (at least up until 'glPopMatrix') vertex coordinates.
         glTranslatef(x, y, 0);
+        GL11.glScalef(scale,scale,scale);
         glBegin(GL_QUADS);
         // Iterate over all the characters in the string.
         for (int i = 0; i < string.length(); i++) {
