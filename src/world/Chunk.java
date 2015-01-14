@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.nio.FloatBuffer;
 
 import org.lwjgl.BufferUtils;
+import org.tukaani.xz.LZMA2Options;
+import org.tukaani.xz.XZOutputStream;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL15.*;
@@ -62,14 +64,24 @@ public class Chunk {
 	public Boolean Save() {
 		try (FileOutputStream file = new FileOutputStream(worldLocation + "\\"
 				+ x + y + z + ".chunk")) {
+			byte[] buf = new byte[4096];
+			int i = 0;
+			
+			//Add all blocks to a buffer
 			for (int x = 0; x < CHUNK_SIZE; x++) {
 				for (int y = 0; y < CHUNK_SIZE; y++) {
 					for (int z = 0; z < CHUNK_SIZE; z++) {
-						file.write(Blocks[x][y][z].GetType());
+						buf[i] = Blocks[x][y][z].GetType();
+						i++;					
 					}
 				}
 			}
-			file.close();
+		
+			LZMA2Options options = new LZMA2Options();			
+			XZOutputStream out = new XZOutputStream(file, options);
+			out.write(buf);
+			out.finish();
+			out.close();
 			return true;
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
