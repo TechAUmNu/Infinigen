@@ -10,6 +10,7 @@ import java.nio.FloatBuffer;
 
 import org.lwjgl.BufferUtils;
 import org.tukaani.xz.LZMA2Options;
+import org.tukaani.xz.XZInputStream;
 import org.tukaani.xz.XZOutputStream;
 
 import static org.lwjgl.opengl.GL11.*;
@@ -63,7 +64,7 @@ public class Chunk {
 	 */
 	public Boolean Save() {
 		try (FileOutputStream file = new FileOutputStream(worldLocation + "\\"
-				+ x + y + z + ".chunk")) {
+				+ x + "." + y + "."  + z + ".chunk")) {
 			byte[] buf = new byte[4096];
 			int i = 0;
 			
@@ -100,9 +101,10 @@ public class Chunk {
 	 */
 	public Boolean Load() {
 		try (FileInputStream file = new FileInputStream(worldLocation + "\\"
-				+ x + y + z + ".chunk")) {
+				+ x + "." + y + "."  + z + ".chunk")) {
+			XZInputStream in = new XZInputStream(file);
 			byte fileContent[] = new byte[CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE];
-			file.read(fileContent);
+			in.read(fileContent);
 			int i = 0;
 			for (int x = 0; x < CHUNK_SIZE; x++) {
 				for (int y = 0; y < CHUNK_SIZE; y++) {
@@ -189,7 +191,7 @@ public class Chunk {
 	 * Creates the visible mesh for the chunk
 	 */
 	public void RebuildMesh() {
-		System.out.println(visibleFaces);
+		//System.out.println(visibleFaces);
 		FloatBuffer VertexPositionData = BufferUtils
 				.createFloatBuffer(visibleFaces * 12);
 		FloatBuffer VertexColorData = BufferUtils
@@ -211,7 +213,7 @@ public class Chunk {
 								.put(Blocks[x][y][z].getVf().genColors());
 						VertexNormalData.put(Blocks[x][y][z].getVf()
 								.genNormals());
-						System.out.println(i);
+						//System.out.println(i);
 						i++;
 					}
 				}

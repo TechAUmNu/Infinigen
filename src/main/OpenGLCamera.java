@@ -102,7 +102,7 @@ public class OpenGLCamera implements Runnable {
 	}
 
 	private void cleanUp(boolean asCrash) {
-
+		chunkManager.UnloadChunks();
 		System.err.println(GLU.gluErrorString(glGetError()));
 		Display.destroy();
 		System.exit(asCrash ? 1 : 0);
@@ -220,7 +220,7 @@ public class OpenGLCamera implements Runnable {
 
 	private void setUpChunks() {
 		chunkManager = new ChunkManager();
-		//chunkManager.genTest(15, 15, 15, BlockType.BlockType_Dirt);		
+		chunkManager.genTest(15, 15, 15, BlockType.BlockType_Dirt);		
 
 	}
 

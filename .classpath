@@ -17,5 +17,6 @@
 	</classpathentry>
 	<classpathentry kind="lib" path="lib/lwjgl/jar/lzma.jar"/>
 	<classpathentry kind="lib" path="lib/PNGDecoder.jar"/>
+	<classpathentry kind="lib" path="lib/xz-java-1.5/build/jar/xz.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
