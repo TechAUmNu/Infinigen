@@ -2,6 +2,7 @@ package entities;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.Display;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
@@ -55,20 +56,13 @@ public class Designer {
 	}
 	public static void processMouse(){
 		//Process mouse for changing block/placing deleting blocks
-		while(Mouse.next()) {
-		    if (Mouse.getEventButton() > -1) {
-		        if (Mouse.getEventButtonState()) {
-		            System.out.println("PRESSED MOUSE BUTTON: " + Mouse.getEventButton());
-		        }
-		        else System.out.println("RELEASED MOUSE BUTTON: " + Mouse.getEventButton());
-		    }
-		}
+		
 	}
 	
-	
-	/*public Ray GetPickRay() {
+	/*
+	public Ray GetPickRay() {
 	    int mouseX = Mouse.getX();
-	    int mouseY = WORLD.Byte56Game.getHeight() - Mouse.getY();
+	    int mouseY = Display.getHeight() - Mouse.getY();
 
 	    float windowWidth = WORLD.Byte56Game.getWidth();
 	    float windowHeight = WORLD.Byte56Game.getHeight();
@@ -163,8 +157,8 @@ public class Designer {
 	        return Float.MAX_VALUE;
 	    }
 	    return rayDistance;
-	}
-	*/
+	}*/
+	
 	
 	public void addBlock(Position p){
 		//Adds a block to the current entity

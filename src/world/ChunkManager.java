@@ -22,7 +22,7 @@ public class ChunkManager {
 	/**
 	 * The location of the world on disk
 	 */
-	private String worldLocation = "C:\\Testing\\ChunkTesting";
+	private String worldLocation = "/scratch/chunks";
 	
 	/**
 	 * Can store 125000 chunks (about 1.2GB)
