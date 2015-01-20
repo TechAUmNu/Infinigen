@@ -1,36 +1,20 @@
 package main;
 
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL20.*;
-import devices.MouseClick;
 import entities.Designer;
 import graphics.ChunkBatch;
 import graphics.EntityBatch;
 import hud.HUDBuilder;
 
 import java.io.IOException;
-import java.nio.FloatBuffer;
-import java.util.ArrayList;
-import java.util.Queue;
-
 import org.lwjgl.LWJGLException;
 import org.lwjgl.Sys;
-import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.ARBDepthClamp;
 import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.DisplayMode;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GLContext;
 import org.lwjgl.opengl.PixelFormat;
 import org.lwjgl.util.glu.GLU;
-import org.lwjgl.util.vector.Vector3f;
-import org.magicwerk.brownies.collections.GapList;
-
 import threading.InterthreadHolder;
-import utility.BufferTools;
 import utility.EulerCamera;
-import world.Block.BlockType;
 import world.ChunkManager;
 
 public class OpenGLCamera implements Runnable {
@@ -51,9 +35,9 @@ public class OpenGLCamera implements Runnable {
 	private HUDBuilder hud;
 	private long lastFrame;
 	private boolean mouse0, mouse1;
-	private long downStart, lastClick;
-	private int clickID;
-	private GapList<MouseClick> mouseClicks = new GapList<MouseClick>();
+	private long downStart;
+	private int clickID;	
+	
 
 	// Render
 	private void render() {
@@ -103,12 +87,16 @@ public class OpenGLCamera implements Runnable {
 					mouse1 = false;
 				}
 			}
-			// A Click
+			// Get Clicks
 			if (Mouse.getEventButton() == 0) {
 				if (!Mouse.getEventButtonState()) {
-					getClicks();
+					if(checkClick()){
+						camera.moveFromLook(5, 5, 5);
+					}
 				}
-			}
+			}		
+			
+			
 		}
 
 		if (Mouse.isGrabbed()) {
@@ -120,21 +108,16 @@ public class OpenGLCamera implements Runnable {
 
 	}
 
-	private void getClicks() {
+	private boolean checkClick() {
+		boolean click = false;
 		if(mouse0){
 			long downTime = getTime() - downStart;			
-			if(downTime < 70){
-				mouseClicks.add(clickID++,new MouseClick(1));
-				long timeSinceLastClick = getTime() - lastClick;				
-				if(timeSinceLastClick < 200){
-					mouseClicks.remove(clickID - 1);
-					mouseClicks.remove(clickID - 2);
-					mouseClicks.add(clickID++, new MouseClick(2));
-				}				
-				lastClick = getTime();	
+			if(downTime < 100){	
+				click = true;			
 			}
 		}		
 		mouse0 = false;
+		return click;
 	
 	}
 
@@ -249,7 +232,7 @@ public class OpenGLCamera implements Runnable {
 		d.initDesigner(new ChunkManager(), camera);
 		setUpHUD();
 		setUpMatrices();
-
+		
 		enterGameLoop();
 		cleanUp(false);
 
