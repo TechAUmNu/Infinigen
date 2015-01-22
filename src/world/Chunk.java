@@ -48,6 +48,8 @@ public class Chunk {
 	private ChunkBatch batch;
 	private BlockType type;
 
+	private int VBOUVHandle;
+
 	/**
 	 * Updates this chunk
 	 */
@@ -63,23 +65,23 @@ public class Chunk {
 	 * @return If the save was successful
 	 */
 	public Boolean Save() {
-		System.out.println("Saving Chunk: " + x + "." + y + "."  + z );
+		System.out.println("Saving Chunk: " + x + "." + y + "." + z);
 		try (FileOutputStream file = new FileOutputStream(worldLocation + ""
-				+ x + "." + y + "."  + z + ".chunk")) {
+				+ x + "." + y + "." + z + ".chunk")) {
 			byte[] buf = new byte[4096];
 			int i = 0;
-			
-			//Add all blocks to a buffer
+
+			// Add all blocks to a buffer
 			for (int x = 0; x < CHUNK_SIZE; x++) {
 				for (int y = 0; y < CHUNK_SIZE; y++) {
 					for (int z = 0; z < CHUNK_SIZE; z++) {
 						buf[i] = Blocks[x][y][z].GetType();
-						i++;					
+						i++;
 					}
 				}
 			}
-		
-			LZMA2Options options = new LZMA2Options();			
+
+			LZMA2Options options = new LZMA2Options();
 			XZOutputStream out = new XZOutputStream(file, options);
 			out.write(buf);
 			out.finish();
@@ -101,8 +103,8 @@ public class Chunk {
 	 * @return If the load was successful
 	 */
 	public Boolean Load() {
-		try (FileInputStream file = new FileInputStream(worldLocation + ""
-				+ x + "." + y + "."  + z + ".chunk")) {
+		try (FileInputStream file = new FileInputStream(worldLocation + "" + x
+				+ "." + y + "." + z + ".chunk")) {
 			XZInputStream in = new XZInputStream(file);
 			byte fileContent[] = new byte[CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE];
 			in.read(fileContent);
@@ -163,13 +165,19 @@ public class Chunk {
 		VBOVertexHandle = glGenBuffers();
 		VBOColorHandle = glGenBuffers();
 		VBONormalHandle = glGenBuffers();
+		VBOUVHandle = glGenBuffers();
 		this.type = type;
 	}
 
 	public void CleanUp() {
+		//Remove chunk from rendering queue
+		InterthreadHolder.getInstance().removeChunkBatch(batch);
+		//Delete buffers on GPU to free memory
 		glDeleteBuffers(VBOVertexHandle);
 		glDeleteBuffers(VBOColorHandle);
 		glDeleteBuffers(VBONormalHandle);
+		glDeleteBuffers(VBOUVHandle);
+		
 	}
 
 	/**
@@ -192,37 +200,48 @@ public class Chunk {
 	 * Creates the visible mesh for the chunk
 	 */
 	public void RebuildMesh() {
-		//System.out.println(visibleFaces);
+		
+		//Create FloatBuffers for all data
 		FloatBuffer VertexPositionData = BufferUtils
 				.createFloatBuffer(visibleFaces * 12);
 		FloatBuffer VertexColorData = BufferUtils
 				.createFloatBuffer(visibleFaces * 12);
 		FloatBuffer VertexNormalData = BufferUtils
 				.createFloatBuffer(visibleFaces * 12);
-		int i = 0;
+		FloatBuffer VertexUVData = BufferUtils
+				.createFloatBuffer(visibleFaces * 8);
+
+		//Loop through all blocks in chunk adding visible faces to buffers
 		for (int x = 0; x < CHUNK_SIZE; x++) {
 			for (int y = 0; y < CHUNK_SIZE; y++) {
 				for (int z = 0; z < CHUNK_SIZE; z++) {
 					if (Blocks[(int) x][(int) y][(int) z].IsVisible()) {
+
+						// Add position data to buffer
 						VertexPositionData.put(Blocks[x][y][z].getVf()
 								.genVertexes(
 										this.x * MULTIPLIER + x * CUBE_LENGTH,
 										this.y * MULTIPLIER + y * CUBE_LENGTH,
 										this.z * MULTIPLIER + z * CUBE_LENGTH,
 										CUBE_LENGTH));
+
+						// Add colour data to buffer
 						VertexColorData
 								.put(Blocks[x][y][z].getVf().genColors());
+
+						// Add normal data to buffer
 						VertexNormalData.put(Blocks[x][y][z].getVf()
 								.genNormals());
-						//System.out.println(i);
-						i++;
+
+						// Add UV coordinates to buffer
+						VertexUVData.put(Blocks[x][y][z].getVf().genUV());
+
 					}
 				}
 			}
 
 		}
 
-		
 		VertexColorData.flip();
 		VertexPositionData.flip();
 		VertexNormalData.flip();
@@ -235,7 +254,7 @@ public class Chunk {
 		glBindBuffer(GL_ARRAY_BUFFER, VBONormalHandle);
 		glBufferData(GL_ARRAY_BUFFER, VertexNormalData, GL_STATIC_DRAW);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		//System.out.println(visibleFaces);
+		
 		if (batch != null) {
 			InterthreadHolder.getInstance().removeChunkBatch(batch);
 		}
@@ -244,7 +263,7 @@ public class Chunk {
 		b.addVBO(VBOVertexHandle, VBOColorHandle, VBONormalHandle, visibleFaces);
 		batch = b;
 		InterthreadHolder.getInstance().addChunkBatch(b);
-		
+
 	}
 
 	/**

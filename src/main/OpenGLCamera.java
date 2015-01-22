@@ -23,7 +23,7 @@ import world.Block.BlockType;
 import world.ChunkManager;
 
 public class OpenGLCamera implements Runnable {
-	private static final String WINDOW_TITLE = "Infinigen";
+	private static final String WINDOW_TITLE = "Infinigen Tech Demo";
 	private static final int[] WINDOW_DIMENSIONS = { 1920, 1080 };
 	private static final float ASPECT_RATIO = (float) WINDOW_DIMENSIONS[0]
 			/ (float) WINDOW_DIMENSIONS[1];

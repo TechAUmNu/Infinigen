@@ -35,7 +35,6 @@ public class VisibleFaces {
 		return vertexes;
 	}
 
-	// TODO: make this work
 	public float[] genColors() {
 		float[] colors = new float[0];
 		if (bottom)
@@ -54,7 +53,6 @@ public class VisibleFaces {
 		return colors;
 	}
 
-	// TODO: make this work
 	public float[] genNormals() {
 		float[] normals = new float[0];
 		if (bottom)
@@ -71,6 +69,24 @@ public class VisibleFaces {
 			normals = BufferTools.concat(normals, genRightNormals());
 
 		return normals;
+	}
+
+	public float[] genUV() {
+		float[] uv = new float[0];
+		if (bottom)
+			uv = BufferTools.concat(uv, genBottomUVs());
+		if (top)
+			uv = BufferTools.concat(uv, genTopUVs());
+		if (front)
+			uv = BufferTools.concat(uv, genFrontUVs());
+		if (back)
+			uv = BufferTools.concat(uv, genBackUVs());
+		if (left)
+			uv = BufferTools.concat(uv, genLeftUVs());
+		if (right)
+			uv = BufferTools.concat(uv, genRightUVs());
+
+		return uv;
 	}
 
 	private float[] genBottom() {
@@ -190,6 +206,42 @@ public class VisibleFaces {
 		return new float[] {
 
 		1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0 };
+	}
+
+	private float[] genBottomUVs() {
+		return new float[] {
+
+		0, -1, 0, 0, -1, 0, 0, -1 };
+	}
+
+	private float[] genTopUVs() {
+		return new float[] {
+
+		0, 1, 0, 0, 1, 0, 0, 1 };
+	}
+
+	private float[] genFrontUVs() {
+		return new float[] {
+
+		0, 0, 1, 0, 0, 1, 0, 0 };
+	}
+
+	private float[] genBackUVs() {
+		return new float[] {
+
+		0, 0, -1, 0, 0, -1, 0, 0 };
+	}
+
+	private float[] genLeftUVs() {
+		return new float[] {
+
+		-1, 0, 0, -1, 0, 0, -1, 0 };
+	}
+
+	private float[] genRightUVs() {
+		return new float[] {
+
+		1, 0, 0, 1, 0, 0, 1, 0 };
 	}
 
 }

@@ -46,7 +46,7 @@ private static ChunkManager instance;
 	/**
 	 * The location of the world on disk
 	 */
-	private String worldLocation = "/scratch/chunks/";
+	private String worldLocation = "C:\\Testing\\ChunkTesting\\";
 	
 	
 	private ChunkHolder chunks = new ChunkHolder();
