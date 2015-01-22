@@ -63,7 +63,8 @@ public class Chunk {
 	 * @return If the save was successful
 	 */
 	public Boolean Save() {
-		try (FileOutputStream file = new FileOutputStream(worldLocation + "\\"
+		System.out.println("Saving Chunk: " + x + "." + y + "."  + z );
+		try (FileOutputStream file = new FileOutputStream(worldLocation + ""
 				+ x + "." + y + "."  + z + ".chunk")) {
 			byte[] buf = new byte[4096];
 			int i = 0;
@@ -100,7 +101,7 @@ public class Chunk {
 	 * @return If the load was successful
 	 */
 	public Boolean Load() {
-		try (FileInputStream file = new FileInputStream(worldLocation + "\\"
+		try (FileInputStream file = new FileInputStream(worldLocation + ""
 				+ x + "." + y + "."  + z + ".chunk")) {
 			XZInputStream in = new XZInputStream(file);
 			byte fileContent[] = new byte[CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE];

@@ -1,5 +1,11 @@
 package world;
 
+import graphics.ChunkBatch;
+import graphics.EntityBatch;
+
+import org.magicwerk.brownies.collections.GapList;
+
+import threading.InterthreadHolder;
 import world.Block.BlockType;
 
 /**
@@ -9,6 +15,24 @@ import world.Block.BlockType;
  */
 public class ChunkManager {
 	
+private static ChunkManager instance;
+	
+	static {
+		setInstance(new ChunkManager());
+	}	
+	
+	//Initialise variables.
+	private ChunkManager() {				
+	}	
+
+	public static ChunkManager getInstance() {
+		return instance;
+	}
+
+	public static void setInstance(ChunkManager instance) {
+		ChunkManager.instance = instance;
+	}
+		
 	/**
 	 * The current view distance
 	 */
@@ -22,11 +46,9 @@ public class ChunkManager {
 	/**
 	 * The location of the world on disk
 	 */
-	private String worldLocation = "/scratch/chunks";
+	private String worldLocation = "/scratch/chunks/";
 	
-	/**
-	 * Can store 125000 chunks (about 1.2GB)
-	 */
+	
 	private ChunkHolder chunks = new ChunkHolder();
 
 	/**
@@ -51,6 +73,7 @@ public class ChunkManager {
 	 * Unloads all loaded chunks
 	 */
 	public void UnloadChunks(){			
+		System.out.println("UNLOAD CHUNKS");
 		chunks.UnloadChunks();		
 	}
 

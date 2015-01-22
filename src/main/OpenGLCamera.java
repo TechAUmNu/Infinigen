@@ -7,14 +7,19 @@ import graphics.EntityBatch;
 import hud.HUDBuilder;
 
 import java.io.IOException;
+
 import org.lwjgl.LWJGLException;
 import org.lwjgl.Sys;
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
+import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.PixelFormat;
 import org.lwjgl.util.glu.GLU;
+
 import threading.InterthreadHolder;
 import utility.EulerCamera;
+import world.Block.BlockType;
 import world.ChunkManager;
 
 public class OpenGLCamera implements Runnable {
@@ -30,17 +35,17 @@ public class OpenGLCamera implements Runnable {
 
 	private static int fps;
 	private static int fpsCounter;
-	private static long lastFPS;
-	private ChunkManager chunkManager;
+	private static long lastFPS;	
 	private HUDBuilder hud;
 	private long lastFrame;
 	private boolean mouse0, mouse1;
 	private long downStart;
-	private int clickID;	
+	
 	
 
 	// Render
 	private void render() {
+		
 		// Clear the pixels on the screen and clear the contents of the depth
 		// buffer (3D contents of the scene)
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -67,7 +72,11 @@ public class OpenGLCamera implements Runnable {
 
 	// Process Input
 	private void input(float delta) {
-
+		while(Keyboard.next()){
+			if(Keyboard.getEventKey() == Keyboard.KEY_ESCAPE){
+				cleanUp(false);
+			}
+		}
 		// We can only set the mouse to be grabbed once, if you set it again
 		// every frame then nothing happens
 		if (Mouse.isButtonDown(1) && !mouse1) {
@@ -122,7 +131,8 @@ public class OpenGLCamera implements Runnable {
 	}
 
 	private void cleanUp(boolean asCrash) {
-		chunkManager.UnloadChunks();
+		//System.out.println("CleanUP");
+		ChunkManager.getInstance().UnloadChunks();
 		System.err.println(GLU.gluErrorString(glGetError()));
 		Display.destroy();
 		System.exit(asCrash ? 1 : 0);
@@ -210,7 +220,8 @@ public class OpenGLCamera implements Runnable {
 
 	private void setUpDisplay() {
 		try {
-			Display.setVSyncEnabled(true);
+			//Display.setDisplayMode(new DisplayMode(1280,720));
+			Display.setVSyncEnabled(false);
 			Display.setFullscreen(true);
 			Display.setResizable(false);
 			Display.setTitle(WINDOW_TITLE);
@@ -229,7 +240,7 @@ public class OpenGLCamera implements Runnable {
 		setUpStates();
 		setUpChunks();
 		Designer d = new Designer();
-		d.initDesigner(new ChunkManager(), camera);
+		d.initDesigner(camera);
 		setUpHUD();
 		setUpMatrices();
 		
@@ -238,10 +249,9 @@ public class OpenGLCamera implements Runnable {
 
 	}
 
-	private void setUpChunks() {
-		chunkManager = new ChunkManager();
-		// chunkManager.genTest(5, 5, 5, BlockType.BlockType_Dirt);
-
+	private void setUpChunks() {		
+		 ChunkManager.getInstance().genTest(1, 1, 1, BlockType.BlockType_Dirt);
+		 
 	}
 
 	private void setUpHUD() {
@@ -254,8 +264,7 @@ public class OpenGLCamera implements Runnable {
 		}
 	}
 
-	public static void main(String[] args) {
-		InterthreadHolder.getInstance();
+	public static void main(String[] args) {		
 		(new Thread(new OpenGLCamera())).start();
 	}
 

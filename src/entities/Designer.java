@@ -17,12 +17,12 @@ import world.ChunkManager;
  *
  */
 public class Designer {
-	public void initDesigner(ChunkManager cm, EulerCamera camera){
+	public void initDesigner(EulerCamera camera){
 		//Generate a few chunks for a floor somewhere that nothing should be
-		cm.GenerateChunk(10000, 10000, 10000, BlockType.BlockType_Dirt);
-		cm.GenerateChunk(10001, 10000, 10000,BlockType.BlockType_Dirt);
-		cm.GenerateChunk(10000, 10000, 10001, BlockType.BlockType_Dirt);
-		cm.GenerateChunk(10001, 10000, 10001, BlockType.BlockType_Dirt);		
+		ChunkManager.getInstance().GenerateChunk(10000, 10000, 10000, BlockType.BlockType_Dirt);
+		ChunkManager.getInstance().GenerateChunk(10001, 10000, 10000,BlockType.BlockType_Dirt);
+		ChunkManager.getInstance().GenerateChunk(10000, 10000, 10001, BlockType.BlockType_Dirt);
+		ChunkManager.getInstance().GenerateChunk(10001, 10000, 10001, BlockType.BlockType_Dirt);
 		camera.setPosition(320000, 320000, 320000);
 	}
 	

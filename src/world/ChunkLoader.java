@@ -22,6 +22,7 @@ public class ChunkLoader {
 	}
 	
 	public void Unload(Chunk c){
+		//System.out.println("UNLOAD");
 		c.Save();
 		c.CleanUp();
 	}

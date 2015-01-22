@@ -50,6 +50,7 @@ public class ChunkHolder {
 	 */
 	public Chunk LoadChunk(int x, int y, int z, String worldLocation, BlockType type){
 		chunks.put(new ChunkID(x,y,z), new ChunkLoader(worldLocation).Load(x, y, z, type));	
+		//System.out.println("Adding chunk to loaded chunks");
 		loadedChunks.add(new ChunkID(x,y,z));
 		return chunks.get(new ChunkID(x,y,z));
 	}
@@ -61,8 +62,8 @@ public class ChunkHolder {
 	 * @param z Z chunk location
 	 */
 	public void UnloadChunk(int x, int y, int z){
-		new ChunkLoader("").Unload(chunks.get(new ChunkID(x,y,z)));		
-		chunks.get(new ChunkID(x,y,z)).CleanUp();
+		new ChunkLoader("").Unload(chunks.get(new ChunkID(x,y,z)));				
+		//System.out.println("Removing chunk from loaded chunks");
 		loadedChunks.remove(new ChunkID(x,y,z));
 		chunks.remove(new ChunkID(x,y,z));
 	}
@@ -71,6 +72,7 @@ public class ChunkHolder {
 	 * Unloads all loaded chunks
 	 */
 	public void UnloadChunks(){
+		//System.out.println("UNLOAD CHUNKS 2");
 		ChunkLoader cl = new ChunkLoader("");
 		for(ChunkID c : loadedChunks){
 			cl.Unload(chunks.get(c));

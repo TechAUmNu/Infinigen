@@ -40,13 +40,15 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
+import org.magicwerk.brownies.collections.GapList;
 
 import utility.EulerCamera;
 import de.matthiasmann.twl.utils.PNGDecoder;
 
 public class HUDBuilder {
 	private static int fontTexture;
-
+	private GapList<ButtonText> buttons = new GapList<ButtonText>();
+	
 	public HUDBuilder() {
 
 	}
@@ -56,6 +58,49 @@ public class HUDBuilder {
 
 	public void render(int fps, EulerCamera camera) {
 		// Change to 2D so we can render the HUD
+		makeText();
+		// TODO:RENDER THE HUD
+
+		drawText("FPS: " + fps, -1, 0.46f, 0.05f);
+		drawText("MouseX: " + Mouse.getX(), -1, 0.44f, 0.05f);
+		drawText("MouseY: " + Mouse.getY(), -1, 0.42f, 0.05f);
+		//drawText("MouseGrabbed: " + Mouse.isGrabbed(), -1, 0.40f,0.05f);
+		//drawText("MouseDY: " + Mouse.getDX(), -1, 0.38f,0.05f);
+	//	drawText("MouseDY: " + Mouse.getDY(), -1, 0.36f,0.05f);
+		
+		for(ButtonText b : buttons){
+			drawText(b.text, b.x, b.y,0.05f);			
+		}
+		buttons.clear();
+		
+		make2D();
+		rotation += 0.4f;
+		//glTranslatef(Display.getWidth() / 2, Display.getHeight() / 2, 0);
+		//GL11.glRotatef(rotation, 0f, 0f, 1f);
+		//glTranslatef(-Display.getWidth() / 2, -Display.getHeight() / 2, 0);
+
+		DrawButton(-0.4f, 0.1f, 10, "button1", false);
+		DrawButton(-0.28f, 0.1f, 10, "button2", false);
+		DrawButton(-0.16f, 0.1f, 10, "button3", false);
+		DrawButton(-0.04f, 0.1f, 10, "button4", false);
+		DrawButton(0.08f, 0.1f, 10, "button5", false);
+		DrawButton(0.20f, 0.1f, 10, "button6", false);
+		DrawButton(0.32f, 0.1f, 10, "button7", false);
+
+		DrawButton(-3.55f, 0.1f, 10, "button8", true);
+		DrawButton(-3.43f, 0.1f, 10, "button9", true);
+		DrawButton(-3.31f, 0.1f, 10, "button10", true);
+		DrawButton(-3.19f, 0.1f, 10, "button11", true);
+		DrawButton(-3.07f, 0.1f, 10, "button12", true);
+		DrawButton(-2.95f, 0.1f, 10, "button13", true);
+		DrawButton(-2.83f, 0.1f, 10, "button14", true);
+
+		// Switch back to 3D
+
+		make3D();
+	}
+
+	private void makeText() {
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 		GL11.glMatrixMode(GL11.GL_PROJECTION);
 		GL11.glPushMatrix();
@@ -63,47 +108,14 @@ public class HUDBuilder {
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);
 		GL11.glPushMatrix();
 		GL11.glLoadIdentity();
-		// TODO:RENDER THE HUD
-
-		drawText("FPS: " + fps, -1, 0.46f, 0.05f);
-		//drawText("MouseX: " + Mouse.getX(), -1, 0.44f, 0.05f);
-		//drawText("MouseY: " + Mouse.getY(), -1, 0.42f, 0.05f);
-		//drawText("MouseGrabbed: " + Mouse.isGrabbed(), -1, 0.40f,0.05f);
-		//drawText("MouseDY: " + Mouse.getDX(), -1, 0.38f,0.05f);
-		//drawText("MouseDY: " + Mouse.getDY(), -1, 0.36f,0.05f);
-		
-		make2D();
-		rotation += 0.4f;
-		// glTranslatef(Display.getWidth() / 2, Display.getHeight() / 2, 0);
-		 //GL11.glRotatef(rotation, 0f, 0f, 1f);
-		// glTranslatef(-Display.getWidth() / 2, -Display.getHeight() / 2, 0);
-
-		DrawButton(-0.4f, 0.1f, 10);
-		DrawButton(-0.28f, 0.1f, 10);
-		DrawButton(-0.16f, 0.1f, 10);
-		DrawButton(-0.04f, 0.1f, 10);
-		DrawButton(0.08f, 0.1f, 10);
-		DrawButton(0.20f, 0.1f, 10);
-		DrawButton(0.32f, 0.1f, 10);
-
-		DrawButton(-3.55f, 0.1f, 10);
-		DrawButton(-3.43f, 0.1f, 10);
-		DrawButton(-3.31f, 0.1f, 10);
-		DrawButton(-3.19f, 0.1f, 10);
-		DrawButton(-3.07f, 0.1f, 10);
-		DrawButton(-2.95f, 0.1f, 10);
-		DrawButton(-2.83f, 0.1f, 10);
-
-		// Switch back to 3D
-
-		make3D();
 	}
 
 	void drawText(String s, float x, float y, float size){
 		renderString(s, fontTexture, 16, x, y, size, size, 1);
 	}
 	
-	void DrawButton(float start_angle, float arc_angle, int num_segments) {
+	void DrawButton(float start_angle, float arc_angle, int num_segments, String text, boolean left) {
+		//Draws a button with the specified text
 		float theta = arc_angle / (float) (num_segments - 1);// theta is now
 																// calculated
 																// from the arc
@@ -187,8 +199,16 @@ public class HUDBuilder {
 		glVertex2f(line2x, line2y);
 		glVertex2f(line2x2, line2y2);
 		glEnd();
+		
+		//System.out.println(line2x);
+		if(left){
+			buttons.add(new ButtonText(text, convertResolutionX(line2x), convertResolutionY(line2y)));
+		}else{
+			buttons.add(new ButtonText(text, convertResolutionX(line1x2) , convertResolutionY(line1y2)+ 0.03f));
+		}
 	}
 
+	
 	protected static void make2D() {
 		// Remove the Z axis
 		// GL11.glDisable(GL11.GL_LIGHTING);
@@ -198,6 +218,18 @@ public class HUDBuilder {
 
 	}
 
+	private float convertResolutionY(float y) {
+		float pos = (y / (Display.getHeight()) -0.5f);
+		System.out.println(pos);
+		return pos;
+	}
+
+	private float convertResolutionX(float x){
+		float pos = (x / (Display.getWidth() / 2f) ) - 1f;
+		System.out.println(pos);
+		return pos;
+	}
+	
 	public static void setUpTextures() throws IOException {
 		// Create a new texture for the bitmap font.
 		fontTexture = glGenTextures();
