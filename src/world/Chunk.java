@@ -245,6 +245,7 @@ public class Chunk {
 		VertexColorData.flip();
 		VertexPositionData.flip();
 		VertexNormalData.flip();
+		VertexUVData.flip();
 		glBindBuffer(GL_ARRAY_BUFFER, VBOVertexHandle);
 		glBufferData(GL_ARRAY_BUFFER, VertexPositionData, GL_STATIC_DRAW);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -254,13 +255,16 @@ public class Chunk {
 		glBindBuffer(GL_ARRAY_BUFFER, VBONormalHandle);
 		glBufferData(GL_ARRAY_BUFFER, VertexNormalData, GL_STATIC_DRAW);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindBuffer(GL_ARRAY_BUFFER, VBOUVHandle);
+		glBufferData(GL_ARRAY_BUFFER, VertexUVData, GL_STATIC_DRAW);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		
 		if (batch != null) {
 			InterthreadHolder.getInstance().removeChunkBatch(batch);
 		}
 		ChunkBatch b = new ChunkBatch("shaders/landscape.vs",
 				"shaders/landscape.fs");
-		b.addVBO(VBOVertexHandle, VBOColorHandle, VBONormalHandle, visibleFaces);
+		b.addVBO(VBOVertexHandle, VBOColorHandle, VBONormalHandle, visibleFaces, VBOUVHandle);
 		batch = b;
 		InterthreadHolder.getInstance().addChunkBatch(b);
 

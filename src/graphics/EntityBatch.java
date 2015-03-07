@@ -17,8 +17,8 @@ public class EntityBatch {
 	//ShaderProgram shader;
 
 	public void addVBO(int vertexid, int colorid, int normalid,
-			int visibleBlocks) {
-		VBOs.add(new ChunkVBO(vertexid, colorid, normalid, visibleBlocks));
+			int visibleBlocks, int textureid) {
+		VBOs.add(new ChunkVBO(vertexid, colorid, normalid, visibleBlocks, textureid));
 	}
 
 	public void draw(float x, float y, float z) {

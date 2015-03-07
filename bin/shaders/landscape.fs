@@ -1,13 +1,14 @@
-#version 120
+#version 430
 
 uniform vec4 cameraPosition;
 varying vec3 varyingNormal;
 varying vec4 varyingVertex;
-
+uniform sampler2D tex;
 
 
 void main() {
-	vec4 colour = vec4(1.0, 1.0, 1.0, 1.0);
+	vec4 colour = texture2D(tex,gl_TexCoord[0].st);
+	//vec4 colour = vec4(1.0, 1.0, 1.0, 1.0);
     vec4 vertexPosition = (gl_ModelViewMatrix * varyingVertex);
     vec3 surfaceNormal = normalize((gl_NormalMatrix * varyingNormal));
     vec3 lightDirection = normalize((gl_LightSource[0].position - vertexPosition).xyz);

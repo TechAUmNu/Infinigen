@@ -1,23 +1,37 @@
 package main;
 
 import static org.lwjgl.opengl.GL11.*;
+import de.matthiasmann.twl.utils.PNGDecoder;
+import de.matthiasmann.twl.utils.PNGDecoder.Format;
 import entities.Designer;
 import graphics.ChunkBatch;
 import graphics.EntityBatch;
 import hud.HUDBuilder;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.ByteBuffer;
 
+import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.Sys;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL13;
+import org.lwjgl.opengl.GL30;
 import org.lwjgl.opengl.PixelFormat;
 import org.lwjgl.util.glu.GLU;
+import org.newdawn.slick.opengl.Texture;
+import org.newdawn.slick.opengl.TextureLoader;
+import org.newdawn.slick.util.ResourceLoader;
 
 import threading.InterthreadHolder;
+import utility.BufferTools;
 import utility.EulerCamera;
 import world.Block.BlockType;
 import world.ChunkManager;
@@ -41,7 +55,7 @@ public class OpenGLCamera implements Runnable {
 	private boolean mouse0, mouse1;
 	private long downStart;
 	
-	
+	private Texture textureHandle;
 
 	// Render
 	private void render() {
@@ -59,7 +73,7 @@ public class OpenGLCamera implements Runnable {
 
 		// Render all chunks
 		for (ChunkBatch cb : InterthreadHolder.getInstance().getChunkBatches()) {
-			cb.draw(camera.x(), camera.y(), camera.z());
+			cb.draw(camera.x(), camera.y(), camera.z(), textureHandle);
 		}
 		// Render all entities
 		for (EntityBatch eb : InterthreadHolder.getInstance()
@@ -146,28 +160,33 @@ public class OpenGLCamera implements Runnable {
 		glShadeModel(GL_SMOOTH);
 		glEnable(GL_DEPTH_TEST);
 		glDepthFunc(GL_LEQUAL);
-		// glEnable(GL_LIGHTING);
-		// glEnable(GL_LIGHT0);
-		// glLightModel(GL_LIGHT_MODEL_AMBIENT,
-		// BufferTools.asFlippedFloatBuffer(new float[] { 1, 1f, 1f, 1f }));
-		// glLight(GL_LIGHT0, GL_CONSTANT_ATTENUATION,
-		// BufferTools.asFlippedFloatBuffer(new float[] { 1, 1, 1, 1 }));
+		 glEnable(GL_LIGHTING);
+		 glEnable(GL_LIGHT0);
+		 glLightModel(GL_LIGHT_MODEL_AMBIENT,
+		 BufferTools.asFlippedFloatBuffer(new float[] { 0.01f, 0.01f, 0.01f, 0.01f }));
+		 glLight(GL_LIGHT0, GL_CONSTANT_ATTENUATION,
+		 BufferTools.asFlippedFloatBuffer(new float[] { 1, 1, 1, 1 }));
 
 		glEnable(GL_COLOR_MATERIAL);
 		glColorMaterial(GL_FRONT, GL_DIFFUSE);
 		glMaterialf(GL_FRONT, GL_SHININESS, 50f);
 		camera.applyOptimalStates();
 
+		
+		//GL11.glEnable(GL11.GL_BLEND);
+    	//GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		
 		glEnable(GL_CULL_FACE);
 		glCullFace(GL_BACK);
 
-		glEnable(GL_TEXTURE_2D);
+		
 
 		glClearColor(0.2f, 0.2f, 0.2f, 0f);
 
-		glEnableClientState(GL_VERTEX_ARRAY);
-		glEnableClientState(GL_COLOR_ARRAY);
-		glEnableClientState(GL_NORMAL_ARRAY);
+		//
+		//glEnableClientState(GL_COLOR_ARRAY);
+		//
+		
 
 		glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 
@@ -222,7 +241,7 @@ public class OpenGLCamera implements Runnable {
 		try {
 			//Display.setDisplayMode(new DisplayMode(1280,720));
 			Display.setVSyncEnabled(false);
-			Display.setFullscreen(true);
+			Display.setFullscreen(false);
 			Display.setResizable(false);
 			Display.setTitle(WINDOW_TITLE);
 			Display.create(new PixelFormat(4, 24, 0, 4));
@@ -243,14 +262,82 @@ public class OpenGLCamera implements Runnable {
 		d.initDesigner(camera);
 		setUpHUD();
 		setUpMatrices();
-		
+		setUpTextures();
 		enterGameLoop();
 		cleanUp(false);
 
 	}
 
+	private void setUpTextures() {		
+		
+				
+					try {
+						textureHandle = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/images/uvgrid01.png"));
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				
+				
+	}
+	
+	
+	 private int loadPNGTexture(String filename, int textureUnit) {
+	        ByteBuffer buf = null;
+	        int tWidth = 0;
+	        int tHeight = 0;
+	         
+	        try {
+	            // Open the PNG file as an InputStream
+	            InputStream in = new FileInputStream(filename);
+	            // Link the PNG decoder to this stream
+	            PNGDecoder decoder = new PNGDecoder(in);
+	             
+	            // Get the width and height of the texture
+	            tWidth = decoder.getWidth();
+	            tHeight = decoder.getHeight();
+	             
+	             
+	            // Decode the PNG file in a ByteBuffer
+	            buf = ByteBuffer.allocateDirect(
+	                    4 * decoder.getWidth() * decoder.getHeight());
+	            decoder.decode(buf, decoder.getWidth() * 4, Format.RGBA);
+	            buf.flip();
+	             
+	            in.close();
+	        } catch (IOException e) {
+	            e.printStackTrace();
+	            System.exit(-1);
+	        }
+	         
+	        // Create a new texture object in memory and bind it
+	        int texId = GL11.glGenTextures();
+	        GL13.glActiveTexture(textureUnit);
+	        GL11.glBindTexture(GL11.GL_TEXTURE_2D, texId);
+	         
+	        // All RGB bytes are aligned to each other and each component is 1 byte
+	        GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 1);
+	         
+	        // Upload the texture data and generate mip maps (for scaling)
+	        GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGB, tWidth, tHeight, 0, 
+	                GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buf);
+	        GL30.glGenerateMipmap(GL11.GL_TEXTURE_2D);
+	         
+	        // Setup the ST coordinate system
+	        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL11.GL_REPEAT);
+	        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL11.GL_REPEAT);
+	         
+	        // Setup what to do when the texture has to be scaled
+	        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, 
+	                GL11.GL_NEAREST);
+	        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, 
+	                GL11.GL_LINEAR_MIPMAP_LINEAR);
+	         
+	        return texId;
+	    }
+
 	private void setUpChunks() {		
-		 ChunkManager.getInstance().genTest(1, 1, 1, BlockType.BlockType_Dirt);
+		 ChunkManager.getInstance().genTest(1, 0, 0, BlockType.BlockType_Dirt);
 		 
 	}
 
