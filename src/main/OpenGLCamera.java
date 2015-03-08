@@ -56,6 +56,7 @@ public class OpenGLCamera implements Runnable {
 	private long downStart;
 	
 	private Texture textureHandle;
+	private int i;
 
 	// Render
 	private void render() {
@@ -81,7 +82,7 @@ public class OpenGLCamera implements Runnable {
 			eb.draw(camera.x(), camera.y(), camera.z());
 		}
 		// System.out.print("FPS: " + fpsCounter);
-		hud.render(fpsCounter, camera);
+		//hud.render(fpsCounter, camera);
 	}
 
 	// Process Input
@@ -193,6 +194,8 @@ public class OpenGLCamera implements Runnable {
 	}
 
 	private void update(long delta) {
+		i++;
+		ChunkManager.getInstance().updateTest(i);
 		Display.update();
 		Display.sync(60);
 	}
@@ -258,9 +261,9 @@ public class OpenGLCamera implements Runnable {
 		setUpDisplay();
 		setUpStates();
 		setUpChunks();
-		Designer d = new Designer();
-		d.initDesigner(camera);
-		setUpHUD();
+		//Designer d = new Designer();
+		//d.initDesigner(camera);
+		//setUpHUD();
 		setUpMatrices();
 		setUpTextures();
 		enterGameLoop();
@@ -272,7 +275,7 @@ public class OpenGLCamera implements Runnable {
 		
 				
 					try {
-						textureHandle = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/images/uvgrid01.png"));
+						textureHandle = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/images/grass.png"));
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -337,8 +340,7 @@ public class OpenGLCamera implements Runnable {
 	    }
 
 	private void setUpChunks() {		
-		 ChunkManager.getInstance().genTest(1, 0, 0, BlockType.BlockType_Dirt);
-		 
+		 ChunkManager.getInstance().genTest(10, 1, 10, BlockType.BlockType_Dirt);
 	}
 
 	private void setUpHUD() {

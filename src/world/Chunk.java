@@ -7,6 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.FloatBuffer;
+import java.util.Random;
 
 import org.lwjgl.BufferUtils;
 import org.tukaani.xz.LZMA2Options;
@@ -42,21 +43,35 @@ public class Chunk {
 	private int VBOColorHandle;
 	private int VBONormalHandle;
 	private int visibleFaces;
-	private int x, y, z;
+	int x;
+
+	private int y;
+
+	private int z;
 	private String worldLocation;
 	private Boolean test = false;
 	private ChunkBatch batch;
 	private BlockType type;
-
+	Random rnd = new Random();
 	private int VBOUVHandle;
 
 	/**
 	 * Updates this chunk
+	 * @param i 
 	 */
-	public void Update() {
+	public void Update(boolean test, int i) {
+		
+		if(test){
+			
+				Blocks[rnd.nextInt(16)][rnd.nextInt(16)][rnd.nextInt(16)] = new Block(BlockType.BlockType_Air);
+			
+			RebuildChunk();
+		}
 		// Update the chunk
 		// If something changed then
-		// RebuildChunk();
+		
+		
+		// 
 	}
 
 	/**
@@ -103,30 +118,30 @@ public class Chunk {
 	 * @return If the load was successful
 	 */
 	public Boolean Load() {
-		try (FileInputStream file = new FileInputStream(worldLocation + "" + x
-				+ "." + y + "." + z + ".chunk")) {
-			XZInputStream in = new XZInputStream(file);
-			byte fileContent[] = new byte[CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE];
-			in.read(fileContent);
-			int i = 0;
-			for (int x = 0; x < CHUNK_SIZE; x++) {
-				for (int y = 0; y < CHUNK_SIZE; y++) {
-					for (int z = 0; z < CHUNK_SIZE; z++) {
-						Blocks[x][y][z] = new Block(
-								BlockType.fromByte(fileContent[i]));
-						i++;
-					}
-				}
-			}
-			file.close();
-			RebuildChunk();
-			return true;
-		} catch (FileNotFoundException e) {
+//		try (FileInputStream file = new FileInputStream(worldLocation + "" + x
+//				+ "." + y + "." + z + ".chunk")) {
+//			XZInputStream in = new XZInputStream(file);
+//			byte fileContent[] = new byte[CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE];
+//			in.read(fileContent);
+//			int i = 0;
+//			for (int x = 0; x < CHUNK_SIZE; x++) {
+//				for (int y = 0; y < CHUNK_SIZE; y++) {
+//					for (int z = 0; z < CHUNK_SIZE; z++) {
+//						Blocks[x][y][z] = new Block(
+//								BlockType.fromByte(fileContent[i]));
+//						i++;
+//					}
+//				}
+//			}
+//			file.close();
+//			RebuildChunk();
+//			return true;
+//		} catch (FileNotFoundException e) {
 			init();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 		return false;
 	}
 
@@ -185,6 +200,7 @@ public class Chunk {
 	 * visible
 	 */
 	public void RebuildChunk() {
+		System.out.println("Updating Chunk: " + x + "." + y + "." + z);
 		visibleFaces = 0;
 		for (int x = 0; x < CHUNK_SIZE; x++) {
 			for (int y = 0; y < CHUNK_SIZE; y++) {

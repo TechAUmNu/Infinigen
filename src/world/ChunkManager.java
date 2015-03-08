@@ -110,5 +110,12 @@ private static ChunkManager instance;
 		}	
 	}
 	
+	public void updateTest(int i){
+		for(ChunkID cid : chunks.loadedChunks){
+			Chunk c = chunks.GetChunk(cid.x, cid.y, cid.z);
+			c.Update(true, i);
+		}
+	}
+	
 
 }

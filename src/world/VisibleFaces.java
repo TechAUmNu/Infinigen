@@ -217,31 +217,31 @@ public class VisibleFaces {
 	private float[] genTopUVs() {
 		return new float[] {
 
-				0,0,1,0,1,1,0,1};
+		0,1,1,1,1,0,0,0		};
 	}
 
 	private float[] genFrontUVs() {
 		return new float[] {
 
-				0,0,1,0,1,1,0,1 };
+				0,1,1,1,1,0,0,0 };
 	}
 
 	private float[] genBackUVs() {
 		return new float[] {
 
-				0,0,1,0,1,1,0,1 };
+				0,1,1,1,1,0,0,0 };
 	}
 
 	private float[] genLeftUVs() {
 		return new float[] {
 
-				0,0,1,0,1,1,0,1 };
+				0,1,1,1,1,0,0,0 };
 	}
 
 	private float[] genRightUVs() {
 		return new float[] {
 
-				0,0,1,0,1,1,0,1 };
+				0,1,1,1,1,0,0,0 };
 	}
 
 }

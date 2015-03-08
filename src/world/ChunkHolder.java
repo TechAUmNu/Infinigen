@@ -13,7 +13,7 @@ public class ChunkHolder {
 	
 	
 	private HashMap<ChunkID,Chunk> chunks = new HashMap<ChunkID,Chunk>();
-	private GapList<ChunkID> loadedChunks = new GapList<ChunkID>();
+	public GapList<ChunkID> loadedChunks = new GapList<ChunkID>();
 	
 	
 	/**
