@@ -68,32 +68,32 @@ public class HUDBuilder {
 		//drawText("MouseDY: " + Mouse.getDX(), -1, 0.38f,0.05f);
 	//	drawText("MouseDY: " + Mouse.getDY(), -1, 0.36f,0.05f);
 		
-		for(ButtonText b : buttons){
-			drawText(b.text, b.x, b.y,0.05f);			
-		}
-		buttons.clear();
+//		for(ButtonText b : buttons){
+//			drawText(b.text, b.x, b.y,0.05f);			
+//		}
+		//buttons.clear();
 		
 		make2D();
-		rotation += 0.4f;
+		//rotation += 0.4f;
 		//glTranslatef(Display.getWidth() / 2, Display.getHeight() / 2, 0);
 		//GL11.glRotatef(rotation, 0f, 0f, 1f);
 		//glTranslatef(-Display.getWidth() / 2, -Display.getHeight() / 2, 0);
 
-		DrawButton(-0.4f, 0.1f, 10, "button1", false);
-		DrawButton(-0.28f, 0.1f, 10, "button2", false);
-		DrawButton(-0.16f, 0.1f, 10, "button3", false);
-		DrawButton(-0.04f, 0.1f, 10, "button4", false);
-		DrawButton(0.08f, 0.1f, 10, "button5", false);
-		DrawButton(0.20f, 0.1f, 10, "button6", false);
-		DrawButton(0.32f, 0.1f, 10, "button7", false);
+		//DrawButton(-0.4f, 0.1f, 10, "button1", false);
+		//DrawButton(-0.28f, 0.1f, 10, "button2", false);
+		//DrawButton(-0.16f, 0.1f, 10, "button3", false);
+		//DrawButton(-0.04f, 0.1f, 10, "button4", false);
+		//DrawButton(0.08f, 0.1f, 10, "button5", false);
+		//DrawButton(0.20f, 0.1f, 10, "button6", false);
+		//DrawButton(0.32f, 0.1f, 10, "button7", false);
 
-		DrawButton(-3.55f, 0.1f, 10, "button8", true);
-		DrawButton(-3.43f, 0.1f, 10, "button9", true);
-		DrawButton(-3.31f, 0.1f, 10, "button10", true);
-		DrawButton(-3.19f, 0.1f, 10, "button11", true);
-		DrawButton(-3.07f, 0.1f, 10, "button12", true);
-		DrawButton(-2.95f, 0.1f, 10, "button13", true);
-		DrawButton(-2.83f, 0.1f, 10, "button14", true);
+		//DrawButton(-3.55f, 0.1f, 10, "button8", true);
+		//DrawButton(-3.43f, 0.1f, 10, "button9", true);
+//		DrawButton(-3.31f, 0.1f, 10, "button10", true);
+//		DrawButton(-3.19f, 0.1f, 10, "button11", true);
+//		DrawButton(-3.07f, 0.1f, 10, "button12", true);
+//		DrawButton(-2.95f, 0.1f, 10, "button13", true);
+//		DrawButton(-2.83f, 0.1f, 10, "button14", true);
 
 		// Switch back to 3D
 

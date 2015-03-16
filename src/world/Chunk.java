@@ -16,6 +16,7 @@ import org.tukaani.xz.XZOutputStream;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL15.*;
+import shaders.Shader;
 import threading.InterthreadHolder;
 import world.Block.BlockType;
 
@@ -278,8 +279,7 @@ public class Chunk {
 		if (batch != null) {
 			InterthreadHolder.getInstance().removeChunkBatch(batch);
 		}
-		ChunkBatch b = new ChunkBatch("shaders/landscape.vs",
-				"shaders/landscape.fs");
+		ChunkBatch b = new ChunkBatch(Shader.Chunk);
 		b.addVBO(VBOVertexHandle, VBOColorHandle, VBONormalHandle, visibleFaces, VBOUVHandle);
 		batch = b;
 		InterthreadHolder.getInstance().addChunkBatch(b);

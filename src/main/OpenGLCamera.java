@@ -82,7 +82,7 @@ public class OpenGLCamera implements Runnable {
 			eb.draw(camera.x(), camera.y(), camera.z());
 		}
 		// System.out.print("FPS: " + fpsCounter);
-		//hud.render(fpsCounter, camera);
+		hud.render(fpsCounter, camera);
 	}
 
 	// Process Input
@@ -197,7 +197,7 @@ public class OpenGLCamera implements Runnable {
 		i++;
 		ChunkManager.getInstance().updateTest(i);
 		Display.update();
-		Display.sync(60);
+		Display.sync(120);
 	}
 
 	private void enterGameLoop() {
@@ -263,7 +263,7 @@ public class OpenGLCamera implements Runnable {
 		setUpChunks();
 		//Designer d = new Designer();
 		//d.initDesigner(camera);
-		//setUpHUD();
+		setUpHUD();
 		setUpMatrices();
 		setUpTextures();
 		enterGameLoop();
@@ -340,7 +340,7 @@ public class OpenGLCamera implements Runnable {
 	    }
 
 	private void setUpChunks() {		
-		 ChunkManager.getInstance().genTest(10, 1, 10, BlockType.BlockType_Dirt);
+		 ChunkManager.getInstance().genTest(5, 1, 5, BlockType.BlockType_Dirt);
 	}
 
 	private void setUpHUD() {
