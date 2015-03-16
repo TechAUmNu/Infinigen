@@ -68,8 +68,8 @@ public class OpenGLCamera implements Runnable {
 		glLoadIdentity();
 		// Apply the camera position and orientation to the scene
 		camera.applyTranslations();
-		// glLight(GL_LIGHT0, GL_POSITION,
-		// BufferTools.asFlippedFloatBuffer(500f, 100f, 500f, 1));
+		 glLight(GL_LIGHT0, GL_POSITION,
+		BufferTools.asFlippedFloatBuffer(0f, 250f, 0f, 1));
 		// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 		// Render all chunks
@@ -82,7 +82,7 @@ public class OpenGLCamera implements Runnable {
 			eb.draw(camera.x(), camera.y(), camera.z());
 		}
 		// System.out.print("FPS: " + fpsCounter);
-		//hud.render(fpsCounter, camera);
+		hud.render(fpsCounter, camera);
 	}
 
 	// Process Input
@@ -194,8 +194,8 @@ public class OpenGLCamera implements Runnable {
 	}
 
 	private void update(long delta) {
-		i++;
-		ChunkManager.getInstance().updateTest(i);
+	
+		ChunkManager.getInstance().update();
 		Display.update();
 		Display.sync(60);
 	}
@@ -263,7 +263,7 @@ public class OpenGLCamera implements Runnable {
 		setUpChunks();
 		//Designer d = new Designer();
 		//d.initDesigner(camera);
-		//setUpHUD();
+		setUpHUD();
 		setUpMatrices();
 		setUpTextures();
 		enterGameLoop();
@@ -340,7 +340,7 @@ public class OpenGLCamera implements Runnable {
 	    }
 
 	private void setUpChunks() {		
-		 ChunkManager.getInstance().genTest(10, 1, 10, BlockType.BlockType_Dirt);
+		 ChunkManager.getInstance().genTest(15, 1, 15, BlockType.BlockType_Dirt);
 	}
 
 	private void setUpHUD() {

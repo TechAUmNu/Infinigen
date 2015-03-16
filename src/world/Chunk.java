@@ -59,18 +59,15 @@ public class Chunk {
 	 * Updates this chunk
 	 * @param i 
 	 */
-	public void Update(boolean test, int i) {
+	public void Update() {
+		boolean changed = false;
 		
-		if(test){
-			
-				Blocks[rnd.nextInt(16)][rnd.nextInt(16)][rnd.nextInt(16)] = new Block(BlockType.BlockType_Air);
-			
+		// Update the chunk
+		
+		// If something changed then
+		if(changed){
 			RebuildChunk();
 		}
-		// Update the chunk
-		// If something changed then
-		
-		
 		// 
 	}
 

@@ -1,35 +1,7 @@
 package hud;
 
-import static org.lwjgl.opengl.GL11.GL_BLEND;
-import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.GL_CULL_FACE;
-import static org.lwjgl.opengl.GL11.GL_ENABLE_BIT;
-import static org.lwjgl.opengl.GL11.GL_LINEAR;
-import static org.lwjgl.opengl.GL11.GL_LINE_STRIP;
-import static org.lwjgl.opengl.GL11.GL_ONE;
-import static org.lwjgl.opengl.GL11.GL_QUADS;
-import static org.lwjgl.opengl.GL11.GL_RGB;
-import static org.lwjgl.opengl.GL11.GL_RGBA;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_BIT;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_MAG_FILTER;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_MIN_FILTER;
-import static org.lwjgl.opengl.GL11.GL_UNSIGNED_BYTE;
-import static org.lwjgl.opengl.GL11.glBegin;
-import static org.lwjgl.opengl.GL11.glBindTexture;
-import static org.lwjgl.opengl.GL11.glBlendFunc;
-import static org.lwjgl.opengl.GL11.glEnable;
-import static org.lwjgl.opengl.GL11.glEnd;
-import static org.lwjgl.opengl.GL11.glGenTextures;
-import static org.lwjgl.opengl.GL11.glPopAttrib;
-import static org.lwjgl.opengl.GL11.glPopMatrix;
-import static org.lwjgl.opengl.GL11.glPushAttrib;
-import static org.lwjgl.opengl.GL11.glPushMatrix;
-import static org.lwjgl.opengl.GL11.glTexCoord2f;
-import static org.lwjgl.opengl.GL11.glTexImage2D;
-import static org.lwjgl.opengl.GL11.glTexParameteri;
-import static org.lwjgl.opengl.GL11.glTranslatef;
-import static org.lwjgl.opengl.GL11.glVertex2f;
+import static org.lwjgl.opengl.GL11.*;
+
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -64,50 +36,30 @@ public class HUDBuilder {
 		drawText("FPS: " + fps, -1, 0.46f, 0.05f);
 		drawText("MouseX: " + Mouse.getX(), -1, 0.44f, 0.05f);
 		drawText("MouseY: " + Mouse.getY(), -1, 0.42f, 0.05f);
-		//drawText("MouseGrabbed: " + Mouse.isGrabbed(), -1, 0.40f,0.05f);
-		//drawText("MouseDY: " + Mouse.getDX(), -1, 0.38f,0.05f);
-	//	drawText("MouseDY: " + Mouse.getDY(), -1, 0.36f,0.05f);
+		drawText("CameraX: " + camera.x(), -1, 0.40f,0.05f);
+		drawText("CameraY: " + camera.y(), -1, 0.38f,0.05f);
+		drawText("CameraZ: " + camera.z(), -1, 0.36f,0.05f);
 		
-		for(ButtonText b : buttons){
-			drawText(b.text, b.x, b.y,0.05f);			
-		}
-		buttons.clear();
 		
+		//Change to orthographic view
 		make2D();
-		rotation += 0.4f;
-		//glTranslatef(Display.getWidth() / 2, Display.getHeight() / 2, 0);
-		//GL11.glRotatef(rotation, 0f, 0f, 1f);
-		//glTranslatef(-Display.getWidth() / 2, -Display.getHeight() / 2, 0);
 
-		DrawButton(-0.4f, 0.1f, 10, "button1", false);
-		DrawButton(-0.28f, 0.1f, 10, "button2", false);
-		DrawButton(-0.16f, 0.1f, 10, "button3", false);
-		DrawButton(-0.04f, 0.1f, 10, "button4", false);
-		DrawButton(0.08f, 0.1f, 10, "button5", false);
-		DrawButton(0.20f, 0.1f, 10, "button6", false);
-		DrawButton(0.32f, 0.1f, 10, "button7", false);
-
-		DrawButton(-3.55f, 0.1f, 10, "button8", true);
-		DrawButton(-3.43f, 0.1f, 10, "button9", true);
-		DrawButton(-3.31f, 0.1f, 10, "button10", true);
-		DrawButton(-3.19f, 0.1f, 10, "button11", true);
-		DrawButton(-3.07f, 0.1f, 10, "button12", true);
-		DrawButton(-2.95f, 0.1f, 10, "button13", true);
-		DrawButton(-2.83f, 0.1f, 10, "button14", true);
 
 		// Switch back to 3D
-
 		make3D();
 	}
 
 	private void makeText() {
-		GL11.glDisable(GL11.GL_DEPTH_TEST);
-		GL11.glMatrixMode(GL11.GL_PROJECTION);
-		GL11.glPushMatrix();
-		GL11.glLoadIdentity();
-		GL11.glMatrixMode(GL11.GL_MODELVIEW);
-		GL11.glPushMatrix();
-		GL11.glLoadIdentity();
+		
+		glMatrixMode(GL_PROJECTION);
+		glPushMatrix();
+		glLoadIdentity();
+		glMatrixMode(GL_MODELVIEW);
+		glPushMatrix();
+		glLoadIdentity();
+		glDisable(GL_DEPTH_TEST);
+		glDisable(GL_LIGHTING);
+		
 	}
 
 	void drawText(String s, float x, float y, float size){
@@ -211,8 +163,8 @@ public class HUDBuilder {
 	
 	protected static void make2D() {
 		// Remove the Z axis
-		// GL11.glDisable(GL11.GL_LIGHTING);
-		// GL11.glColor3f(0f, 0f, 0f);
+		// glDisable(GL_LIGHTING);
+		// glColor3f(0f, 0f, 0f);
 
 		GLU.gluOrtho2D(0, Display.getWidth(), 0, Display.getHeight());
 
@@ -252,14 +204,15 @@ public class HUDBuilder {
 
 	protected static void make3D() {
 		// Restore the Z axis
-		GL11.glEnable(GL11.GL_DEPTH_TEST);
-		GL11.glMatrixMode(GL11.GL_PROJECTION);
-		GL11.glPopMatrix();
-		GL11.glMatrixMode(GL11.GL_MODELVIEW);
-		GL11.glPopMatrix();
+		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_LIGHTING);
+		glMatrixMode(GL_PROJECTION);
+		glPopMatrix();
+		glMatrixMode(GL_MODELVIEW);
+		glPopMatrix();
 
-		// GL11.glEnable(GL11.GL_DEPTH_TEST);
-		// GL11.glEnable(GL11.GL_LIGHTING);
+		// glEnable(GL_DEPTH_TEST);
+		// glEnable(GL_LIGHTING);
 	}
 
 	/**
@@ -304,7 +257,7 @@ public class HUDBuilder {
 		// Offset all subsequent (at least up until 'glPopMatrix') vertex
 		// coordinates.
 		glTranslatef(x, y, 0);
-		GL11.glScalef(scale, scale, scale);
+		glScalef(scale, scale, scale);
 		glBegin(GL_QUADS);
 		// Iterate over all the characters in the string.
 		for (int i = 0; i < string.length(); i++) {
