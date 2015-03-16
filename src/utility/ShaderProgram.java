@@ -15,9 +15,9 @@ import org.lwjgl.util.vector.Vector3f;
  */
 public class ShaderProgram
 {
-    // ProgramID
+    
+	// ProgramID
     int programID;
-
     // Vertex Shader ID
     int vertexShaderID;
     // Fragment Shader ID

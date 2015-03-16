@@ -40,9 +40,11 @@ public class HUDBuilder {
 		drawText("CameraY: " + camera.y(), -1, 0.38f,0.05f);
 		drawText("CameraZ: " + camera.z(), -1, 0.36f,0.05f);
 		
+
 		
 		//Change to orthographic view
 		make2D();
+
 
 
 		// Switch back to 3D

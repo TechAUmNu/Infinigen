@@ -8,6 +8,8 @@ import static org.lwjgl.opengl.GL13.*;
 import org.magicwerk.brownies.collections.GapList;
 import org.newdawn.slick.opengl.Texture;
 
+import shaders.Shader;
+import shaders.ShaderManager;
 import utility.ShaderProgram;
 
 // A batch is a group of objects that need to be rendered. 
@@ -17,7 +19,7 @@ import utility.ShaderProgram;
 // A batch is specific to a shader.
 public class ChunkBatch {
 	GapList<ChunkVBO> VBOs;
-	ShaderProgram shader;
+	Shader shader;
 
 	public void addVBO(int vertexid, int colorid, int normalid,
 			int visibleBlocks, int textureid) {
@@ -25,8 +27,9 @@ public class ChunkBatch {
 	}
 
 	public void draw(float x, float y, float z, Texture textureHandle) {
-		shader.bind();
-		shader.setUniform("cameraPosition", x, y, z);
+		ShaderProgram s = ShaderManager.getInstance().getShaderProgram(shader);
+		s.bind();
+		s.setUniform("cameraPosition", x, y, z);
 		
 		
 		
@@ -86,15 +89,9 @@ public class ChunkBatch {
 	public void dispose() {
 	}
 
-	public ChunkBatch(String vertexShader, String fragmentShader) {
+	public ChunkBatch(Shader s) {
 		VBOs = new GapList<ChunkVBO>();
-		// Create a new ShaderProgram
-		shader = new ShaderProgram();
-		// Attach the shaders
-		shader.attachVertexShader(vertexShader);
-		shader.attachFragmentShader(fragmentShader);
-
-		shader.link();
+		shader = s;
 	}
 
 }

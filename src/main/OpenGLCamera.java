@@ -197,7 +197,7 @@ public class OpenGLCamera implements Runnable {
 	
 		ChunkManager.getInstance().update();
 		Display.update();
-		Display.sync(60);
+		Display.sync(120);
 	}
 
 	private void enterGameLoop() {
@@ -340,7 +340,8 @@ public class OpenGLCamera implements Runnable {
 	    }
 
 	private void setUpChunks() {		
-		 ChunkManager.getInstance().genTest(15, 1, 15, BlockType.BlockType_Dirt);
+		 ChunkManager.getInstance().genTest(5, 1, 5, BlockType.BlockType_Dirt);
+
 	}
 
 	private void setUpHUD() {
