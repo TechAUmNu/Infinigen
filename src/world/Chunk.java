@@ -61,14 +61,24 @@ public class Chunk {
 	 * @param i 
 	 */
 	public void Update() {
-		boolean changed = false;
+		//boolean changed = false;
 		
 		// Update the chunk
+		//for (int x = 0; x < CHUNK_SIZE; x++) {
+		//	for (int y = 0; y < CHUNK_SIZE; y++) {
+		//		for (int z = 0; z < CHUNK_SIZE; z++) {
+		//			if(rnd.nextInt(100) > 95){
+		//				Blocks[x][y][z] = new Block(BlockType.BlockType_Air);
+		//				changed = true;
+		//			}
+		//		}
+		//	}
+		//}
 		
 		// If something changed then
-		if(changed){
+		//if(changed){
 			RebuildChunk();
-		}
+		//}
 		// 
 	}
 

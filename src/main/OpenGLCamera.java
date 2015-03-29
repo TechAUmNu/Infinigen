@@ -69,7 +69,7 @@ public class OpenGLCamera implements Runnable {
 		// Apply the camera position and orientation to the scene
 		camera.applyTranslations();
 		 glLight(GL_LIGHT0, GL_POSITION,
-		BufferTools.asFlippedFloatBuffer(0f, 250f, 0f, 1));
+		BufferTools.asFlippedFloatBuffer(35f, 35f, 35f, 1));
 		// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 		// Render all chunks
@@ -145,8 +145,7 @@ public class OpenGLCamera implements Runnable {
 	
 	}
 
-	private void cleanUp(boolean asCrash) {
-		//System.out.println("CleanUP");
+	private void cleanUp(boolean asCrash) {		
 		ChunkManager.getInstance().UnloadChunks();
 		System.err.println(GLU.gluErrorString(glGetError()));
 		Display.destroy();
@@ -172,21 +171,12 @@ public class OpenGLCamera implements Runnable {
 		glColorMaterial(GL_FRONT, GL_DIFFUSE);
 		glMaterialf(GL_FRONT, GL_SHININESS, 50f);
 		camera.applyOptimalStates();
-
-		
-		//GL11.glEnable(GL11.GL_BLEND);
-    	//GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		
 		glEnable(GL_CULL_FACE);
 		glCullFace(GL_BACK);
 
-		
 
 		glClearColor(0.2f, 0.2f, 0.2f, 0f);
-
-		//
-		//glEnableClientState(GL_COLOR_ARRAY);
-		//
 		
 
 		glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
@@ -195,7 +185,7 @@ public class OpenGLCamera implements Runnable {
 
 	private void update(long delta) {
 	
-		ChunkManager.getInstance().update();
+		//ChunkManager.getInstance().update();
 		Display.update();
 		Display.sync(120);
 	}

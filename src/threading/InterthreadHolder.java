@@ -67,10 +67,6 @@ public class InterthreadHolder {
 	public void resetEntityBatches(){
 		entityBatches.clear();
 	}
-
-
-
-
 	
 	
 }

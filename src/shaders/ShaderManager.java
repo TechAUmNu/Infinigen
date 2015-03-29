@@ -17,7 +17,7 @@ private static ShaderManager instance;
 	
 	//Initialise variables.
 	private ShaderManager() {	
-		loadShaders();
+		//loadShaders();
 	}	
 
 	public static ShaderManager getInstance() {

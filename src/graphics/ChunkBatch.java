@@ -19,7 +19,7 @@ import utility.ShaderProgram;
 // A batch is specific to a shader.
 public class ChunkBatch {
 	GapList<ChunkVBO> VBOs;
-	Shader shader;
+	//Shader shader;
 
 	public void addVBO(int vertexid, int colorid, int normalid,
 			int visibleBlocks, int textureid) {
@@ -27,9 +27,9 @@ public class ChunkBatch {
 	}
 
 	public void draw(float x, float y, float z, Texture textureHandle) {
-		ShaderProgram s = ShaderManager.getInstance().getShaderProgram(shader);
-		s.bind();
-		s.setUniform("cameraPosition", x, y, z);
+		//ShaderProgram s = ShaderManager.getInstance().getShaderProgram(shader);
+		//s.bind();
+		//s.setUniform("cameraPosition", x, y, z);
 		
 		
 		
@@ -82,7 +82,7 @@ public class ChunkBatch {
 		    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 		    
 		}
-		ShaderProgram.unbind();
+		//ShaderProgram.unbind();
 	}
 
 	// dispose the VAOs and VBOs
@@ -91,7 +91,7 @@ public class ChunkBatch {
 
 	public ChunkBatch(Shader s) {
 		VBOs = new GapList<ChunkVBO>();
-		shader = s;
+		//shader = s;
 	}
 
 }
