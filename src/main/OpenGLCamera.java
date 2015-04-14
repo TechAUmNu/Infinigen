@@ -3,24 +3,26 @@ package main;
 import static org.lwjgl.opengl.GL11.*;
 import de.matthiasmann.twl.utils.PNGDecoder;
 import de.matthiasmann.twl.utils.PNGDecoder.Format;
-import entities.Designer;
+import entities.EntityManager;
 import graphics.ChunkBatch;
-import graphics.EntityBatch;
 import hud.HUDBuilder;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+import java.util.HashSet;
+import java.util.Set;
 
-import org.lwjgl.BufferUtils;
+import javax.vecmath.Matrix4f;
+import javax.vecmath.Quat4f;
+import javax.vecmath.Vector3f;
+
 import org.lwjgl.LWJGLException;
 import org.lwjgl.Sys;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL30;
@@ -29,6 +31,17 @@ import org.lwjgl.util.glu.GLU;
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
 import org.newdawn.slick.util.ResourceLoader;
+
+import physics.PhysicsManager;
+
+import com.bulletphysics.collision.shapes.BoxShape;
+import com.bulletphysics.collision.shapes.CollisionShape;
+import com.bulletphysics.collision.shapes.SphereShape;
+import com.bulletphysics.dynamics.RigidBody;
+import com.bulletphysics.dynamics.RigidBodyConstructionInfo;
+import com.bulletphysics.linearmath.DefaultMotionState;
+import com.bulletphysics.linearmath.Transform;
+import com.sun.corba.se.impl.oa.poa.ActiveObjectMap.Key;
 
 import threading.InterthreadHolder;
 import utility.BufferTools;
@@ -43,7 +56,7 @@ public class OpenGLCamera implements Runnable {
 			/ (float) WINDOW_DIMENSIONS[1];
 
 	private static final EulerCamera camera = new EulerCamera.Builder()
-			.setPosition(0f, 0f, 0f).setRotation(50, 12, 0)
+			.setPosition(500f, 500f, 500f).setRotation(50, 320, 0)
 			.setAspectRatio(ASPECT_RATIO).setFieldOfView(60)
 			.setFarClippingPane(10000f).setNearClippingPane(0.1f).build();
 
@@ -56,7 +69,7 @@ public class OpenGLCamera implements Runnable {
 	private long downStart;
 	
 	private Texture textureHandle;
-	private int i;
+	private boolean createNewShape;
 
 	// Render
 	private void render() {
@@ -69,18 +82,16 @@ public class OpenGLCamera implements Runnable {
 		// Apply the camera position and orientation to the scene
 		camera.applyTranslations();
 		 glLight(GL_LIGHT0, GL_POSITION,
-		BufferTools.asFlippedFloatBuffer(35f, 35f, 35f, 1));
+		BufferTools.asFlippedFloatBuffer(35f, 100f, 35f, 1));
 		// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 		// Render all chunks
 		for (ChunkBatch cb : InterthreadHolder.getInstance().getChunkBatches()) {
 			cb.draw(camera.x(), camera.y(), camera.z(), textureHandle);
 		}
-		// Render all entities
-		for (EntityBatch eb : InterthreadHolder.getInstance()
-				.getEntityBatches()) {
-			eb.draw(camera.x(), camera.y(), camera.z());
-		}
+		
+		EntityManager.getInstance().drawAll();
+		
 		// System.out.print("FPS: " + fpsCounter);
 		hud.render(fpsCounter, camera);
 	}
@@ -90,6 +101,11 @@ public class OpenGLCamera implements Runnable {
 		while(Keyboard.next()){
 			if(Keyboard.getEventKey() == Keyboard.KEY_ESCAPE){
 				cleanUp(false);
+			}
+			if(Keyboard.getEventKey() == Keyboard.KEY_G){
+				createNewShape = true;
+			}else{
+				//createNewShape = false;
 			}
 		}
 		// We can only set the mouse to be grabbed once, if you set it again
@@ -147,6 +163,8 @@ public class OpenGLCamera implements Runnable {
 
 	private void cleanUp(boolean asCrash) {		
 		ChunkManager.getInstance().UnloadChunks();
+		EntityManager.getInstance().cleanUp();
+		PhysicsManager.getInstance().cleanUp();
 		System.err.println(GLU.gluErrorString(glGetError()));
 		Display.destroy();
 		System.exit(asCrash ? 1 : 0);
@@ -176,30 +194,61 @@ public class OpenGLCamera implements Runnable {
 		glCullFace(GL_BACK);
 
 
-		glClearColor(0.2f, 0.2f, 0.2f, 0f);
+		glClearColor(0.529f, 0.8078f, 0.980f, 0f);
 		
 
 		glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 
 	}
 
-	private void update(long delta) {
+	private void logic(long delta) {		
+		// Reset the model-view matrix.
+        glLoadIdentity();
+        // Apply the camera's position and orientation to the model-view matrix.
+        camera.applyTranslations();
+        // Runs the JBullet physics simulation for the specified time in seconds.
+        PhysicsManager.getInstance().stepSimulate(delta);
+        // Create a set of bodies that are to be removed.
+        Set<RigidBody> bodiesToBeRemoved = new HashSet<RigidBody>();
+        // For every physics ball ...
+        EntityManager.getInstance().process(delta);
+        
+        if (createNewShape) {
+            // Create the collision shape (sphere with radius of 3 metres).
+            CollisionShape shape = new BoxShape(new Vector3f(1f,1f,1f));
+            // Create the motion state (x and z are the same as the camera's).
+            DefaultMotionState motionState = new DefaultMotionState(new Transform(new Matrix4f(new Quat4f(0, 0, 0, 1), new Vector3f(100, 100, 100), 1.0f)));
+            // Calculate the inertia (resistance to movement) using the ball's mass of 1 kilogram.
+            Vector3f inertia = new Vector3f(0, 0, 0);
+            shape.calculateLocalInertia(1.0f, inertia);
+            RigidBodyConstructionInfo constructionInfo = new RigidBodyConstructionInfo(1, motionState, shape, inertia);
+            constructionInfo.restitution = 0.75f;
+            RigidBody rigidBody = new RigidBody(constructionInfo);
+            EntityManager.getInstance().addEntity(rigidBody);            
+            //createNewShape = false;
+        }        
+	}
 	
-		//ChunkManager.getInstance().update();
+	private void update(long delta) {		
 		Display.update();
 		Display.sync(120);
+		//createNewShape = true;
 	}
 
 	private void enterGameLoop() {
 		lastFPS = getTime();
 		while (!Display.isCloseRequested()) {
 			long delta = getDelta();
+			if(delta <= 0){delta = 1;}
 			render();
 			input(delta);
+			logic(delta);
 			update(delta);
 			updateFPS();
 		}
 	}
+
+	
 
 	/**
 	 * Calculate how many milliseconds have passed since last frame.
@@ -210,7 +259,7 @@ public class OpenGLCamera implements Runnable {
 		long time = getTime();
 		long delta = (long) (time - lastFrame);
 		lastFrame = time;
-		// System.out.println(" Delta: " + delta);
+		System.out.println(" Delta: " + delta);
 		return delta;
 	}
 
@@ -261,77 +310,18 @@ public class OpenGLCamera implements Runnable {
 
 	}
 
-	private void setUpTextures() {		
-		
-				
-					try {
-						textureHandle = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/images/grass.png"));
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				
-				
+	private void setUpTextures() {
+		try {
+			textureHandle = TextureLoader.getTexture("PNG",
+					ResourceLoader.getResourceAsStream("res/images/grass.png"));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}		
 	}
-	
-	
-	 private int loadPNGTexture(String filename, int textureUnit) {
-	        ByteBuffer buf = null;
-	        int tWidth = 0;
-	        int tHeight = 0;
-	         
-	        try {
-	            // Open the PNG file as an InputStream
-	            InputStream in = new FileInputStream(filename);
-	            // Link the PNG decoder to this stream
-	            PNGDecoder decoder = new PNGDecoder(in);
-	             
-	            // Get the width and height of the texture
-	            tWidth = decoder.getWidth();
-	            tHeight = decoder.getHeight();
-	             
-	             
-	            // Decode the PNG file in a ByteBuffer
-	            buf = ByteBuffer.allocateDirect(
-	                    4 * decoder.getWidth() * decoder.getHeight());
-	            decoder.decode(buf, decoder.getWidth() * 4, Format.RGBA);
-	            buf.flip();
-	             
-	            in.close();
-	        } catch (IOException e) {
-	            e.printStackTrace();
-	            System.exit(-1);
-	        }
-	         
-	        // Create a new texture object in memory and bind it
-	        int texId = GL11.glGenTextures();
-	        GL13.glActiveTexture(textureUnit);
-	        GL11.glBindTexture(GL11.GL_TEXTURE_2D, texId);
-	         
-	        // All RGB bytes are aligned to each other and each component is 1 byte
-	        GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 1);
-	         
-	        // Upload the texture data and generate mip maps (for scaling)
-	        GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGB, tWidth, tHeight, 0, 
-	                GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buf);
-	        GL30.glGenerateMipmap(GL11.GL_TEXTURE_2D);
-	         
-	        // Setup the ST coordinate system
-	        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL11.GL_REPEAT);
-	        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL11.GL_REPEAT);
-	         
-	        // Setup what to do when the texture has to be scaled
-	        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, 
-	                GL11.GL_NEAREST);
-	        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, 
-	                GL11.GL_LINEAR_MIPMAP_LINEAR);
-	         
-	        return texId;
-	    }
 
 	private void setUpChunks() {		
-		 ChunkManager.getInstance().genTest(5, 1, 5, BlockType.BlockType_Dirt);
-
+		 ChunkManager.getInstance().genTest(10, 1, 10, BlockType.BlockType_Dirt);
 	}
 
 	private void setUpHUD() {

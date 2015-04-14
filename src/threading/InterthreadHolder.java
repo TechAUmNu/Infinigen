@@ -4,7 +4,7 @@ import graphics.ChunkBatch;
 
 
 
-import graphics.EntityBatch;
+
 
 import org.magicwerk.brownies.collections.GapList;
 
@@ -13,7 +13,7 @@ public class InterthreadHolder {
 	
 	
 	private GapList<ChunkBatch> chunkBatches;
-	private GapList<EntityBatch> entityBatches;
+	
 	
 
 	static {
@@ -22,7 +22,6 @@ public class InterthreadHolder {
 	
 	public void initBatches(){
 		chunkBatches = new GapList<ChunkBatch>();
-		entityBatches = new GapList<EntityBatch>();
 	}
 
 	//Initialise variables.
@@ -53,20 +52,7 @@ public class InterthreadHolder {
 		InterthreadHolder.instance = instance;
 	}
 
-	public GapList<EntityBatch> getEntityBatches() {
-		return entityBatches;
-	}
+	
 
-	public void addEntityBatch(EntityBatch batch) {
-		entityBatches.add(batch);
-	}
-	
-	public void removeEntityBatch(EntityBatch batch){
-		entityBatches.remove(batch);
-	}
-	public void resetEntityBatches(){
-		entityBatches.clear();
-	}
-	
 	
 }

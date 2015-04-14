@@ -2,7 +2,6 @@ package hud;
 
 import static org.lwjgl.opengl.GL11.*;
 
-
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -16,6 +15,7 @@ import org.magicwerk.brownies.collections.GapList;
 
 import utility.EulerCamera;
 import de.matthiasmann.twl.utils.PNGDecoder;
+import entities.EntityManager;
 
 public class HUDBuilder {
 	private static int fontTexture;
@@ -39,7 +39,7 @@ public class HUDBuilder {
 		drawText("CameraX: " + camera.x(), -1, 0.40f,0.05f);
 		drawText("CameraY: " + camera.y(), -1, 0.38f,0.05f);
 		drawText("CameraZ: " + camera.z(), -1, 0.36f,0.05f);
-		
+		drawText("Number Entities: " + EntityManager.getInstance().numEntities(), -1, 0.34f, 0.05f );
 
 		
 		//Change to orthographic view

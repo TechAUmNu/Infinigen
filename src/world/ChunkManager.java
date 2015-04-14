@@ -1,7 +1,6 @@
 package world;
 
 import graphics.ChunkBatch;
-import graphics.EntityBatch;
 
 import org.magicwerk.brownies.collections.GapList;
 
