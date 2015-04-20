@@ -265,7 +265,7 @@ public class OpenGLCamera implements Runnable {
 	private void update(float delta) {	
 		System.out.println("----------------update----------------");
 		Display.update();
-		Display.sync(120);
+		//Display.sync(120);
 		//createNewShape = true;
 	}
 
@@ -356,7 +356,7 @@ public class OpenGLCamera implements Runnable {
 	}
 
 	private void setUpChunks() {		
-		 ChunkManager.getInstance().genTest(10, 1, 10, BlockType.BlockType_Dirt);
+		 ChunkManager.getInstance().genTest(30, 1, 30, BlockType.BlockType_Dirt);
 	}
 
 	private void setUpHUD() {

@@ -48,7 +48,7 @@ private static EntityManager instance;
 	
 	public void drawAll() {
 		for(Entity e : entities){
-			e.draw();
+			//e.draw();
 		}
 		
 	}
