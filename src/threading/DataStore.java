@@ -71,7 +71,7 @@ public class DataStore {
 	}
 	
 	public int calcNumberCores(){
-		return cores = 64;
+		return cores = 4;
 	}
 
 	// ///////////////////////////////////////////////////////////////
