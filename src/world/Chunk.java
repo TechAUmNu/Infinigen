@@ -17,7 +17,7 @@ import org.tukaani.xz.XZOutputStream;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL15.*;
 import shaders.Shader;
-import threading.InterthreadHolder;
+import threading.DataStore;
 import world.Block.BlockType;
 
 public class Chunk {
@@ -194,7 +194,7 @@ public class Chunk {
 
 	public void CleanUp() {
 		//Remove chunk from rendering queue
-		InterthreadHolder.getInstance().removeChunkBatch(batch);
+		DataStore.getInstance().removeChunkBatch(batch);
 		//Delete buffers on GPU to free memory
 		glDeleteBuffers(VBOVertexHandle);
 		glDeleteBuffers(VBOColorHandle);
@@ -284,12 +284,12 @@ public class Chunk {
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		
 		if (batch != null) {
-			InterthreadHolder.getInstance().removeChunkBatch(batch);
+			DataStore.getInstance().removeChunkBatch(batch);
 		}
 		ChunkBatch b = new ChunkBatch(Shader.Chunk);
 		b.addVBO(VBOVertexHandle, VBOColorHandle, VBONormalHandle, visibleFaces, VBOUVHandle);
 		batch = b;
-		InterthreadHolder.getInstance().addChunkBatch(b);
+		DataStore.getInstance().addChunkBatch(b);
 
 	}
 

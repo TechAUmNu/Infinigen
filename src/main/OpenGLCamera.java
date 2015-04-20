@@ -1,16 +1,42 @@
 package main;
 
-import static org.lwjgl.opengl.GL11.*;
-import de.matthiasmann.twl.utils.PNGDecoder;
-import de.matthiasmann.twl.utils.PNGDecoder.Format;
+import static org.lwjgl.opengl.GL11.GL_BACK;
+import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_COLOR_MATERIAL;
+import static org.lwjgl.opengl.GL11.GL_CONSTANT_ATTENUATION;
+import static org.lwjgl.opengl.GL11.GL_CULL_FACE;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
+import static org.lwjgl.opengl.GL11.GL_DIFFUSE;
+import static org.lwjgl.opengl.GL11.GL_FRONT;
+import static org.lwjgl.opengl.GL11.GL_LEQUAL;
+import static org.lwjgl.opengl.GL11.GL_LIGHT0;
+import static org.lwjgl.opengl.GL11.GL_LIGHTING;
+import static org.lwjgl.opengl.GL11.GL_LIGHT_MODEL_AMBIENT;
+import static org.lwjgl.opengl.GL11.GL_NICEST;
+import static org.lwjgl.opengl.GL11.GL_PERSPECTIVE_CORRECTION_HINT;
+import static org.lwjgl.opengl.GL11.GL_POSITION;
+import static org.lwjgl.opengl.GL11.GL_SHININESS;
+import static org.lwjgl.opengl.GL11.GL_SMOOTH;
+import static org.lwjgl.opengl.GL11.glClear;
+import static org.lwjgl.opengl.GL11.glClearColor;
+import static org.lwjgl.opengl.GL11.glColorMaterial;
+import static org.lwjgl.opengl.GL11.glCullFace;
+import static org.lwjgl.opengl.GL11.glDepthFunc;
+import static org.lwjgl.opengl.GL11.glEnable;
+import static org.lwjgl.opengl.GL11.glGetError;
+import static org.lwjgl.opengl.GL11.glHint;
+import static org.lwjgl.opengl.GL11.glLight;
+import static org.lwjgl.opengl.GL11.glLightModel;
+import static org.lwjgl.opengl.GL11.glLoadIdentity;
+import static org.lwjgl.opengl.GL11.glMaterialf;
+import static org.lwjgl.opengl.GL11.glShadeModel;
 import entities.EntityManager;
 import graphics.ChunkBatch;
 import hud.HUDBuilder;
 
-import java.io.FileInputStream;
+import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.ByteBuffer;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -23,9 +49,6 @@ import org.lwjgl.Sys;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL13;
-import org.lwjgl.opengl.GL30;
 import org.lwjgl.opengl.PixelFormat;
 import org.lwjgl.util.glu.GLU;
 import org.newdawn.slick.opengl.Texture;
@@ -33,21 +56,18 @@ import org.newdawn.slick.opengl.TextureLoader;
 import org.newdawn.slick.util.ResourceLoader;
 
 import physics.PhysicsManager;
-
-import com.bulletphysics.collision.shapes.BoxShape;
-import com.bulletphysics.collision.shapes.CollisionShape;
-import com.bulletphysics.collision.shapes.SphereShape;
-import com.bulletphysics.dynamics.RigidBody;
-import com.bulletphysics.dynamics.RigidBodyConstructionInfo;
-import com.bulletphysics.linearmath.DefaultMotionState;
-import com.bulletphysics.linearmath.Transform;
-import com.sun.corba.se.impl.oa.poa.ActiveObjectMap.Key;
-
-import threading.InterthreadHolder;
+import threading.DataStore;
 import utility.BufferTools;
 import utility.EulerCamera;
 import world.Block.BlockType;
 import world.ChunkManager;
+
+import com.bulletphysics.collision.shapes.BoxShape;
+import com.bulletphysics.collision.shapes.CollisionShape;
+import com.bulletphysics.dynamics.RigidBody;
+import com.bulletphysics.dynamics.RigidBodyConstructionInfo;
+import com.bulletphysics.linearmath.DefaultMotionState;
+import com.bulletphysics.linearmath.Transform;
 
 public class OpenGLCamera implements Runnable {
 	private static final String WINDOW_TITLE = "Infinigen Tech Demo";
@@ -56,7 +76,7 @@ public class OpenGLCamera implements Runnable {
 			/ (float) WINDOW_DIMENSIONS[1];
 
 	private static final EulerCamera camera = new EulerCamera.Builder()
-			.setPosition(500f, 500f, 500f).setRotation(50, 320, 0)
+			.setPosition(140f, 140f, 140f).setRotation(50, 320, 0)
 			.setAspectRatio(ASPECT_RATIO).setFieldOfView(60)
 			.setFarClippingPane(10000f).setNearClippingPane(0.1f).build();
 
@@ -64,16 +84,17 @@ public class OpenGLCamera implements Runnable {
 	private static int fpsCounter;
 	private static long lastFPS;	
 	private HUDBuilder hud;
-	private long lastFrame;
+	private double lastFrame;
 	private boolean mouse0, mouse1;
 	private long downStart;
 	
 	private Texture textureHandle;
 	private boolean createNewShape;
-
+	private int id;
+	
 	// Render
 	private void render() {
-		
+		System.out.println("----------------render----------------");
 		// Clear the pixels on the screen and clear the contents of the depth
 		// buffer (3D contents of the scene)
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -86,7 +107,7 @@ public class OpenGLCamera implements Runnable {
 		// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 		// Render all chunks
-		for (ChunkBatch cb : InterthreadHolder.getInstance().getChunkBatches()) {
+		for (ChunkBatch cb : DataStore.getInstance().getChunkBatches()) {
 			cb.draw(camera.x(), camera.y(), camera.z(), textureHandle);
 		}
 		
@@ -98,12 +119,17 @@ public class OpenGLCamera implements Runnable {
 
 	// Process Input
 	private void input(float delta) {
+		System.out.println("----------------input----------------");
+		
+		
 		while(Keyboard.next()){
 			if(Keyboard.getEventKey() == Keyboard.KEY_ESCAPE){
 				cleanUp(false);
 			}
+			
 			if(Keyboard.getEventKey() == Keyboard.KEY_G){
 				createNewShape = true;
+				
 			}else{
 				//createNewShape = false;
 			}
@@ -162,6 +188,7 @@ public class OpenGLCamera implements Runnable {
 	}
 
 	private void cleanUp(boolean asCrash) {		
+		System.out.println("----------------Cleanup----------------");
 		ChunkManager.getInstance().UnloadChunks();
 		EntityManager.getInstance().cleanUp();
 		PhysicsManager.getInstance().cleanUp();
@@ -175,6 +202,7 @@ public class OpenGLCamera implements Runnable {
 	}
 
 	private void setUpStates() {
+		System.out.println("----------------Set up States----------------");
 		glShadeModel(GL_SMOOTH);
 		glEnable(GL_DEPTH_TEST);
 		glDepthFunc(GL_LEQUAL);
@@ -201,7 +229,8 @@ public class OpenGLCamera implements Runnable {
 
 	}
 
-	private void logic(long delta) {		
+	private void logic(float delta) {		
+		System.out.println("----------------Logic----------------");
 		// Reset the model-view matrix.
         glLoadIdentity();
         // Apply the camera's position and orientation to the model-view matrix.
@@ -224,12 +253,17 @@ public class OpenGLCamera implements Runnable {
             RigidBodyConstructionInfo constructionInfo = new RigidBodyConstructionInfo(1, motionState, shape, inertia);
             constructionInfo.restitution = 0.75f;
             RigidBody rigidBody = new RigidBody(constructionInfo);
-            EntityManager.getInstance().addEntity(rigidBody);            
-            //createNewShape = false;
+            EntityManager.getInstance().addEntity(rigidBody, id);
+            id++;
+            if(id >= DataStore.getInstance().calcNumberCores()){
+            	id = 0;
+            }
+           
         }        
 	}
 	
-	private void update(long delta) {		
+	private void update(float delta) {	
+		System.out.println("----------------update----------------");
 		Display.update();
 		Display.sync(120);
 		//createNewShape = true;
@@ -238,8 +272,9 @@ public class OpenGLCamera implements Runnable {
 	private void enterGameLoop() {
 		lastFPS = getTime();
 		while (!Display.isCloseRequested()) {
-			long delta = getDelta();
+			float delta = getDelta();
 			if(delta <= 0){delta = 1;}
+			DataStore.getInstance().setDelta(delta);
 			render();
 			input(delta);
 			logic(delta);
@@ -255,11 +290,11 @@ public class OpenGLCamera implements Runnable {
 	 * 
 	 * @return milliseconds passed since last frame
 	 */
-	public long getDelta() {
-		long time = getTime();
-		long delta = (long) (time - lastFrame);
+	public float getDelta() {
+		float time = getTime();
+		float delta = (float) (time - lastFrame);
 		lastFrame = time;
-		System.out.println(" Delta: " + delta);
+		//System.out.println(" Delta: " + delta);
 		return delta;
 	}
 
@@ -334,7 +369,8 @@ public class OpenGLCamera implements Runnable {
 		}
 	}
 
-	public static void main(String[] args) {		
+	public static void main(String[] args) {	
+		System.setProperty("org.lwjgl.librarypath", new File("natives/windows").getAbsolutePath());
 		(new Thread(new OpenGLCamera())).start();
 	}
 

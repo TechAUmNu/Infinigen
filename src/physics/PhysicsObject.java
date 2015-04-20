@@ -27,6 +27,7 @@ public class PhysicsObject {
 		FloatBuffer transformationBuffer = BufferUtils.createFloatBuffer(16);
 
 		// Get the transformation matrix from JBullet.
+	
 		MotionState motionState = body.getMotionState();
 		motionState.getWorldTransform(transform);
 		transform.getOpenGLMatrix(matrix);

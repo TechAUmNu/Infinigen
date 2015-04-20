@@ -3,7 +3,7 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/brownies-collections-0.9.8.jar"/>
-	<classpathentry kind="lib" path="lib/jbullet.jar"/>
+	<classpathentry kind="lib" path="lib/jbullet.jar" sourcepath="C:/libraries/jbullet-20101010/src"/>
 	<classpathentry kind="lib" path="lib/lwjgl/jar/jinput.jar"/>
 	<classpathentry kind="lib" path="lib/lwjgl/jar/lwjgl_util.jar">
 		<attributes>
@@ -20,5 +20,6 @@
 	<classpathentry kind="lib" path="lib/xz-java-1.5/build/jar/xz.jar"/>
 	<classpathentry kind="lib" path="lib/vecmath.jar"/>
 	<classpathentry kind="lib" path="lib/slick-util.jar"/>
+	<classpathentry kind="lib" path="lib/lwjgl/jar/lwjgl-debug.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

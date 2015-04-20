@@ -4,7 +4,7 @@ import graphics.ChunkBatch;
 
 import org.magicwerk.brownies.collections.GapList;
 
-import threading.InterthreadHolder;
+import threading.DataStore;
 import world.Block.BlockType;
 
 /**

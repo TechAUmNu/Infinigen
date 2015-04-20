@@ -49,16 +49,11 @@ private static EntityManager instance;
 	public void drawAll() {
 		for(Entity e : entities){
 			e.draw();
-			
-			
-			
-			
-			
 		}
 		
 	}
 
-	public void process(long delta) {
+	public void process(float delta) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -68,13 +63,13 @@ private static EntityManager instance;
 		
 	}
 
-	public void addEntity(RigidBody rigidBody) {
+	public void addEntity(RigidBody rigidBody, int id) {
 		Entity e = new Entity();
 		PhysicsObject p = new PhysicsObject();
 		p.body = rigidBody;
 		e.bodies.add(p);
 		entities.add(e);
-		PhysicsManager.getInstance().addRigidBody(rigidBody);		
+		PhysicsManager.getInstance().addPhysicsObject(rigidBody, id);		
 	}
 	public int numEntities(){
 		return entities.size();
