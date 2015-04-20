@@ -10,12 +10,13 @@ public class Entity {
 	GapList<Entity> entites;
 	GapList<Constraint> constraints;
 	GapList<PhysicsObject> bodies;
-
+	int displayList;
 	
-	public Entity(){
+	public Entity(int displayList){
 		entites = new GapList<Entity>();
 		bodies = new GapList<PhysicsObject>();
 		constraints = new GapList<Constraint>();
+		this.displayList = displayList;
 	}
 	
 	public void addConstraint(Constraint c) {
@@ -43,38 +44,7 @@ public class Entity {
 			glPushMatrix();
 			p.translateToPosition();
 			
-			glBegin(GL_QUADS);
-				
-				glVertex3f(1.0f, 1.0f, -1.0f);
-				glVertex3f(-1.0f, 1.0f, -1.0f);
-				glVertex3f(-1.0f, 1.0f, 1.0f);
-				glVertex3f(1.0f, 1.0f, 1.0f);
-				
-				glVertex3f(1.0f, -1.0f, 1.0f);
-				glVertex3f(-1.0f, -1.0f, 1.0f);
-				glVertex3f(-1.0f, -1.0f, -1.0f);
-				glVertex3f(1.0f, -1.0f, -1.0f);
-				
-				glVertex3f(1.0f, 1.0f, 1.0f);
-				glVertex3f(-1.0f, 1.0f, 1.0f);
-				glVertex3f(-1.0f, -1.0f, 1.0f);
-				glVertex3f(1.0f, -1.0f, 1.0f);
-				
-				glVertex3f(1.0f, -1.0f, -1.0f);
-				glVertex3f(-1.0f, -1.0f, -1.0f);
-				glVertex3f(-1.0f, 1.0f, -1.0f);
-				glVertex3f(1.0f, 1.0f, -1.0f);
-				
-				glVertex3f(-1.0f, 1.0f, 1.0f);
-				glVertex3f(-1.0f, 1.0f, -1.0f);
-				glVertex3f(-1.0f, -1.0f, -1.0f);
-				glVertex3f(-1.0f, -1.0f, 1.0f);
-				
-				glVertex3f(1.0f, 1.0f, -1.0f);
-				glVertex3f(1.0f, 1.0f, 1.0f);
-				glVertex3f(1.0f, -1.0f, 1.0f);
-				glVertex3f(1.0f, -1.0f, -1.0f);
-			glEnd();
+			glCallList(displayList);
 			
 			glPopMatrix();
 

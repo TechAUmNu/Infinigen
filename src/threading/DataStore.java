@@ -71,7 +71,7 @@ public class DataStore {
 	}
 	
 	public int calcNumberCores(){
-		return cores = 4;
+		return cores = Runtime.getRuntime().availableProcessors();
 	}
 
 	// ///////////////////////////////////////////////////////////////

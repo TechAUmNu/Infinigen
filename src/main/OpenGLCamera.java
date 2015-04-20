@@ -356,7 +356,7 @@ public class OpenGLCamera implements Runnable {
 	}
 
 	private void setUpChunks() {		
-		 ChunkManager.getInstance().genTest(30, 1, 30, BlockType.BlockType_Dirt);
+		 ChunkManager.getInstance().genTest(5, 1, 5, BlockType.BlockType_Dirt);
 	}
 
 	private void setUpHUD() {
