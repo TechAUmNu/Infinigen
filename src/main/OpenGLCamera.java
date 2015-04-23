@@ -1,5 +1,7 @@
 package main;
 
+
+import com.catnapgames.winfolders.WinFoldersJava;
 import static org.lwjgl.opengl.GL11.GL_BACK;
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.GL_COLOR_MATERIAL;
@@ -68,6 +70,7 @@ import com.bulletphysics.dynamics.RigidBody;
 import com.bulletphysics.dynamics.RigidBodyConstructionInfo;
 import com.bulletphysics.linearmath.DefaultMotionState;
 import com.bulletphysics.linearmath.Transform;
+import com.catnapgames.winfolders.WinFoldersJava;
 
 public class OpenGLCamera implements Runnable {
 	private static final String WINDOW_TITLE = "Infinigen Tech Demo";
@@ -87,6 +90,7 @@ public class OpenGLCamera implements Runnable {
 	private double lastFrame;
 	private boolean mouse0, mouse1;
 	private long downStart;
+
 	
 	private Texture textureHandle;
 	private boolean createNewShape;

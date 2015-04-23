@@ -21,5 +21,6 @@
 	<classpathentry kind="lib" path="lib/vecmath.jar"/>
 	<classpathentry kind="lib" path="lib/slick-util.jar"/>
 	<classpathentry kind="lib" path="lib/lwjgl/jar/lwjgl-debug.jar"/>
+	<classpathentry kind="lib" path="lib/WinFoldersJava/WinFoldersJava-1.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
