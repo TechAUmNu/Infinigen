@@ -18,8 +18,7 @@ import de.matthiasmann.twl.utils.PNGDecoder;
 import entities.EntityManager;
 
 public class HUDBuilder {
-	private static int fontTexture;
-	private GapList<ButtonText> buttons = new GapList<ButtonText>();
+	private static int fontTexture;	
 	
 	public HUDBuilder() {
 
@@ -66,102 +65,8 @@ public class HUDBuilder {
 
 	void drawText(String s, float x, float y, float size){
 		renderString(s, fontTexture, 16, x, y, size, size, 1);
-	}
+	}	
 	
-	void DrawButton(float start_angle, float arc_angle, int num_segments, String text, boolean left) {
-		//Draws a button with the specified text
-		float theta = arc_angle / (float) (num_segments - 1);// theta is now
-																// calculated
-																// from the arc
-																// angle
-																// instead, the
-																// - 1 bit comes
-																// from the fact
-																// that the arc
-																// is open
-
-		float tangetial_factor = (float) Math.tan(theta);
-
-		float radial_factor = (float) Math.cos(theta);
-
-		float x = (float) ((float) (Display.getHeight() / 1.2) * Math
-				.cos(start_angle));// we now start at the start angle
-		float y = (float) ((float) (Display.getHeight() / 1.2) * Math
-				.sin(start_angle));
-
-		float x2 = (float) ((float) (Display.getHeight() / 1.3) * Math
-				.cos(start_angle));// we now start at the start angle
-		float y2 = (float) ((float) (Display.getHeight() / 1.3) * Math
-				.sin(start_angle));
-
-		float line1x = 0, line1y = 0, line1x2 = 0, line1y2 = 0;
-		float line2x = 0, line2y = 0, line2x2 = 0, line2y2 = 0;
-
-		glBegin(GL_LINE_STRIP);// since the arc is not a closed curve, this is a
-								// strip now
-		for (int i = 0; i < num_segments; i++) {
-
-			glVertex2f(x + Display.getWidth() / 2, y + Display.getHeight() / 2);
-			if (i == 0) {
-				line1x = x + Display.getWidth() / 2;
-				line1y = y + Display.getHeight() / 2;
-			}
-			if (i == num_segments - 1) {
-				line2x = x + Display.getWidth() / 2;
-				line2y = y + Display.getHeight() / 2;
-			}
-			float tx = -y;
-			float ty = x;
-
-			x += tx * tangetial_factor;
-			y += ty * tangetial_factor;
-
-			x *= radial_factor;
-			y *= radial_factor;
-		}
-		glEnd();
-		glBegin(GL_LINE_STRIP);// since the arc is not a closed curve, this is a
-								// strip now
-		for (int i = 0; i < num_segments; i++) {
-
-			glVertex2f(x2 + Display.getWidth() / 2, y2 + Display.getHeight()
-					/ 2);
-			if (i == 0) {
-				line1x2 = x2 + Display.getWidth() / 2;
-				line1y2 = y2 + Display.getHeight() / 2;
-			}
-			if (i == num_segments - 1) {
-				line2x2 = x2 + Display.getWidth() / 2;
-				line2y2 = y2 + Display.getHeight() / 2;
-			}
-			float tx = -y2;
-			float ty = x2;
-
-			x2 += tx * tangetial_factor;
-			y2 += ty * tangetial_factor;
-
-			x2 *= radial_factor;
-			y2 *= radial_factor;
-		}
-		glEnd();
-		glBegin(GL_LINE_STRIP);
-
-		glVertex2f(line1x, line1y);
-		glVertex2f(line1x2, line1y2);
-		glEnd();
-		glBegin(GL_LINE_STRIP);
-		glVertex2f(line2x, line2y);
-		glVertex2f(line2x2, line2y2);
-		glEnd();
-		
-		//System.out.println(line2x);
-		if(left){
-			buttons.add(new ButtonText(text, convertResolutionX(line2x), convertResolutionY(line2y)));
-		}else{
-			buttons.add(new ButtonText(text, convertResolutionX(line1x2) , convertResolutionY(line1y2)+ 0.03f));
-		}
-	}
-
 	
 	protected static void make2D() {
 		// Remove the Z axis
