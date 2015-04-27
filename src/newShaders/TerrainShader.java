@@ -7,10 +7,10 @@ import newUtility.Maths;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
-public class StaticShader extends ShaderProgram {
+public class TerrainShader extends ShaderProgram{
 
-	private static final String VERTEX_FILE = "src/newShaders/vertexShader.vs";
-	private static final String FRAGMENT_FILE = "src/newShaders/fragmentShader.fs";
+	private static final String VERTEX_FILE = "src/newShaders/terrainvertexShader.vs";
+	private static final String FRAGMENT_FILE = "src/newShaders/terrainfragmentShader.fs";
 	
 	private int location_transformationMatrix;
 	private int location_projectionMatrix;
@@ -19,10 +19,9 @@ public class StaticShader extends ShaderProgram {
 	private int location_lightColour;
 	private int location_shineDamper;
 	private int location_reflectivity;
-	private int location_useFakeLighting;
 	private int location_skyColour;
 	
-	public StaticShader() {
+	public TerrainShader() {
 		super(VERTEX_FILE, FRAGMENT_FILE);
 	}
 
@@ -42,16 +41,11 @@ public class StaticShader extends ShaderProgram {
 		location_lightColour = super.getUniformLocation("lightColour");
 		location_shineDamper = super.getUniformLocation("shineDamper");
 		location_reflectivity = super.getUniformLocation("reflectivity");
-		location_useFakeLighting = super.getUniformLocation("useFakeLighting");
 		location_skyColour = super.getUniformLocation("skyColour");
 	}
 	
 	public void loadSkyColour(float r, float g, float b){
 		super.loadVector(location_skyColour, new Vector3f(r,g,b));
-	}
-	
-	public void loadFakeLighting(boolean useFake){
-		super.loadBoolean(location_useFakeLighting, useFake);
 	}
 	
 	public void loadShineVariables(float damper, float reflectivity){
@@ -77,4 +71,5 @@ public class StaticShader extends ShaderProgram {
 		super.loadMatrix(location_viewMatrix, viewMatrix);
 	}
 
+	
 }
