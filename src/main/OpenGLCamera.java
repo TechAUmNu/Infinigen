@@ -2,11 +2,13 @@ package main;
 
 
 
+
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.*;
 import static org.lwjgl.opengl.GL14.*;
 import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL30.*;
+
 
 import entities.EntityManager;
 import graphics.ChunkBatch;
@@ -46,6 +48,7 @@ import com.bulletphysics.dynamics.RigidBodyConstructionInfo;
 import com.bulletphysics.linearmath.DefaultMotionState;
 import com.bulletphysics.linearmath.Transform;
 
+
 public class OpenGLCamera implements Runnable {
 	private static final String WINDOW_TITLE = "Infinigen Tech Demo";
 	private static final int[] WINDOW_DIMENSIONS = { 1920, 1080 };
@@ -64,6 +67,7 @@ public class OpenGLCamera implements Runnable {
 	private double lastFrame;
 	private boolean mouse0, mouse1;
 	private long downStart;
+
 	
 	private Texture textureHandle;
 	private boolean createNewShape;
