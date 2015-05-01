@@ -128,7 +128,7 @@ public class MainGameLoop {
 		
 		List<GuiTexture> guis = new ArrayList<GuiTexture>();
 		GuiTexture gui = new GuiTexture(loader.loadTexture("socuwan"), new Vector2f(0.5f, 0.5f), new Vector2f(0.25f, 0.25f));
-		guis.add(gui);
+		//guis.add(gui);
 		
 		GuiRenderer guiRenderer = new GuiRenderer(loader);
 		
@@ -140,7 +140,7 @@ public class MainGameLoop {
 			camera.move(terrain);
 			player.move(terrain);
 			picker.update();
-			System.out.println(picker.getCurrentRay());
+			//System.out.println(picker.getCurrentRay());
 			renderer.processEntity(player);
 			
 			

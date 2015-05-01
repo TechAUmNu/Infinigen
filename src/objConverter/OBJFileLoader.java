@@ -11,6 +11,7 @@ import java.util.List;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
+import newModels.PhysicsModel;
 import newModels.RawModel;
 import newRendering.Loader;
 
@@ -79,7 +80,7 @@ public class OBJFileLoader {
         float furthest = convertDataToArrays(vertices, textures, normals, verticesArray,
                 texturesArray, normalsArray);
         int[] indicesArray = convertIndicesListToArray(indices);
-        ModelData data = new ModelData(verticesArray, texturesArray, normalsArray, indicesArray,
+        ModelData data = new ModelData(verticesArray, vertices, texturesArray, normalsArray, indicesArray,
                 furthest);
         return data;
     }
@@ -87,6 +88,11 @@ public class OBJFileLoader {
     public static RawModel loadOBJtoVAO(String objFile, Loader loader){
     	ModelData model = loadOBJ(objFile);
     	return loader.loadToVAO(model.getVertices(), model.getTextureCoords(), model.getNormals(), model.getIndices());
+    }
+    
+    public static PhysicsModel loadOBJtoVAOWithGeneratedPhysics(String objFile, Loader loader){
+    	ModelData model = loadOBJ(objFile);
+    	return loader.loadToVAOWithGeneratedPhysics(model.getVertices(), model.getVerticesList(), model.getTextureCoords(), model.getNormals(), model.getIndices());
     }
  
     private static void processVertex(String[] vertex, List<Vertex> vertices, List<Integer> indices) {

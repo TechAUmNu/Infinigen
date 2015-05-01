@@ -21,8 +21,8 @@ import newTerrains.Terrain;
 public class MasterRenderer {
 
 	private static final float FOV = 90;
-	private static final float NEAR_PLANE = 0.1f;
-	private static final float FAR_PLANE = 10000f;
+	private static final float NEAR_PLANE = 10f;
+	private static final float FAR_PLANE = 1000000f;
 	
 	private static final float RED = 0.5f;
 	private static final float GREEN = 0.5f;
@@ -116,14 +116,18 @@ public class MasterRenderer {
 		float y_scale = (float) ((1f / Math.tan(Math.toRadians(FOV/2f))) * aspectRatio);
 		float x_scale = y_scale / aspectRatio;
 		float frustum_length = FAR_PLANE - NEAR_PLANE;
+		System.out.println(FAR_PLANE - NEAR_PLANE);
 		
 		projectionMatrix = new Matrix4f();
 		projectionMatrix.m00 = x_scale;
 		projectionMatrix.m11 = y_scale;
 		projectionMatrix.m22 = -((FAR_PLANE + NEAR_PLANE) / frustum_length);
+		System.out.println(-((FAR_PLANE + NEAR_PLANE) / frustum_length));
 		projectionMatrix.m23 = -1;
 		projectionMatrix.m32 = -((2 * NEAR_PLANE * FAR_PLANE) / frustum_length);
+		System.out.println(-((2 * NEAR_PLANE * FAR_PLANE) / frustum_length));
 		projectionMatrix.m33 = 0;
+		
 		
 	}
 }

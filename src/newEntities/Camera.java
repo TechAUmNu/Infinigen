@@ -1,9 +1,12 @@
 package newEntities;
 
+import static org.lwjgl.opengl.ARBDepthClamp.GL_DEPTH_CLAMP;
+import static org.lwjgl.opengl.GL11.glEnable;
 import newTerrains.Terrain;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.GLContext;
 import org.lwjgl.util.vector.Vector3f;
 
 import com.sun.corba.se.impl.oa.poa.ActiveObjectMap.Key;
@@ -22,6 +25,9 @@ public class Camera {
 	
 	public Camera(Player player){
 		this.player= player;
+		if (GLContext.getCapabilities().GL_ARB_depth_clamp) {
+			glEnable(GL_DEPTH_CLAMP);
+		}
 	}
 	
 	public void move(Terrain terrain){

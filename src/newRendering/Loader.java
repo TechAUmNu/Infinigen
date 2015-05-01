@@ -9,8 +9,12 @@ import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.vecmath.Vector3f;
+
+import newModels.PhysicsModel;
 import newModels.RawModel;
 import newTextures.TextureData;
+import objConverter.Vertex;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
@@ -21,6 +25,8 @@ import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
+
+import com.bulletphysics.collision.shapes.ConvexHullShape;
 
 import de.matthiasmann.twl.utils.PNGDecoder;
 import de.matthiasmann.twl.utils.PNGDecoder.Format;
@@ -41,6 +47,25 @@ public class Loader {
 		storeDataInAttributeList(2, 3, normals);
 		unbindVAO();
 		return new RawModel(vaoID, indices.length);
+	}
+	
+	public PhysicsModel loadToVAOWithGeneratedPhysics(float[] positions, List<Vertex> vertices, float[] textureCoords, float[] normals, int[] indices){
+		int vaoID = createVAO();
+		bindIndicesBuffer(indices);
+		storeDataInAttributeList(0, 3, positions);
+		storeDataInAttributeList(1, 2, textureCoords);
+		storeDataInAttributeList(2, 3, normals);
+		unbindVAO();
+		//Generate a new physics object to represent the model;
+		ConvexHullShape collisionShape = new ConvexHullShape(null);
+		for(Vertex v : vertices){
+			Vector3f mathVector = new Vector3f();			
+			mathVector.x = v.getPosition().getX();
+			mathVector.y = v.getPosition().getY();
+			mathVector.z = v.getPosition().getZ();
+			collisionShape.addPoint(mathVector);
+		}
+		return new PhysicsModel(vaoID, indices.length, collisionShape);
 	}
 	
 	
