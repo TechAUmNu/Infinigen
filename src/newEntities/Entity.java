@@ -1,14 +1,17 @@
 package newEntities;
 
+import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
 import newModels.TexturedModel;
+import newUtility.Maths;
 
 public class Entity {
-	private TexturedModel model;
-	private Vector3f position;
-	private float rotX, rotY, rotZ;
-	private float scale;
+	protected TexturedModel model;
+	protected Vector3f position;
+	protected float rotX, rotY, rotZ;
+	protected float scale;
+	protected Matrix4f transformationMatrix;
 
 	private int textureIndex = 0;
 	
@@ -103,6 +106,18 @@ public class Entity {
 
 	public void setScale(float scale) {
 		this.scale = scale;
+	}
+
+	public Matrix4f getTransformationMatrix() {
+		return transformationMatrix;
+	}
+
+	public void setTransformationMatrix(Matrix4f transformationMatrix) {
+		this.transformationMatrix = transformationMatrix;
+	}
+	
+	public Matrix4f updateTransformationMatrix(){
+		return Maths.createTransformationMatrix(getPosition(), getRotX(), getRotY(), getRotZ(), getScale());
 	}
 
 }

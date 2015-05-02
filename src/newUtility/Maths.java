@@ -45,4 +45,23 @@ public class Maths {
 		Matrix4f.translate(negativeCameraPos, viewMatrix, viewMatrix);
 		return viewMatrix;		
 	}
+
+	public static org.lwjgl.util.vector.Matrix4f convertMatrix(
+			javax.vecmath.Matrix4f matrix) {
+		
+		Matrix4f outMatrix = new Matrix4f();
+		outMatrix.m00 = matrix.m00;
+		outMatrix.m01 = matrix.m01;
+		outMatrix.m02 = matrix.m02;
+		outMatrix.m03 = matrix.m03;
+		outMatrix.m10 = matrix.m10;
+		outMatrix.m11 = matrix.m11;
+		outMatrix.m12 = matrix.m12;
+		outMatrix.m13 = matrix.m13;
+		outMatrix.m20 = matrix.m20;
+		outMatrix.m21 = matrix.m21;
+		outMatrix.m22 = matrix.m22;		
+		outMatrix.m23 = matrix.m23;
+		return outMatrix;
+	}
 }
