@@ -1,5 +1,8 @@
 package newModels;
 
+import javax.vecmath.Vector3f;
+
+import com.bulletphysics.collision.shapes.CollisionShape;
 import com.bulletphysics.collision.shapes.ConvexHullShape;
 import com.bulletphysics.dynamics.RigidBody;
 import com.bulletphysics.linearmath.MotionState;
@@ -9,16 +12,19 @@ import newTextures.ModelTexture;
 
 public class TexturedPhysicsModel extends TexturedModel {
 
-	private ConvexHullShape collisionShape;
+	private CollisionShape collisionShape;
+	
 	
 	public TexturedPhysicsModel(PhysicsModel model, ModelTexture texture) {
 		super(model, texture);
 		this.collisionShape = model.getCollisionShape();
+	
 	}
 
-	public ConvexHullShape getCollisionShape() {
+	public CollisionShape getCollisionShape() {
 		return collisionShape;
 	}
+	
 	
 	
 	

@@ -1,13 +1,15 @@
 package newEntities;
 
 import newModels.TexturedModel;
+import newModels.TexturedPhysicsModel;
+import newPhysics.PhysicsProcessor;
 import newRendering.DisplayManager;
 import newTerrains.Terrain;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.util.vector.Vector3f;
 
-public class Player extends Entity{
+public class Player extends PhysicsEntity{
 
 	private static final float RUN_SPEED = 20;
 	private static final float TURN_SPEED = 160;
@@ -21,9 +23,9 @@ public class Player extends Entity{
 	
 	private boolean isInAir = false;
 	
-	public Player(TexturedModel model, Vector3f position, float rotX,
-			float rotY, float rotZ, float scale) {
-		super(model, position, rotX, rotY, rotZ, scale);		
+	public Player(TexturedPhysicsModel model, Vector3f position, float rotX,
+			float rotY, float rotZ, float scale, PhysicsProcessor processor) {
+		super(model, position, rotX, rotY, rotZ, scale, scale, processor);		
 	}
 
 	public void move(Terrain terrain){

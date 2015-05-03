@@ -4,6 +4,9 @@ import javax.vecmath.Matrix4f;
 import javax.vecmath.Quat4f;
 import javax.vecmath.Vector3f;
 
+import newEntities.PhysicsEntity;
+import newRendering.DisplayManager;
+
 import com.bulletphysics.collision.broadphase.BroadphaseInterface;
 import com.bulletphysics.collision.broadphase.DbvtBroadphase;
 import com.bulletphysics.collision.dispatch.CollisionConfiguration;
@@ -24,13 +27,24 @@ public class PhysicsProcessor {
 	
 	private DiscreteDynamicsWorld dynamicsWorld;
 	
-	public PhysicsProcessor (){
-		
+	public PhysicsProcessor (){		
 		setUpPhysics();
 	}
 	
 	
-	public void setUpPhysics() {
+	public void addPhysicsEntity(PhysicsEntity entity){
+		dynamicsWorld.addRigidBody(entity.getBody());
+	}
+	
+	public void removePhysicsEntity(PhysicsEntity entity){
+		dynamicsWorld.removeRigidBody(entity.getBody());
+	}
+	
+	public void simulate(){
+		dynamicsWorld.stepSimulation(DisplayManager.getFrameTimeSeconds());
+	}
+	
+	private void setUpPhysics() {
 		/**
 		 * The object that will roughly find out whether bodies are colliding.
 		 */
@@ -60,7 +74,7 @@ public class PhysicsProcessor {
 		// from partially going through the floor. It is also possible to think
 		// of this as the plane being lifted 0.25m.
 		CollisionShape groundShape = new StaticPlaneShape(
-				new Vector3f(0, 1, 0), 31f);
+				new Vector3f(0, 1, 0), 0f);
 
 		// Initialise 'groundMotionState' to a motion state that simply assigns
 		// the origin [0, 0, 0] as the origin of
@@ -76,14 +90,15 @@ public class PhysicsProcessor {
 		// Set the restitution, also known as the bounciness or spring, to 0.25.
 		// The restitution may range from 0.0
 		// not bouncy) to 1.0 (extremely bouncy).
-		groundBodyConstructionInfo.restitution = 0.6f;
+		groundBodyConstructionInfo.restitution = 0.0f;
 		// Initialise 'groundRigidBody', the final variable representing the
 		// ground, to a rigid body with the previously
 		// assigned construction information.
 		RigidBody groundRigidBody = new RigidBody(groundBodyConstructionInfo);
 		// Add the ground to the JBullet world.
-		dynamicsWorld.addRigidBody(groundRigidBody);
-		
+		dynamicsWorld.addRigidBody(groundRigidBody);	
 
 	}
+	
+	
 }

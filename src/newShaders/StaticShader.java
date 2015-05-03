@@ -88,6 +88,10 @@ public class StaticShader extends ShaderProgram {
 		super.loadMatrix(location_transformationMatrix, matrix);
 	}
 	
+	public void loadTransformationMatrix(float[] matrix){
+		super.loadMatrix(location_transformationMatrix, matrix);
+	}
+	
 	public void loadLights(List<Light> lights){
 		for(int i=0; i < MAX_LIGHTS; i++){
 			if(i < lights.size()){

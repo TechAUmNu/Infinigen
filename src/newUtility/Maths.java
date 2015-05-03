@@ -16,13 +16,22 @@ public class Maths {
 		return l1 * p1.y + l2 * p2.y + l3 * p3.y;
 	}
 
-	public static Matrix4f createTransformationMatrix(Vector3f translation, float rx, float ry, float rz, float scale){
+	public static Matrix4f createTransformationMatrix(Vector3f translation, float rx, float ry, float rz, float rw, float scale, boolean inRadians){
 		Matrix4f matrix = new Matrix4f();
 		matrix.setIdentity();
 		Matrix4f.translate(translation, matrix, matrix);
-		Matrix4f.rotate((float) Math.toRadians(rx), new Vector3f(1,0,0), matrix, matrix);
-		Matrix4f.rotate((float) Math.toRadians(ry), new Vector3f(0,1,0), matrix, matrix);
-		Matrix4f.rotate((float) Math.toRadians(rz), new Vector3f(0,0,1), matrix, matrix);
+		
+		if(inRadians){
+			Matrix4f.rotate((float)(rx*rw), new Vector3f(1,0,0), matrix, matrix);
+			Matrix4f.rotate((float) (ry*rw), new Vector3f(0,1,0), matrix, matrix);
+			Matrix4f.rotate((float) (rz*rw), new Vector3f(0,0,1), matrix, matrix);
+			
+		}else{
+			Matrix4f.rotate((float) Math.toRadians(rx*rw), new Vector3f(1,0,0), matrix, matrix);
+			Matrix4f.rotate((float) Math.toRadians(ry*rw), new Vector3f(0,1,0), matrix, matrix);
+			Matrix4f.rotate((float) Math.toRadians(rz*rw), new Vector3f(0,0,1), matrix, matrix);
+		}
+		
 		Matrix4f.scale(new Vector3f(scale,scale,scale), matrix, matrix);
 		return matrix;
 	}

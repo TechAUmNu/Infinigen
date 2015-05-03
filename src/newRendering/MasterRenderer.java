@@ -12,7 +12,9 @@ import org.lwjgl.util.vector.Matrix4f;
 import newEntities.Camera;
 import newEntities.Entity;
 import newEntities.Light;
+import newEntities.PhysicsEntity;
 import newModels.TexturedModel;
+import newModels.TexturedPhysicsModel;
 import newShaders.StaticShader;
 import newShaders.TerrainShader;
 import newSkybox.SkyboxRenderer;
@@ -39,7 +41,7 @@ public class MasterRenderer {
 	private TerrainShader terrainShader = new TerrainShader();
 	
 	
-	private Map<TexturedModel, List<Entity>> entities = new HashMap<TexturedModel, List<Entity>>();
+	private Map<TexturedPhysicsModel, List<PhysicsEntity>> entities = new HashMap<TexturedPhysicsModel, List<PhysicsEntity>>();
 	private List<Terrain> terrains = new ArrayList<Terrain>();
 	
 	private SkyboxRenderer skyboxRenderer;
@@ -84,13 +86,13 @@ public class MasterRenderer {
 		terrains.add(terrain);
 	}
 	
-	public void processEntity(Entity entity){
-		TexturedModel entityModel = entity.getModel();
-		List<Entity> batch = entities.get(entityModel);
+	public void processEntity(PhysicsEntity entity){
+		TexturedPhysicsModel entityModel = entity.getModel();
+		List<PhysicsEntity> batch = entities.get(entityModel);
 		if(batch!=null){
 			batch.add(entity);
 		}else{
-			List<Entity> newBatch = new ArrayList<Entity>();
+			List<PhysicsEntity> newBatch = new ArrayList<PhysicsEntity>();
 			newBatch.add(entity);
 			entities.put(entityModel, newBatch);
 		}
@@ -116,16 +118,16 @@ public class MasterRenderer {
 		float y_scale = (float) ((1f / Math.tan(Math.toRadians(FOV/2f))) * aspectRatio);
 		float x_scale = y_scale / aspectRatio;
 		float frustum_length = FAR_PLANE - NEAR_PLANE;
-		System.out.println(FAR_PLANE - NEAR_PLANE);
+		//System.out.println(FAR_PLANE - NEAR_PLANE);
 		
 		projectionMatrix = new Matrix4f();
 		projectionMatrix.m00 = x_scale;
 		projectionMatrix.m11 = y_scale;
 		projectionMatrix.m22 = -((FAR_PLANE + NEAR_PLANE) / frustum_length);
-		System.out.println(-((FAR_PLANE + NEAR_PLANE) / frustum_length));
+		//System.out.println(-((FAR_PLANE + NEAR_PLANE) / frustum_length));
 		projectionMatrix.m23 = -1;
 		projectionMatrix.m32 = -((2 * NEAR_PLANE * FAR_PLANE) / frustum_length);
-		System.out.println(-((2 * NEAR_PLANE * FAR_PLANE) / frustum_length));
+		//System.out.println(-((2 * NEAR_PLANE * FAR_PLANE) / frustum_length));
 		projectionMatrix.m33 = 0;
 		
 		

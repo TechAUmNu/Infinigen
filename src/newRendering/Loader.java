@@ -26,7 +26,11 @@ import org.lwjgl.opengl.GL30;
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
 
+import com.bulletphysics.collision.shapes.BoxShape;
+import com.bulletphysics.collision.shapes.CollisionShape;
 import com.bulletphysics.collision.shapes.ConvexHullShape;
+import com.bulletphysics.collision.shapes.SphereShape;
+import com.bulletphysics.util.ObjectArrayList;
 
 import de.matthiasmann.twl.utils.PNGDecoder;
 import de.matthiasmann.twl.utils.PNGDecoder.Format;
@@ -57,14 +61,21 @@ public class Loader {
 		storeDataInAttributeList(2, 3, normals);
 		unbindVAO();
 		//Generate a new physics object to represent the model;
-		ConvexHullShape collisionShape = new ConvexHullShape(null);
+		ConvexHullShape collisionShape = new ConvexHullShape(new ObjectArrayList<Vector3f>());
 		for(Vertex v : vertices){
+			//System.out.println("_______________________");
+			//System.out.println(v.getPosition().getX());
+			//System.out.println(v.getPosition().getY());
+			//System.out.println(v.getPosition().getZ());
 			Vector3f mathVector = new Vector3f();			
 			mathVector.x = v.getPosition().getX();
 			mathVector.y = v.getPosition().getY();
 			mathVector.z = v.getPosition().getZ();
 			collisionShape.addPoint(mathVector);
 		}
+		
+		//CollisionShape cs = new BoxShape( new Vector3f(5,5,5));
+		//cs.calculateLocalInertia(1, new Vector3f(0.5f,0.5f,0.5f));
 		return new PhysicsModel(vaoID, indices.length, collisionShape);
 	}
 	

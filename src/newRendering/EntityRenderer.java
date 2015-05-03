@@ -4,8 +4,10 @@ import java.util.List;
 import java.util.Map;
 
 import newEntities.Entity;
+import newEntities.PhysicsEntity;
 import newModels.RawModel;
 import newModels.TexturedModel;
+import newModels.TexturedPhysicsModel;
 import newShaders.StaticShader;
 import newTextures.ModelTexture;
 import newUtility.Maths;
@@ -16,6 +18,7 @@ import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Matrix4f;
+import org.lwjgl.util.vector.Vector3f;
 
 public class EntityRenderer {
 	
@@ -35,11 +38,11 @@ public class EntityRenderer {
 	
 	
 	
-	public void render(Map<TexturedModel, List<Entity>> entities){
-		for(TexturedModel model : entities.keySet()){
+	public void render(Map<TexturedPhysicsModel, List<PhysicsEntity>> entities){
+		for(TexturedPhysicsModel model : entities.keySet()){
 			prepareTexturedModel(model);
-			List<Entity> batch = entities.get(model);
-			for(Entity entity : batch){
+			List<PhysicsEntity> batch = entities.get(model);
+			for(PhysicsEntity entity : batch){
 				prepareInstance(entity);
 				GL11.glDrawElements(GL11.GL_TRIANGLES, model.getRawModel().getVertexCount(), GL11.GL_UNSIGNED_INT, 0);
 			}
@@ -72,9 +75,14 @@ public class EntityRenderer {
 		GL30.glBindVertexArray(0);
 	}
 	
-	private void prepareInstance(Entity entity){
-		Matrix4f transformationMatrix = entity.updateTransformationMatrix();
-		shader.loadTransformationMatrix(transformationMatrix);
+	private void prepareInstance(PhysicsEntity entity){		
+		if(entity.isPhysicsBody()){
+			float[] transformationMatrix = entity.updateTransformationMatrixFloat();
+			shader.loadTransformationMatrix(transformationMatrix);
+		}else{
+			Matrix4f transformationMatrix = entity.updateTransformationMatrix();
+			shader.loadTransformationMatrix(transformationMatrix);
+		}
 		shader.loadOffset(entity.getTextureXOffset(), entity.getTextureYOffset());
 	}
 	

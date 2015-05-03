@@ -44,6 +44,7 @@ public class DisplayManager {
 		Display.update();
 		long currentFrameTime = getCurrentTime();
 		delta = (currentFrameTime - lastFrameTime) / 1000f;
+		//System.out.println(delta);
 		lastFrameTime = currentFrameTime;
 		calculateFPS();
 	}
@@ -56,7 +57,7 @@ public class DisplayManager {
 		
 			if (getCurrentTime() - lastFPS > 1000f) {
 
-				// System.out.println("FPS: " + fps);
+				 System.out.println("FPS: " + fps);
 				fpsCounter = fps;
 				fps = 0;
 				lastFPS += 1000f;

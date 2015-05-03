@@ -15,11 +15,15 @@ import org.lwjgl.util.vector.Vector3f;
 import newEntities.Camera;
 import newEntities.Entity;
 import newEntities.Light;
+import newEntities.PhysicsEntity;
 import newEntities.Player;
 import newGui.GuiRenderer;
 import newGui.GuiTexture;
+import newModels.PhysicsModel;
 import newModels.RawModel;
 import newModels.TexturedModel;
+import newModels.TexturedPhysicsModel;
+import newPhysics.PhysicsProcessor;
 import newRendering.DisplayManager;
 import newRendering.Loader;
 import newRendering.MasterRenderer;
@@ -37,7 +41,8 @@ public class MainGameLoop {
 	public static void main(String[] args) {
 		System.setProperty("org.lwjgl.librarypath", new File("natives/windows").getAbsolutePath());
 		DisplayManager.createDisplay();
-		Loader loader = new Loader();		
+		Loader loader = new Loader();	
+		PhysicsProcessor processor = new PhysicsProcessor();
 		
 		TerrainTexture backgroundTexture = new TerrainTexture(loader.loadTexture("grassy"));
 		TerrainTexture rTexture = new TerrainTexture(loader.loadTexture("dirt"));
@@ -49,12 +54,13 @@ public class MainGameLoop {
 		TerrainTexture blendMap = new TerrainTexture(loader.loadTexture("blendMap"));
 		
 		RawModel model = OBJFileLoader.loadOBJtoVAO("lamp", loader);
+		PhysicsModel pmodel = OBJFileLoader.loadOBJtoVAOWithGeneratedPhysics("box", loader);
 		
 		TexturedModel lamp = new TexturedModel(model, new ModelTexture(loader.loadTexture("lamp")));
 		TexturedModel grass = new TexturedModel(OBJFileLoader.loadOBJtoVAO("grassModel", loader), new ModelTexture(loader.loadTexture("grassTexture")));
 		TexturedModel flower = new TexturedModel(OBJFileLoader.loadOBJtoVAO("grassModel", loader), new ModelTexture(loader.loadTexture("flower")));
 		
-		
+		TexturedPhysicsModel testPhysics = new TexturedPhysicsModel(pmodel, new ModelTexture(loader.loadTexture("box")));
 		
 		
 		ModelTexture fernTextureAtlas = new ModelTexture(loader.loadTexture("fern"));
@@ -76,8 +82,8 @@ public class MainGameLoop {
 		
 		Terrain terrain = new Terrain(0,-1, loader, texturePack,blendMap, "heightMap");
 		
-		List<Entity> entities = new ArrayList<Entity>();
-		Random random = new Random(676452);
+		List<PhysicsEntity> entities = new ArrayList<PhysicsEntity>();
+		/*Random random = new Random(676452);
 		for(int i = 0; i < 400; i++){
 			if(i % 2 == 0){
 				float x = random.nextFloat() * 800 - 400;
@@ -99,7 +105,7 @@ public class MainGameLoop {
 				
 			}
 		}
-		
+		*/
 		
 		
 	
@@ -107,39 +113,45 @@ public class MainGameLoop {
 		
 		lights.add(new Light(new Vector3f(0,10000,-7000), new Vector3f(1,1,1))); //Sun
 		
-		lights.add(new Light(new Vector3f(-185,10,-293), new Vector3f(2,0,0), new Vector3f(1,0.01f,0.002f)));
-		lights.add(new Light(new Vector3f(370,17,-300), new Vector3f(0,2,2), new Vector3f(1,0.01f,0.002f)));
-		lights.add(new Light(new Vector3f(293,7,-305), new Vector3f(2,2,0), new Vector3f(1,0.01f,0.002f)));
+		//lights.add(new Light(new Vector3f(-185,10,-293), new Vector3f(2,0,0), new Vector3f(1,0.01f,0.002f)));
+		//lights.add(new Light(new Vector3f(370,17,-300), new Vector3f(0,2,2), new Vector3f(1,0.01f,0.002f)));
+		//lights.add(new Light(new Vector3f(293,7,-305), new Vector3f(2,2,0), new Vector3f(1,0.01f,0.002f)));
 
-		entities.add(new Entity(lamp,new Vector3f(-185,-4.7f,-293),0,0,0,1));
-		entities.add(new Entity(lamp,new Vector3f(370,4.2f,-300),0,0,0,1));
-		entities.add(new Entity(lamp,new Vector3f(293,-6.8f,-305),0,0,0,1));
+		//entities.add(new Entity(lamp,new Vector3f(-185,-4.7f,-293),0,0,0,1));
+		//entities.add(new Entity(lamp,new Vector3f(370,4.2f,-300),0,0,0,1));
+		//entities.add(new Entity(lamp,new Vector3f(293,-6.8f,-305),0,0,0,1));
+		
+		entities.add(new PhysicsEntity(testPhysics, new Vector3f(1,100,1), 0, 0, 0, 1, 1, processor));
 		
 		//Terrain terrain2 = new Terrain(-1,-1, loader, texturePack,blendMap, "heightMap");
 		
 		
 		MasterRenderer renderer = new MasterRenderer(loader);
 		
-		RawModel bunnyModel = OBJFileLoader.loadOBJtoVAO("bunny", loader);
-		TexturedModel stanfordBunny = new TexturedModel(bunnyModel, new ModelTexture(loader.loadTexture("white")));
+		//PhysicsModel bunnyModel = OBJFileLoader.loadOBJtoVAOWithGeneratedPhysics("bunny", loader);
+		//TexturedPhysicsModel stanfordBunny = new TexturedPhysicsModel(bunnyModel, new ModelTexture(loader.loadTexture("white")));
 		
-		Player player = new Player(stanfordBunny, new Vector3f(100, 0 ,-50), 0,0,0,1);
+		Player player = new Player(testPhysics, new Vector3f(100, 0 ,-50), 0,0,0,1, processor);
 		Camera camera = new Camera(player);
 		
-		List<GuiTexture> guis = new ArrayList<GuiTexture>();
-		GuiTexture gui = new GuiTexture(loader.loadTexture("socuwan"), new Vector2f(0.5f, 0.5f), new Vector2f(0.25f, 0.25f));
+		//List<GuiTexture> guis = new ArrayList<GuiTexture>();
+		//GuiTexture gui = new GuiTexture(loader.loadTexture("socuwan"), new Vector2f(0.5f, 0.5f), new Vector2f(0.25f, 0.25f));
 		//guis.add(gui);
 		
-		GuiRenderer guiRenderer = new GuiRenderer(loader);
+		//GuiRenderer guiRenderer = new GuiRenderer(loader);
 		
 		boolean mouse0, mouse1 = false;
 		
 		MousePicker picker = new MousePicker(camera, renderer.getProjectionMatrix());
-		
+		for(int i = 0; i < 4000; i++){
+			entities.add(new PhysicsEntity(testPhysics, new Vector3f(1,i,1), 0, 0, 0, 1, 1, processor));
+		}
 		while(!Display.isCloseRequested()){			
 			camera.move(terrain);
 			player.move(terrain);
+			processor.simulate();
 			picker.update();
+			
 			//System.out.println(picker.getCurrentRay());
 			renderer.processEntity(player);
 			
@@ -147,9 +159,12 @@ public class MainGameLoop {
 			if (Mouse.isButtonDown(1) && !mouse1) {
 				Mouse.setGrabbed(true);
 				mouse1 = true;
+				
+				
 			}
 			
-
+			
+		
 			// Process Mouse events
 			while (Mouse.next()) {
 				if (Mouse.getEventButton() == 1) {
@@ -167,15 +182,15 @@ public class MainGameLoop {
 			
 			renderer.processTerrain(terrain);
 			//renderer.processTerrain(terrain2);
-			for(Entity entity : entities){
+			for(PhysicsEntity entity : entities){
 				renderer.processEntity(entity);
 			}
 			renderer.render(lights, camera);
-			guiRenderer.render(guis);
+			//guiRenderer.render(guis);
 			DisplayManager.updateDisplay();
 		}
 		
-		guiRenderer.cleanUp();
+		//guiRenderer.cleanUp();
 		renderer.cleanUp();
 		loader.cleanUp();
 		DisplayManager.closeDisplay();

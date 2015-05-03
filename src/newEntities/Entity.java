@@ -117,7 +117,7 @@ public class Entity {
 	}
 	
 	public Matrix4f updateTransformationMatrix(){
-		return Maths.createTransformationMatrix(getPosition(), getRotX(), getRotY(), getRotZ(), getScale());
+		return Maths.createTransformationMatrix(getPosition(), getRotX(), getRotY(), getRotZ(), 1,getScale(), false);
 	}
 
 }
