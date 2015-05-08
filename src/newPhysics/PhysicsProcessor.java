@@ -66,7 +66,7 @@ public class PhysicsProcessor {
 		// Set the gravity to 10 metres per second squared (m/s^2). Gravity
 		// affects all bodies with a mass larger than
 		// zero.
-		dynamicsWorld.setGravity(new Vector3f(0, -10, 0));
+		dynamicsWorld.setGravity(new Vector3f(0, -50, 0));
 		// Initialise 'groundShape' to a static plane shape on the origin facing
 		// upwards ([0, 1, 0] is the normal).
 		// 0.25 metres is an added buffer between the ground and potential

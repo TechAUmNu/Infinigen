@@ -42,8 +42,8 @@ public class PhysicsProcessor implements Runnable {
 		this.barrier = barrier;
 		this.barrier2 = barrier2;
 		this.id = id;
-		
-		setUpPhysics();
+		//
+		//etUpPhysics();
 		numberEntities = 0;
 		
 		System.out.println("Physics Thread " + id + " Started Sucessfully");

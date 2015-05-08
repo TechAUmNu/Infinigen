@@ -1,5 +1,7 @@
 package newUtility;
 
+import javax.vecmath.Quat4f;
+
 import newEntities.Camera;
 
 import org.lwjgl.util.vector.Matrix4f;
@@ -14,6 +16,31 @@ public class Maths {
 		float l2 = ((p3.z - p1.z) * (pos.x - p3.x) + (p1.x - p3.x) * (pos.y - p3.z)) / det;
 		float l3 = 1.0f - l1 - l2;
 		return l1 * p1.y + l2 * p2.y + l3 * p3.y;
+	}
+	
+	public static float convertToHeading(Quat4f quat4f) {
+		double heading, attitude, bank;
+		double test = quat4f.x*quat4f.y + quat4f.z*quat4f.w;
+		if (test > 0.499) { // singularity at north pole
+			heading = 2 * Math.atan2(quat4f.x,quat4f.w);
+			attitude = Math.PI/2;
+			bank = 0;
+			return (float) heading;
+		}
+		if (test < -0.499) { // singularity at south pole
+			heading = -2 * Math.atan2(quat4f.x,quat4f.w);
+			attitude = - Math.PI/2;
+			bank = 0;
+			return (float) heading;
+		}
+	    double sqx = quat4f.x*quat4f.x;
+	    double sqy = quat4f.y*quat4f.y;
+	    double sqz = quat4f.z*quat4f.z;
+	    heading = Math.atan2(2*quat4f.y*quat4f.w-2*quat4f.x*quat4f.z , 1 - 2*sqy - 2*sqz);
+		attitude = Math.asin(2*test);
+		bank = Math.atan2(2*quat4f.x*quat4f.w-2*quat4f.y*quat4f.z , 1 - 2*sqx - 2*sqz);
+		float rotationDegrees = (float) Math.toDegrees(heading);
+		return rotationDegrees;
 	}
 
 	public static Matrix4f createTransformationMatrix(Vector3f translation, float rx, float ry, float rz, float rw, float scale, boolean inRadians){

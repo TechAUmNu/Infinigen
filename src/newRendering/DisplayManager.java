@@ -12,7 +12,7 @@ public class DisplayManager {
 	
 	private static final int WIDTH = 1920;
 	private static final int HEIGHT = 1080;
-	private static final int FPS_CAP = 10000;
+	private static final int FPS_CAP = 30;
 	
 	
 	private static long lastFrameTime;
@@ -26,9 +26,10 @@ public class DisplayManager {
 		ContextAttribs attribs = new ContextAttribs(3,2).withForwardCompatible(true).withProfileCore(true);
 		
 		try {
-			Display.setDisplayMode(new DisplayMode(WIDTH, HEIGHT));
-			Display.create(new PixelFormat(), attribs);
-			Display.setTitle("New Features testing");
+			Display.setFullscreen(true);
+			
+			Display.create(new PixelFormat(8,24,0,8), attribs);
+			Display.setTitle("New Features testing");			
 		} catch (LWJGLException e) {
 			
 			e.printStackTrace();

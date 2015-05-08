@@ -2,13 +2,19 @@ package newEntities;
 
 import static org.lwjgl.opengl.ARBDepthClamp.GL_DEPTH_CLAMP;
 import static org.lwjgl.opengl.GL11.glEnable;
+
+import javax.vecmath.Quat4d;
+import javax.vecmath.Quat4f;
+
 import newTerrains.Terrain;
+import newUtility.Maths;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GLContext;
 import org.lwjgl.util.vector.Vector3f;
 
+import com.bulletphysics.linearmath.Transform;
 import com.sun.corba.se.impl.oa.poa.ActiveObjectMap.Key;
 
 public class Camera {
@@ -23,6 +29,8 @@ public class Camera {
 	
 	private Player player;
 	
+	
+	
 	public Camera(Player player){
 		this.player= player;
 		if (GLContext.getCapabilities().GL_ARB_depth_clamp) {
@@ -36,8 +44,14 @@ public class Camera {
 		calculateAngleAroundPlayer();
 		float horizontalDistance = calculateHorizontalDistance();
 		float verticalDistance = calculateVerticalDistance();
-		calculateCameraPosition(horizontalDistance, verticalDistance, terrain);
-		this.yaw = 180 - (player.getRotY() + angleAroundPlayer);
+		
+		Transform transform = player.getBody().getWorldTransform(new Transform());
+		Quat4f rotation = new Quat4f();
+		float rotationDegrees = Maths.convertToHeading(transform.getRotation(rotation));		
+		calculateCameraPosition(horizontalDistance, verticalDistance, terrain, rotationDegrees, transform);			
+		
+		
+		this.yaw = 180 - (rotationDegrees + angleAroundPlayer);
 	}
 	/*
 	public void processMouse(float mouseSpeed, float maxLookUp,
@@ -82,13 +96,16 @@ public class Camera {
 		return roll;
 	}
 	
-	private void calculateCameraPosition(float horizontalDistance, float verticalDistance, Terrain terrain){
-		float theta = player.getRotY() + angleAroundPlayer;
+	private void calculateCameraPosition(float horizontalDistance, float verticalDistance, Terrain terrain, float rotationDegrees, Transform transform){
+
+		//System.out.println(yRotDeg);
+		float theta = (float) (rotationDegrees + angleAroundPlayer);
 		float offsetX = (float) (horizontalDistance * Math.sin(Math.toRadians(theta)));
 		float offsetZ = (float) (horizontalDistance * Math.cos(Math.toRadians(theta)));
-		position.x = player.getPosition().x - offsetX;
-		position.z = player.getPosition().z - offsetZ;
-		position.y = player.getPosition().y + verticalDistance;
+		
+		position.x = transform.origin.x - offsetX;
+		position.z = transform.origin.z - offsetZ;
+		position.y = transform.origin.y + verticalDistance;
 		float terrainHeight = terrain.getHeightOfTerrain(position.x, position.z);
 
 		if (position.y < terrainHeight + 2) {
@@ -96,6 +113,10 @@ public class Camera {
 
 		}
 	}
+	
+	
+
+
 	
 	private float calculateHorizontalDistance(){
 		return (float) (distanceFromPlayer * Math.cos(Math.toRadians(pitch)));

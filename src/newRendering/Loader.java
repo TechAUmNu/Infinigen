@@ -61,28 +61,32 @@ public class Loader {
 		storeDataInAttributeList(2, 3, normals);
 		unbindVAO();
 		//Generate a new physics object to represent the model;
-		ConvexHullShape collisionShape = new ConvexHullShape(new ObjectArrayList<Vector3f>());
-		for(Vertex v : vertices){
-			//System.out.println("_______________________");
-			//System.out.println(v.getPosition().getX());
-			//System.out.println(v.getPosition().getY());
-			//System.out.println(v.getPosition().getZ());
+		ObjectArrayList<Vector3f> verticesPhysics = new ObjectArrayList<Vector3f>();
+		
+		for(Vertex v : vertices){			
 			Vector3f mathVector = new Vector3f();			
 			mathVector.x = v.getPosition().getX();
 			mathVector.y = v.getPosition().getY();
 			mathVector.z = v.getPosition().getZ();
-			collisionShape.addPoint(mathVector);
+			verticesPhysics.add(mathVector);
 		}
+		ConvexHullShape collisionShape = new ConvexHullShape(verticesPhysics);
 		
-		//CollisionShape cs = new BoxShape( new Vector3f(5,5,5));
-		//cs.calculateLocalInertia(1, new Vector3f(0.5f,0.5f,0.5f));
 		return new PhysicsModel(vaoID, indices.length, collisionShape);
 	}
 	
 	
 	public RawModel loadToVAO(float [] positions, int dimensions){
 		int vaoID = createVAO();
-		this.storeDataInAttributeList(0, dimensions, positions);
+		storeDataInAttributeList(0, dimensions, positions);
+		unbindVAO();
+		return new RawModel(vaoID, positions.length/dimensions);
+	}
+	
+	public RawModel loadToVAO(float [] positions, float[] textureCoords, int dimensions){
+		int vaoID = createVAO();
+		storeDataInAttributeList(0, dimensions, positions);
+		storeDataInAttributeList(1, 2, textureCoords);
 		unbindVAO();
 		return new RawModel(vaoID, positions.length/dimensions);
 	}

@@ -1,4 +1,4 @@
-#version 430
+#version 120
 
 uniform vec4 cameraPosition;
 varying vec3 varyingNormal;
@@ -23,12 +23,12 @@ void main() {
     gl_FragColor += gl_LightModel.ambient;
     
     //specular
-    float specularCoefficient = 10;
-    if(diffuseLightIntensity > 0.0){
-        specularCoefficient = pow(max(0.0, dot(surfaceToCamera, -reflect(lightDirection, surfaceNormal))), gl_FrontMaterial.shininess);    
-    
-    	specularCoefficient = specularCoefficient / 0.90;
-  	}
+    //float specularCoefficient = 10;
+    //if(diffuseLightIntensity > 0.0){
+    //    specularCoefficient = pow(max(0.0, dot(surfaceToCamera, -reflect(lightDirection, surfaceNormal))), gl_FrontMaterial.shininess);    
+    //
+    //	specularCoefficient = specularCoefficient / 1.5;
+  	//}
     //gl_FragColor += specularCoefficient;
    
     

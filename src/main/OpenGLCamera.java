@@ -10,10 +10,7 @@ import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL30.*;
 
 
-import entities.EntityManager;
 import graphics.ChunkBatch;
-import hud.HUDBuilder;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
@@ -63,7 +60,7 @@ public class OpenGLCamera implements Runnable {
 	private static int fps;
 	private static int fpsCounter;
 	private static long lastFPS;	
-	private HUDBuilder hud;
+	//private HUDBuilder hud;
 	private double lastFrame;
 	private boolean mouse0, mouse1;
 	private long downStart;
@@ -92,10 +89,10 @@ public class OpenGLCamera implements Runnable {
 			cb.draw(camera.x(), camera.y(), camera.z(), textureHandle);
 		}
 		
-		EntityManager.getInstance().drawAll();
+		//EntityManager.getInstance().drawAll();
 		
 		// System.out.print("FPS: " + fpsCounter);
-		hud.render(fpsCounter, camera);
+		//hud.render(fpsCounter, camera);
 	}
 
 	// Process Input
@@ -171,7 +168,7 @@ public class OpenGLCamera implements Runnable {
 	private void cleanUp(boolean asCrash) {		
 		System.out.println("----------------Cleanup----------------");
 		ChunkManager.getInstance().UnloadChunks();
-		EntityManager.getInstance().cleanUp();
+		//EntityManager.getInstance().cleanUp();
 		PhysicsManager.getInstance().cleanUp();
 		System.err.println(GLU.gluErrorString(glGetError()));
 		Display.destroy();
@@ -221,7 +218,7 @@ public class OpenGLCamera implements Runnable {
         // Create a set of bodies that are to be removed.
         Set<RigidBody> bodiesToBeRemoved = new HashSet<RigidBody>();
         // For every physics ball ...
-        EntityManager.getInstance().process(delta);
+        //EntityManager.getInstance().process(delta);
         
         if (createNewShape) {
             // Create the collision shape (sphere with radius of 3 metres).
@@ -234,7 +231,7 @@ public class OpenGLCamera implements Runnable {
             RigidBodyConstructionInfo constructionInfo = new RigidBodyConstructionInfo(1, motionState, shape, inertia);
             constructionInfo.restitution = 0.75f;
             RigidBody rigidBody = new RigidBody(constructionInfo);
-            EntityManager.getInstance().addEntity(rigidBody, id);
+            //EntityManager.getInstance().addEntity(rigidBody, id);
             id++;
             if(id >= DataStore.getInstance().calcNumberCores()){
             	id = 0;
@@ -299,7 +296,7 @@ public class OpenGLCamera implements Runnable {
 		try {
 			//Display.setDisplayMode(new DisplayMode(1280,720));
 			Display.setVSyncEnabled(false);
-			Display.setFullscreen(false);
+			Display.setFullscreen(true);
 			Display.setResizable(false);
 			Display.setTitle(WINDOW_TITLE);
 			Display.create(new PixelFormat(4, 24, 0, 4));
@@ -329,7 +326,7 @@ public class OpenGLCamera implements Runnable {
 	private void setUpTextures() {
 		try {
 			textureHandle = TextureLoader.getTexture("PNG",
-					ResourceLoader.getResourceAsStream("res/images/grass.png"));
+					ResourceLoader.getResourceAsStream("res/textures/grassy.png"));
 			
 			glGenerateMipmap(GL_TEXTURE_2D);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
@@ -346,17 +343,17 @@ public class OpenGLCamera implements Runnable {
 	}
 
 	private void setUpHUD() {
-		hud = new HUDBuilder();
-		try {
-			hud.setUpTextures();
-		} catch (IOException e) {
+		//hud = new HUDBuilder();
+		//try {
+		//	hud.setUpTextures();
+		//} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		//	e.printStackTrace();
+		//}
 	}
 
 	public static void main(String[] args) {	
-		System.setProperty("org.lwjgl.librarypath", new File("natives/windows").getAbsolutePath());
+		System.setProperty("org.lwjgl.librarypath", new File("natives/linux").getAbsolutePath());
 		(new Thread(new OpenGLCamera())).start();
 	}
 

@@ -1,4 +1,4 @@
-#version 430
+#version 120
 
 varying vec4 varyingColour;
 

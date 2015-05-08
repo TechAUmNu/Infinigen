@@ -7,6 +7,7 @@ import java.util.Random;
 
 import objConverter.OBJFileLoader;
 
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.util.vector.Vector2f;
@@ -17,8 +18,8 @@ import newEntities.Entity;
 import newEntities.Light;
 import newEntities.PhysicsEntity;
 import newEntities.Player;
+import newGui.GuiElement;
 import newGui.GuiRenderer;
-import newGui.GuiTexture;
 import newModels.PhysicsModel;
 import newModels.RawModel;
 import newModels.TexturedModel;
@@ -39,7 +40,7 @@ public class MainGameLoop {
 	
 	
 	public static void main(String[] args) {
-		System.setProperty("org.lwjgl.librarypath", new File("natives/windows").getAbsolutePath());
+		System.setProperty("org.lwjgl.librarypath", new File("natives/linux").getAbsolutePath());
 		DisplayManager.createDisplay();
 		Loader loader = new Loader();	
 		PhysicsProcessor processor = new PhysicsProcessor();
@@ -134,18 +135,20 @@ public class MainGameLoop {
 		Player player = new Player(testPhysics, new Vector3f(100, 0 ,-50), 0,0,0,1, processor);
 		Camera camera = new Camera(player);
 		
-		//List<GuiTexture> guis = new ArrayList<GuiTexture>();
-		//GuiTexture gui = new GuiTexture(loader.loadTexture("socuwan"), new Vector2f(0.5f, 0.5f), new Vector2f(0.25f, 0.25f));
-		//guis.add(gui);
+		List<GuiElement> guis = new ArrayList<GuiElement>();
+		GuiElement gui = new GuiElement(new Vector2f(0,0), new Vector2f(1920,1080), "sc2Overlay", loader);
+		guis.add(gui);
 		
-		//GuiRenderer guiRenderer = new GuiRenderer(loader);
+		GuiRenderer guiRenderer = new GuiRenderer();
 		
 		boolean mouse0, mouse1 = false;
 		
 		MousePicker picker = new MousePicker(camera, renderer.getProjectionMatrix());
-		for(int i = 0; i < 4000; i++){
-			entities.add(new PhysicsEntity(testPhysics, new Vector3f(1,i,1), 0, 0, 0, 1, 1, processor));
+		
+		for(int i = 0; i < 10000; i++){
+			entities.add(new PhysicsEntity(testPhysics, new Vector3f(10,i * 10, 10), 0, 0, 0, 1, 1, processor));
 		}
+		
 		while(!Display.isCloseRequested()){			
 			camera.move(terrain);
 			player.move(terrain);
@@ -174,6 +177,9 @@ public class MainGameLoop {
 					}
 				}
 			}
+			if(Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)){
+				cleanUp(loader, renderer, guiRenderer);
+			}
 			
 			if (Mouse.isGrabbed()) {
 				//camera.processMouse(1, 80, -80);				
@@ -186,15 +192,26 @@ public class MainGameLoop {
 				renderer.processEntity(entity);
 			}
 			renderer.render(lights, camera);
-			//guiRenderer.render(guis);
+			guiRenderer.render(guis);
 			DisplayManager.updateDisplay();
 		}
 		
-		//guiRenderer.cleanUp();
+		cleanUp(loader, renderer, guiRenderer);
+		
+		
+	}
+
+	private static void cleanUp(Loader loader, MasterRenderer renderer,
+			GuiRenderer guiRenderer) {
+		guiRenderer.cleanUp();
 		renderer.cleanUp();
 		loader.cleanUp();
 		DisplayManager.closeDisplay();
-		
-		
+		System.exit(0);
+	}
+	
+	private static void cleanUp(){
+		DisplayManager.closeDisplay();
+		System.exit(0);
 	}
 }
