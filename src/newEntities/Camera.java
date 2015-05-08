@@ -51,7 +51,7 @@ public class Camera {
 		calculateCameraPosition(horizontalDistance, verticalDistance, terrain, rotationDegrees, transform);			
 		
 		
-		this.yaw = 180 - (rotationDegrees + angleAroundPlayer);
+		this.yaw = 180 - (angleAroundPlayer);
 	}
 	/*
 	public void processMouse(float mouseSpeed, float maxLookUp,
@@ -99,7 +99,7 @@ public class Camera {
 	private void calculateCameraPosition(float horizontalDistance, float verticalDistance, Terrain terrain, float rotationDegrees, Transform transform){
 
 		//System.out.println(yRotDeg);
-		float theta = (float) (rotationDegrees + angleAroundPlayer);
+		float theta = (float) (angleAroundPlayer);
 		float offsetX = (float) (horizontalDistance * Math.sin(Math.toRadians(theta)));
 		float offsetZ = (float) (horizontalDistance * Math.cos(Math.toRadians(theta)));
 		

@@ -40,7 +40,7 @@ public class MainGameLoop {
 	
 	
 	public static void main(String[] args) {
-		System.setProperty("org.lwjgl.librarypath", new File("natives/linux").getAbsolutePath());
+		System.setProperty("org.lwjgl.librarypath", new File("natives/windows").getAbsolutePath());
 		DisplayManager.createDisplay();
 		Loader loader = new Loader();	
 		PhysicsProcessor processor = new PhysicsProcessor();
@@ -55,13 +55,13 @@ public class MainGameLoop {
 		TerrainTexture blendMap = new TerrainTexture(loader.loadTexture("blendMap"));
 		
 		RawModel model = OBJFileLoader.loadOBJtoVAO("lamp", loader);
-		PhysicsModel pmodel = OBJFileLoader.loadOBJtoVAOWithGeneratedPhysics("box", loader);
+		PhysicsModel pmodel = OBJFileLoader.loadOBJtoVAOWithGeneratedPhysics("person", loader);
 		
 		TexturedModel lamp = new TexturedModel(model, new ModelTexture(loader.loadTexture("lamp")));
 		TexturedModel grass = new TexturedModel(OBJFileLoader.loadOBJtoVAO("grassModel", loader), new ModelTexture(loader.loadTexture("grassTexture")));
 		TexturedModel flower = new TexturedModel(OBJFileLoader.loadOBJtoVAO("grassModel", loader), new ModelTexture(loader.loadTexture("flower")));
 		
-		TexturedPhysicsModel testPhysics = new TexturedPhysicsModel(pmodel, new ModelTexture(loader.loadTexture("box")));
+		TexturedPhysicsModel testPhysics = new TexturedPhysicsModel(pmodel, new ModelTexture(loader.loadTexture("playerTexture")));
 		
 		
 		ModelTexture fernTextureAtlas = new ModelTexture(loader.loadTexture("fern"));
@@ -145,7 +145,7 @@ public class MainGameLoop {
 		
 		MousePicker picker = new MousePicker(camera, renderer.getProjectionMatrix());
 		
-		for(int i = 0; i < 10000; i++){
+		for(int i = 0; i < 1000; i++){
 			entities.add(new PhysicsEntity(testPhysics, new Vector3f(10,i * 10, 10), 0, 0, 0, 1, 1, processor));
 		}
 		

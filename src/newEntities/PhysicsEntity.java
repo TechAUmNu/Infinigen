@@ -32,6 +32,7 @@ public class PhysicsEntity extends Entity {
 		this.model = model;		
 		generateRigidBody(mass, position, rotX, rotY, rotZ, scale);
 		processor.addPhysicsEntity(this);
+		body.setActivationState(RigidBody.DISABLE_DEACTIVATION);
 	}
 
 	public TexturedPhysicsModel getModel() {

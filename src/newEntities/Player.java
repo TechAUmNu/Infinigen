@@ -12,6 +12,7 @@ import newUtility.Maths;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.util.vector.Vector3f;
 
+import com.bulletphysics.dynamics.RigidBody;
 import com.bulletphysics.linearmath.Transform;
 
 public class Player extends PhysicsEntity{
@@ -31,11 +32,13 @@ public class Player extends PhysicsEntity{
 	public Player(TexturedPhysicsModel model, Vector3f position, float rotX,
 			float rotY, float rotZ, float scale, PhysicsProcessor processor) {
 		super(model, position, rotX, rotY, rotZ, scale, scale, processor);		
+		super.body.setActivationState(RigidBody.DISABLE_DEACTIVATION);
 	}
 
 	public void move(Terrain terrain){
+		super.body.setActivationState(RigidBody.DISABLE_DEACTIVATION);
 		checkInputs();
-		super.body.setFriction(5);
+		//super.body.setFriction(5);
 		super.body.applyTorque(new javax.vecmath.Vector3f(0, currentTurnSpeed * DisplayManager.getFrameTimeSeconds(), 0));
 		
 		float distance = currentSpeed * DisplayManager.getFrameTimeSeconds();
@@ -56,7 +59,7 @@ public class Player extends PhysicsEntity{
 			isInAir = false;
 			super.getPosition().y = terrainHeight;
 		}
-		
+	
 	}
 	
 	private void jump(){
