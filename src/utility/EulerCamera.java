@@ -544,7 +544,7 @@ public final class EulerCamera implements Camera {
 	 */
 	public void applyOptimalStates() {
 		if (GLContext.getCapabilities().GL_ARB_depth_clamp) {
-			glEnable(GL_DEPTH_CLAMP);
+			//glEnable(GL_DEPTH_CLAMP);
 		}
 	}
 

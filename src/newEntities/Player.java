@@ -17,8 +17,8 @@ import com.bulletphysics.linearmath.Transform;
 
 public class Player extends PhysicsEntity{
 
-	private static final float RUN_SPEED = 1000;
-	private static final float TURN_SPEED = 1000;
+	private static final float RUN_SPEED = 600;
+	private static final float TURN_SPEED = 100;
 	private static final float GRAVITY = -10000;
 	private static final float JUMP_POWER = 10000;
 	private static final float TERRAIN_HEIGHT = 0;

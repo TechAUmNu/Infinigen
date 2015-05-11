@@ -26,9 +26,9 @@ public class DisplayManager {
 		ContextAttribs attribs = new ContextAttribs(3,2).withForwardCompatible(true).withProfileCore(true);
 		
 		try {
-			Display.setFullscreen(true);
+			Display.setFullscreen(false);
 			
-			Display.create(new PixelFormat(8,24,0,8), attribs);
+			Display.create(new PixelFormat(8,32,0,8), attribs);
 			Display.setTitle("New Features testing");			
 		} catch (LWJGLException e) {
 			

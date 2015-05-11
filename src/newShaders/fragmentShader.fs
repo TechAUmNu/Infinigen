@@ -48,5 +48,5 @@ void main(void){
 	}
 	
 	out_Color = vec4(totalDiffuse, 1.0) * texture(textureSampler, pass_textureCoords) + vec4(totalSpecular, 1.0);
-	out_Color = mix(vec4(skyColour, 1.0), out_Color, visibility);
+	//out_Color = mix(vec4(skyColour, 1.0), out_Color, visibility);
 }

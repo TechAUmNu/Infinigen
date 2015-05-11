@@ -1,5 +1,9 @@
 package engineTester;
 
+import static org.lwjgl.opengl.GL11.GL_NICEST;
+import static org.lwjgl.opengl.GL11.GL_PERSPECTIVE_CORRECTION_HINT;
+import static org.lwjgl.opengl.GL11.glHint;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;

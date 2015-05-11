@@ -1,5 +1,10 @@
 package newGui;
 
+import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
+import static org.lwjgl.opengl.GL11.GL_LEQUAL;
+import static org.lwjgl.opengl.GL11.glDepthFunc;
+import static org.lwjgl.opengl.GL11.glEnable;
+
 import java.util.List;
 
 import org.lwjgl.opengl.GL11;
@@ -38,7 +43,8 @@ public class GuiRenderer {
 			GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0,  gui.getBox().getVertexCount());
 		}
 		GL11.glEnable(GL11.GL_CULL_FACE);
-		GL11.glEnable(GL11.GL_DEPTH_TEST);
+		glEnable(GL_DEPTH_TEST);
+		glDepthFunc(GL_LEQUAL);
 		GL11.glDisable(GL11.GL_BLEND);
 		GL20.glDisableVertexAttribArray(0);
 		GL20.glDisableVertexAttribArray(1);

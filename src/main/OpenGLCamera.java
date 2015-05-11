@@ -53,7 +53,7 @@ public class OpenGLCamera implements Runnable {
 			/ (float) WINDOW_DIMENSIONS[1];
 
 	private static final EulerCamera camera = new EulerCamera.Builder()
-			.setPosition(140f, 140f, 140f).setRotation(50, 320, 0)
+			.setPosition(140f, 100000f, 140f).setRotation(50, 320, 0)
 			.setAspectRatio(ASPECT_RATIO).setFieldOfView(60)
 			.setFarClippingPane(10000f).setNearClippingPane(0.1f).build();
 
@@ -183,7 +183,7 @@ public class OpenGLCamera implements Runnable {
 		System.out.println("----------------Set up States----------------");
 		glShadeModel(GL_SMOOTH);
 		glEnable(GL_DEPTH_TEST);
-		glDepthFunc(GL_LEQUAL);
+		//glDepthFunc(GL_LEQUAL);
 		 glEnable(GL_LIGHTING);
 		 glEnable(GL_LIGHT0);
 		 glLightModel(GL_LIGHT_MODEL_AMBIENT,
@@ -214,7 +214,7 @@ public class OpenGLCamera implements Runnable {
         // Apply the camera's position and orientation to the model-view matrix.
         camera.applyTranslations();
         // Runs the JBullet physics simulation for the specified time in seconds.
-        PhysicsManager.getInstance().stepSimulate(delta);
+        //PhysicsManager.getInstance().stepSimulate(delta);
         // Create a set of bodies that are to be removed.
         Set<RigidBody> bodiesToBeRemoved = new HashSet<RigidBody>();
         // For every physics ball ...
@@ -353,7 +353,7 @@ public class OpenGLCamera implements Runnable {
 	}
 
 	public static void main(String[] args) {	
-		System.setProperty("org.lwjgl.librarypath", new File("natives/linux").getAbsolutePath());
+		System.setProperty("org.lwjgl.librarypath", new File("natives/windows").getAbsolutePath());
 		(new Thread(new OpenGLCamera())).start();
 	}
 
