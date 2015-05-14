@@ -1,8 +1,10 @@
 package newTextures;
 
+import javax.vecmath.Vector3f;
+
 public class ModelTexture {
 	
-	private int textureID;
+	private Vector3f textureID;
 	
 	private float shineDamper = 1;
 	private float reflectivity = 0;
@@ -12,8 +14,8 @@ public class ModelTexture {
 	
 	private int numberOfRows = 1;
 	
-	public ModelTexture(int id){
-		this.textureID = id;
+	public ModelTexture(Vector3f vector3f){
+		this.textureID = vector3f;
 	}
 	
 	public int getNumberOfRows() {
@@ -33,7 +35,7 @@ public class ModelTexture {
 	}
 
 	public int getID(){
-		return textureID;
+		return (int) textureID.z;
 	}
 
 	public float getShineDamper() {

@@ -13,7 +13,7 @@ public class DisplayManager {
 	private static final int WIDTH = 1920;
 	private static final int HEIGHT = 1080;
 	private static final int FPS_CAP = 120;
-	
+	private static float GUI_SCALE = 0.5f;
 	
 	private static long lastFrameTime;
 	private static float delta;
@@ -76,6 +76,10 @@ public class DisplayManager {
 	
 	private static long getCurrentTime(){
 		return Sys.getTime()*1000/ Sys.getTimerResolution();
+	}
+
+	public static float getGUIScale() {
+		return GUI_SCALE;
 	}
 	
 	

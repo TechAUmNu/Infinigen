@@ -140,9 +140,18 @@ public class MainGameLoop {
 		Camera camera = new Camera(player);
 		
 		List<GuiElement> guis = new ArrayList<GuiElement>();
-		GuiElement gui = new GuiElement(new Vector2f(0,0), new Vector2f(1920,1080), "sc2Overlay", loader);
-		guis.add(gui);
+	
 		
+	     
+	     //Test for wrong sized texture
+		//GuiElement gui = new GuiElement(new Vector2f(0,0), new Vector2f(1920,1080), new Vector2f(1920,337), "sc2Overlay", loader);
+		
+	     
+		GuiElement gui2 = new GuiElement(new Vector2f(0,0), "uvgrid01", loader);
+		GuiElement gui3 = new GuiElement(new Vector2f(1024,0), "uvgrid01", loader);
+		//guis.add(gui);
+		guis.add(gui2);
+		guis.add(gui3);
 		GuiRenderer guiRenderer = new GuiRenderer();
 		
 		boolean mouse0, mouse1 = false;
@@ -157,7 +166,9 @@ public class MainGameLoop {
 			camera.move(terrain);
 			player.move(terrain);
 			processor.simulate();
-			picker.update();
+			picker.update();			
+			
+			
 			
 			//System.out.println(picker.getCurrentRay());
 			renderer.processEntity(player);

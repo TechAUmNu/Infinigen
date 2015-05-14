@@ -39,7 +39,7 @@ public class GuiRenderer {
 			GL20.glEnableVertexAttribArray(1);
 			GL13.glActiveTexture(GL13.GL_TEXTURE0);
 			GL11.glBindTexture(GL11.GL_TEXTURE_2D, gui.getTexture());		
-
+			shader.loadMouseOver(gui.CheckHover());
 			GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0,  gui.getBox().getVertexCount());
 		}
 		GL11.glEnable(GL11.GL_CULL_FACE);

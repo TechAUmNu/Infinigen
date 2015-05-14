@@ -12,6 +12,8 @@ public class GuiShader extends ShaderProgram{
 	private static final String FRAGMENT_FILE = "src/newGui/guiFragmentShader.txt";
 	
 	
+	private int location_mouseOver;
+	
 	public GuiShader() {
 		super(VERTEX_FILE, FRAGMENT_FILE);
 	}
@@ -26,11 +28,12 @@ public class GuiShader extends ShaderProgram{
 
 	@Override
 	protected void getAllUniformLoactions() {
-		
-		
+		location_mouseOver = super.getUniformLocation("mouseOver");		
 	}
 	
-	
+	public void loadMouseOver(boolean mouseOver){
+		super.loadBoolean(location_mouseOver, mouseOver);
+	}
 	
 
 }

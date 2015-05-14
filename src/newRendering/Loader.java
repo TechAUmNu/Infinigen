@@ -90,10 +90,13 @@ public class Loader {
 		unbindVAO();
 		return new RawModel(vaoID, positions.length/dimensions);
 	}
-	public int loadTexture(String fileName){
+	public Vector3f loadTexture(String fileName){
 		Texture texture = null;
+		Vector3f WidthHeightID = new Vector3f(0,0,0);
 		try {
 			texture = TextureLoader.getTexture("PNG",  new FileInputStream("res/textures/" + fileName+ ".png"));
+			WidthHeightID.y = texture.getImageHeight();
+			WidthHeightID.x = texture.getImageWidth();
 			GL30.glGenerateMipmap(GL11.GL_TEXTURE_2D);
 			GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR_MIPMAP_LINEAR);
 			GL11.glTexParameterf(GL11.GL_TEXTURE_2D, GL14.GL_TEXTURE_LOD_BIAS, -0.4f);
@@ -103,8 +106,9 @@ public class Loader {
 			e.printStackTrace();
 		}
 		int textureID = texture.getTextureID();
+		WidthHeightID.z = textureID;
 		textures.add(textureID);
-		return textureID;
+		return WidthHeightID;
 	}
 	
 	public int loadCubeMap(String[] textureFiles){
