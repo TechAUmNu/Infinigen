@@ -59,13 +59,13 @@ public class MainGameLoop {
 		TerrainTexture blendMap = new TerrainTexture(loader.loadTexture("blendMap"));
 		
 		RawModel model = OBJFileLoader.loadOBJtoVAO("lamp", loader);
-		PhysicsModel pmodel = OBJFileLoader.loadOBJtoVAOWithGeneratedPhysics("person", loader);
+		PhysicsModel pmodel = OBJFileLoader.loadOBJtoVAOWithGeneratedPhysics("box", loader);
 		
 		TexturedModel lamp = new TexturedModel(model, new ModelTexture(loader.loadTexture("lamp")));
 		TexturedModel grass = new TexturedModel(OBJFileLoader.loadOBJtoVAO("grassModel", loader), new ModelTexture(loader.loadTexture("grassTexture")));
 		TexturedModel flower = new TexturedModel(OBJFileLoader.loadOBJtoVAO("grassModel", loader), new ModelTexture(loader.loadTexture("flower")));
 		
-		TexturedPhysicsModel testPhysics = new TexturedPhysicsModel(pmodel, new ModelTexture(loader.loadTexture("playerTexture")));
+		TexturedPhysicsModel testPhysics = new TexturedPhysicsModel(pmodel, new ModelTexture(loader.loadTexture("white")));
 		
 		
 		ModelTexture fernTextureAtlas = new ModelTexture(loader.loadTexture("fern"));

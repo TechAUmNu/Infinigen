@@ -21,5 +21,8 @@
 	<classpathentry kind="lib" path="lib/vecmath.jar"/>
 	<classpathentry kind="lib" path="lib/slick-util.jar"/>
 	<classpathentry kind="lib" path="lib/lwjgl/jar/lwjgl-debug.jar"/>
+	<classpathentry kind="lib" path="lib/xml/stax2-api-3.1.1.jar"/>
+	<classpathentry kind="lib" path="lib/xml/woodstox-core-lgpl-4.2.0.jar"/>
+	<classpathentry kind="lib" path="lib/mysql/mysql-connector-java-5.1.31-bin.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
