@@ -4,6 +4,7 @@ import javax.vecmath.Quat4f;
 
 import newEntities.Camera;
 
+import org.lwjgl.opengl.Display;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
@@ -99,5 +100,13 @@ public class Maths {
 		outMatrix.m22 = matrix.m22;		
 		outMatrix.m23 = matrix.m23;
 		return outMatrix;
+	}
+	
+	public static Vector2f convertCoordinate(Vector2f coord){
+		coord.x /= 1920;
+		coord.y /= 1080;
+		coord.x *= Display.getWidth();
+		coord.y *= Display.getHeight();
+		return coord;
 	}
 }

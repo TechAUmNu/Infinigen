@@ -38,13 +38,15 @@ import newTerrains.Terrain;
 import newTextures.ModelTexture;
 import newTextures.TerrainTexture;
 import newTextures.TerrainTexturePack;
+import newUtility.Maths;
 import newUtility.MousePicker;
+import newUtility.OSValidator;
 
 public class MainGameLoop {
 	
 	
 	public static void main(String[] args) {
-		System.setProperty("org.lwjgl.librarypath", new File("natives/windows").getAbsolutePath());
+		OSValidator.setCorrectNativesLocation();
 		DisplayManager.createDisplay();
 		Loader loader = new Loader();	
 		PhysicsProcessor processor = new PhysicsProcessor();
@@ -147,8 +149,8 @@ public class MainGameLoop {
 		//GuiElement gui = new GuiElement(new Vector2f(0,0), new Vector2f(1920,1080), new Vector2f(1920,337), "sc2Overlay", loader);
 		
 	     
-		GuiElement gui2 = new GuiElement(new Vector2f(0,0), "uvgrid01", loader);
-		GuiElement gui3 = new GuiElement(new Vector2f(1024,0), "uvgrid01", loader);
+		GuiElement gui2 = new GuiElement(Maths.convertCoordinate(new Vector2f(0,0)), "uvgrid01", loader);
+		GuiElement gui3 = new GuiElement(Maths.convertCoordinate(new Vector2f(1024,0)), "uvgrid01", loader);
 		//guis.add(gui);
 		guis.add(gui2);
 		guis.add(gui3);

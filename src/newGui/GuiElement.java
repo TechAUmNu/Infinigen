@@ -65,11 +65,10 @@ public class GuiElement {
 	}
 	
 	public void scale(){
-		guiRatioX = Display.getWidth()/1920 * DisplayManager.getGUIScale();
-	    guiRatioY = Display.getHeight()/1080* DisplayManager.getGUIScale();
+		
 	    
-	    texture.y = texture.y * guiRatioY;
-	    texture.x = texture.x * guiRatioX;
+	    texture.y = texture.y * DisplayManager.getGUIScale();
+	    texture.x = texture.x * DisplayManager.getGUIScale();
 	    
 	    if(detectionSize == null){
 	    	detectionSize = new Vector2f(texture.x, texture.y);	    	
@@ -91,6 +90,7 @@ public class GuiElement {
 				convertCoord(position.y, Display.getHeight()),
 
 		};
+		
 
 		float[] textureCoords = { 0, 0, 1, 0, 0, 1, 1, 1 };
 
@@ -116,6 +116,7 @@ public class GuiElement {
 	}
 
 	private float convertCoord(float coord, float maxSize) {
+		
 		return (((coord * 2) / maxSize) - 1);
 	}
 

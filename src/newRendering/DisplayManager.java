@@ -10,10 +10,11 @@ import org.lwjgl.opengl.PixelFormat;
 
 public class DisplayManager {
 	
-	private static final int WIDTH = 1920;
-	private static final int HEIGHT = 1080;
-	private static final int FPS_CAP = 120;
-	private static float GUI_SCALE = 0.5f;
+	private static final int WIDTH = 640;
+	private static final int HEIGHT = 360;
+	private static final int FPS_CAP = 240;
+	private static float GUI_SCALE = 1f;
+	private static float GUI_SCALE_FACTOR = 0.5f;
 	
 	private static long lastFrameTime;
 	private static float delta;
@@ -27,17 +28,17 @@ public class DisplayManager {
 		
 		try {
 			Display.setFullscreen(false);
-			
+			Display.setDisplayMode(new DisplayMode(WIDTH, HEIGHT));
 			Display.create(new PixelFormat(8,32,0,8), attribs);
-			Display.setTitle("New Features testing");			
-		} catch (LWJGLException e) {
-			
+			Display.setTitle("New Features testing");
+		} catch (LWJGLException e) {			
 			e.printStackTrace();
 		}
 		
 		GL11.glViewport(0, 0, WIDTH, HEIGHT);
 		lastFrameTime = getCurrentTime();
 		lastFPS = getCurrentTime();
+		calcScale();
 	}
 	
 	public static void updateDisplay(){
@@ -81,6 +82,17 @@ public class DisplayManager {
 	public static float getGUIScale() {
 		return GUI_SCALE;
 	}
+	
+	public static void calcScale(){
+		
+		GUI_SCALE = (float)(Display.getWidth()  / 1920f) * GUI_SCALE_FACTOR; 
+	}
+
+	public static int getFpsCounter() {
+		return fpsCounter;
+	}
+
+	
 	
 	
 }
