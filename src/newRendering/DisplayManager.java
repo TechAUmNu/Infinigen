@@ -29,7 +29,7 @@ public class DisplayManager {
 		try {
 			Display.setFullscreen(false);
 			Display.setDisplayMode(new DisplayMode(WIDTH, HEIGHT));
-			Display.create(new PixelFormat(8,32,0,8), attribs);
+			Display.create(new PixelFormat(8,24,0,8), attribs);
 			Display.setTitle("New Features testing");
 		} catch (LWJGLException e) {			
 			e.printStackTrace();

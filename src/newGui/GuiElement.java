@@ -8,6 +8,10 @@ import newRendering.Loader;
 
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL13;
+import org.lwjgl.opengl.GL20;
+import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Vector2f;
 
 public class GuiElement {
@@ -120,4 +124,15 @@ public class GuiElement {
 		return (((coord * 2) / maxSize) - 1);
 	}
 
+	
+	public void draw(GuiShader shader){
+		GL30.glBindVertexArray(getBox().getVaoID());
+		GL20.glEnableVertexAttribArray(0);
+		GL20.glEnableVertexAttribArray(1);
+		GL13.glActiveTexture(GL13.GL_TEXTURE0);
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, getTexture());		
+		shader.loadMouseOver(CheckHover());
+		GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0,  getBox().getVertexCount());
+	}
+	
 }

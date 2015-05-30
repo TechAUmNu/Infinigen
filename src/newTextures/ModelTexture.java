@@ -22,8 +22,9 @@ public class ModelTexture {
 		return numberOfRows;
 	}
 
-	public void setNumberOfRows(int numberOfRows) {
+	public ModelTexture setNumberOfRows(int numberOfRows) {
 		this.numberOfRows = numberOfRows;
+		return this;
 	}
 
 	public boolean isUseFakeLighting() {
