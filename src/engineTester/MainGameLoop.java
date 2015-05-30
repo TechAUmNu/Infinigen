@@ -31,7 +31,7 @@ import newUtility.OSValidator;
 public class MainGameLoop {
 
 	/**
-	 * Globals that are used alot go here.
+	 * Globals that are used a lot go here.
 	 */
 	private GuiManager gui;
 	private Loader loader;
