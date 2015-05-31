@@ -6,6 +6,7 @@ import static org.lwjgl.opengl.GL11.glEnable;
 import javax.vecmath.Quat4d;
 import javax.vecmath.Quat4f;
 
+import newMain.IModule;
 import newTerrains.Terrain;
 import newUtility.Maths;
 
@@ -17,7 +18,7 @@ import org.lwjgl.util.vector.Vector3f;
 import com.bulletphysics.linearmath.Transform;
 import com.sun.corba.se.impl.oa.poa.ActiveObjectMap.Key;
 
-public class Camera {
+public class Camera implements IModule {
 	
 	private float distanceFromPlayer = 50;
 	private float angleAroundPlayer = -50;
@@ -38,7 +39,7 @@ public class Camera {
 		}
 	}
 	
-	public void move(Terrain terrain){
+	public void update(){
 		calculateZoom();
 		calculatePitch();
 		calculateAngleAroundPlayer();
@@ -48,7 +49,7 @@ public class Camera {
 		Transform transform = player.getBody().getWorldTransform(new Transform());
 		Quat4f rotation = new Quat4f();
 		float rotationDegrees = Maths.convertToHeading(transform.getRotation(rotation));		
-		calculateCameraPosition(horizontalDistance, verticalDistance, terrain, rotationDegrees, transform);			
+		calculateCameraPosition(horizontalDistance, verticalDistance, rotationDegrees, transform);			
 		
 		
 		this.yaw = 180 - (angleAroundPlayer);
@@ -96,7 +97,7 @@ public class Camera {
 		return roll;
 	}
 	
-	private void calculateCameraPosition(float horizontalDistance, float verticalDistance, Terrain terrain, float rotationDegrees, Transform transform){
+	private void calculateCameraPosition(float horizontalDistance, float verticalDistance, float rotationDegrees, Transform transform){
 
 		//System.out.println(yRotDeg);
 		float theta = (float) (angleAroundPlayer);
@@ -106,7 +107,7 @@ public class Camera {
 		position.x = transform.origin.x - offsetX;
 		position.z = transform.origin.z - offsetZ;
 		position.y = transform.origin.y + verticalDistance;
-		float terrainHeight = terrain.getHeightOfTerrain(position.x, position.z);
+		float terrainHeight = 0;
 
 		if (position.y < terrainHeight + 2) {
 		    position.y = terrainHeight + 2;
@@ -145,4 +146,30 @@ public class Camera {
 			angleAroundPlayer -= angleChange;
 		}
 	}
+
+	@Override
+	public void process() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setUp() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void cleanUp() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void render() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	
 }

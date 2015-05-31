@@ -11,6 +11,7 @@ import java.util.List;
 
 import javax.vecmath.Vector3f;
 
+import newMain.IModule;
 import newModels.PhysicsModel;
 import newModels.RawModel;
 import newTextures.TextureData;
@@ -36,7 +37,7 @@ import de.matthiasmann.twl.utils.PNGDecoder;
 import de.matthiasmann.twl.utils.PNGDecoder.Format;
 
 
-public class Loader {
+public class Loader implements IModule{
 	
 	private List<Integer> vaos = new ArrayList<Integer>();
 	private List<Integer> vbos = new ArrayList<Integer>();
@@ -201,5 +202,29 @@ public class Loader {
 		buffer.put(data);
 		buffer.flip();
 		return buffer;
+	}
+
+	@Override
+	public void process() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setUp() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void render() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void update() {
+		// TODO Auto-generated method stub
+		
 	}
 }

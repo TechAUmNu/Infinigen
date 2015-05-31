@@ -19,6 +19,7 @@ import newEntities.Camera;
 import newEntities.Entity;
 import newEntities.Light;
 import newEntities.PhysicsEntity;
+import newMain.IModule;
 import newModels.TexturedModel;
 import newModels.TexturedPhysicsModel;
 import newShaders.StaticShader;
@@ -26,7 +27,7 @@ import newShaders.TerrainShader;
 import newSkybox.SkyboxRenderer;
 import newTerrains.Terrain;
 
-public class MasterRenderer {
+public class MasterRenderer implements IModule {
 
 	private static final float FOV = 90;
 	private static final float NEAR_PLANE = 0.1f;
@@ -137,6 +138,30 @@ public class MasterRenderer {
 		
 		projectionMatrix.m33 = 0;
 		
+		
+	}
+
+	@Override
+	public void process() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setUp() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void render() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void update() {
+		// TODO Auto-generated method stub
 		
 	}
 }

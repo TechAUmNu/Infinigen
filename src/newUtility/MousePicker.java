@@ -1,6 +1,7 @@
 package newUtility;
 
 import newEntities.Camera;
+import newMain.IModule;
 import newRendering.DisplayManager;
 
 import org.lwjgl.input.Mouse;
@@ -10,7 +11,7 @@ import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 
-public class MousePicker {
+public class MousePicker implements IModule{
 
 	private Vector3f currentRay;
 	
@@ -61,5 +62,29 @@ public class MousePicker {
 		float x = (2f * mouseX) / Display.getWidth() - 1f;
 		float y = (2f * mouseY) / Display.getHeight() -1f;
 		return new Vector2f(x,y);
+	}
+
+	@Override
+	public void process() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setUp() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void cleanUp() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void render() {
+		// TODO Auto-generated method stub
+		
 	}
 }
