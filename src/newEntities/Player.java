@@ -2,6 +2,7 @@ package newEntities;
 
 import javax.vecmath.Quat4f;
 
+import newMain.IModule;
 import newModels.TexturedModel;
 import newModels.TexturedPhysicsModel;
 import newPhysics.PhysicsProcessor;
@@ -15,7 +16,7 @@ import org.lwjgl.util.vector.Vector3f;
 import com.bulletphysics.dynamics.RigidBody;
 import com.bulletphysics.linearmath.Transform;
 
-public class Player extends PhysicsEntity{
+public class Player extends PhysicsEntity implements IModule{
 
 	private static final float RUN_SPEED = 600;
 	private static final float TURN_SPEED = 100;
@@ -35,7 +36,7 @@ public class Player extends PhysicsEntity{
 		super.body.setActivationState(RigidBody.DISABLE_DEACTIVATION);
 	}
 
-	public void move(Terrain terrain){
+	public void update(){
 		super.body.setActivationState(RigidBody.DISABLE_DEACTIVATION);
 		checkInputs();
 		//super.body.setFriction(5);
@@ -53,7 +54,7 @@ public class Player extends PhysicsEntity{
 		upwardsSpeed += GRAVITY * DisplayManager.getFrameTimeSeconds();
 		//super.increasePosition(0, upwardsSpeed * DisplayManager.getFrameTimeSeconds(), 0);
 		//super.body.applyForce(new javax.vecmath.Vector3f(0, upwardsSpeed * DisplayManager.getFrameTimeSeconds(), 0), new javax.vecmath.Vector3f(0, upwardsSpeed * DisplayManager.getFrameTimeSeconds(), 0));
-		float terrainHeight = terrain.getHeightOfTerrain(super.getPosition().x, super.getPosition().z);
+		float terrainHeight = 0;
 		if(super.getPosition().y < terrainHeight){
 			upwardsSpeed = 0;
 			isInAir = false;
@@ -99,4 +100,30 @@ public class Player extends PhysicsEntity{
 		}
 		*/
 	}
+
+	@Override
+	public void process() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setUp() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void cleanUp() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void render() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	
 }

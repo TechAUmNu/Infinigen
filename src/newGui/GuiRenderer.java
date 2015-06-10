@@ -5,6 +5,7 @@ import static org.lwjgl.opengl.GL11.GL_LEQUAL;
 import static org.lwjgl.opengl.GL11.glDepthFunc;
 import static org.lwjgl.opengl.GL11.glEnable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.lwjgl.opengl.GL11;
@@ -22,26 +23,48 @@ public class GuiRenderer {
 
 	private GuiShader shader;
 	
+	private List<GuiButton> buttons;
+	private List<GuiElement> elements;
+	private List<GuiTextElement> textElements;
+	private List<GuiTabMenu> tabMenus;
+	private List<GuiMenu> menus;
+	
 	public GuiRenderer(){		
 		shader = new GuiShader();
+		buttons = new ArrayList<GuiButton>();
+		elements = new ArrayList<GuiElement>();
+		textElements = new ArrayList<GuiTextElement>();
+		tabMenus = new ArrayList<GuiTabMenu>();
+		menus = new ArrayList<GuiMenu>();
 	}
 	
-	public void render(List<GuiElement> guis){
+	public void render(){
 		shader.start();
 		
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 		GL11.glDisable(GL11.GL_CULL_FACE);
-		for(GuiElement gui : guis){
-			GL30.glBindVertexArray(gui.getBox().getVaoID());
-			GL20.glEnableVertexAttribArray(0);
-			GL20.glEnableVertexAttribArray(1);
-			GL13.glActiveTexture(GL13.GL_TEXTURE0);
-			GL11.glBindTexture(GL11.GL_TEXTURE_2D, gui.getTexture());		
-			shader.loadMouseOver(gui.CheckHover());
-			GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0,  gui.getBox().getVertexCount());
+		
+		
+		
+		//Replace with rendering each element
+		for(GuiElement e : elements){
+			e.draw(shader);
 		}
+		for(GuiTextElement te : textElements){
+			te.draw(shader);
+		}
+		for(GuiButton gb : buttons){
+			gb.draw(shader);
+		}
+		for(GuiTabMenu gtm : tabMenus){
+			gtm.draw(shader);
+		}
+		for(GuiMenu m : menus){
+			m.draw(shader);
+		}
+		
 		GL11.glEnable(GL11.GL_CULL_FACE);
 		glEnable(GL_DEPTH_TEST);
 		glDepthFunc(GL_LEQUAL);
@@ -54,5 +77,25 @@ public class GuiRenderer {
 	
 	public void cleanUp(){
 		shader.cleanUp();
+	}
+
+	public void addElement(GuiElement guiElement) {
+		elements.add(guiElement);		
+	}
+	
+	public void addTextElement(GuiTextElement gte){
+		textElements.add(gte);
+	}
+	
+	public void addButton(GuiButton gb){
+		buttons.add(gb);
+	}
+	
+	public void addTabMenu(GuiTabMenu gtm){
+		tabMenus.add(gtm);
+	}
+	
+	public void addMenu(GuiMenu gm){
+		menus.add(gm);
 	}
 }

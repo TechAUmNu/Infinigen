@@ -28,10 +28,6 @@ public class PhysicsProcessor {
 	
 	private DiscreteDynamicsWorld dynamicsWorld;
 	
-	public PhysicsProcessor (){		
-		setUpPhysics();
-	}
-	
 	
 	public void addPhysicsEntity(PhysicsEntity entity){
 		dynamicsWorld.addRigidBody(entity.getBody());
@@ -45,7 +41,7 @@ public class PhysicsProcessor {
 		dynamicsWorld.stepSimulation(DisplayManager.getFrameTimeSeconds());
 	}
 	
-	private void setUpPhysics() {
+	public void setUpPhysics() {
 		/**
 		 * The object that will roughly find out whether bodies are colliding.
 		 */
