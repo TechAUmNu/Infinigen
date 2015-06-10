@@ -15,7 +15,7 @@ import newMain.IModule;
 import newModels.PhysicsModel;
 import newModels.RawModel;
 import newTextures.TextureData;
-import objConverter.Vertex;
+import newobjConverter.Vertex;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
