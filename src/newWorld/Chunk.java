@@ -25,6 +25,11 @@ public class Chunk {
 		generateGeneric(BlockType.BlockType_Stone);
 	}
 
+	
+	/**
+	 * Creates a chunk of only the given type
+	 * @param type
+	 */
 	private void generateGeneric(BlockType type) {
 		for(int x = 0; x < size; x++){
 			for(int y = 0; y < size; y++){
@@ -34,5 +39,10 @@ public class Chunk {
 			}
 		}
 	}
+	
+	
+	
+	
+	
 	
 }
