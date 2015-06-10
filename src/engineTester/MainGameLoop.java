@@ -3,8 +3,6 @@ package engineTester;
 import java.util.ArrayList;
 import java.util.List;
 
-import objConverter.OBJFileLoader;
-
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
@@ -30,6 +28,7 @@ import newTextures.TerrainTexture;
 import newTextures.TerrainTexturePack;
 import newUtility.MousePicker;
 import newUtility.OSValidator;
+import newobjConverter.OBJFileLoader;
 
 public class MainGameLoop {
 
@@ -103,6 +102,8 @@ public class MainGameLoop {
 		physics = new PhysicsManager();
 		entities = new ArrayList<PhysicsEntity>();
 		lights = new ArrayList<Light>();
+		
+		physics.setUp();
 
 		PhysicsModel pmodel = OBJFileLoader.loadOBJtoVAOWithGeneratedPhysics("box", loader);
 		TexturedPhysicsModel testPhysics = new TexturedPhysicsModel(pmodel, new ModelTexture(loader.loadTexture("white")));
@@ -127,7 +128,9 @@ public class MainGameLoop {
 		//Add anything to the globals that might be needed elsewhere.
 		Globals.setLoader(loader);
 		
-		
+		for(IModule module : loadedModules){
+			module.setUp();
+		}
 
 	}
 
@@ -156,8 +159,7 @@ public class MainGameLoop {
 	 * Anything to do with setting up the gui
 	 */
 	private void generateGui() {
-		gui.generateElement(0, 0, "uvgrid01");
-		gui.generateElement(1024, 0, "uvgrid01");
+		gui.generateElement(0, 0, "uvgrid01");		
 	}
 
 	/**
