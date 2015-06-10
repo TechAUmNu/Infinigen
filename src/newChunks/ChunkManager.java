@@ -2,7 +2,7 @@ package newChunks;
 
 import oldgraphics.ChunkBatch;
 import oldthreading.DataStore;
-import oldworld.Block.BlockType;
+import newChunks.Block.BlockType;
 
 import org.magicwerk.brownies.collections.GapList;
 

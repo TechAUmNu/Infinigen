@@ -1,8 +1,6 @@
 package newChunks;
 
-import java.io.File;
-
-import oldworld.Block.BlockType;
+import newChunks.Block.BlockType;
 
 //Loader for chunks, which executes on a new thread
 public class ChunkLoader {

@@ -2,7 +2,7 @@ package newChunks;
 
 import java.util.HashMap;
 
-import oldworld.Block.BlockType;
+import newChunks.Block.BlockType;
 
 import org.magicwerk.brownies.collections.GapList;
 

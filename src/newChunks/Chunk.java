@@ -10,7 +10,7 @@ import java.util.Random;
 import oldgraphics.ChunkBatch;
 import oldshaders.Shader;
 import oldthreading.DataStore;
-import oldworld.Block.BlockType;
+import newChunks.Block.BlockType;
 
 import org.lwjgl.BufferUtils;
 import org.tukaani.xz.LZMA2Options;
@@ -52,7 +52,7 @@ public class Chunk {
 	private String worldLocation;
 	private Boolean test = false;
 	private ChunkBatch batch;
-	private BlockType type;
+	private newChunks.Block.BlockType type;
 	Random rnd = new Random();
 	private int VBOUVHandle;
 
