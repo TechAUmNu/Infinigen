@@ -29,7 +29,7 @@ public class PhysicsManager implements IModule {
 
 	@Override
 	public void cleanUp() {
-		
+
 		// TODO Auto-generated method stub
 	}
 

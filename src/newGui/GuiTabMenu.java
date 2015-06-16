@@ -5,19 +5,18 @@ import java.util.List;
 
 public class GuiTabMenu {
 
-	
-	//A tab menu is a collection of tabs it will display the menuButton from each tab and call the draw method on the selected tab.
-	
+	// A tab menu is a collection of tabs it will display the menuButton from
+	// each tab and call the draw method on the selected tab.
+
 	private List<GuiTab> tabs;
 	private GuiTab selectedTab;
 
-	
-	public GuiTabMenu(){
-		tabs = new ArrayList<GuiTab>();		
+	public GuiTabMenu() {
+		tabs = new ArrayList<GuiTab>();
 	}
-	
-	public void draw(GuiShader shader){
-		for(GuiTab gt : tabs){
+
+	public void draw(GuiShader shader) {
+		for (GuiTab gt : tabs) {
 			gt.getMenuButton().draw(shader);
 		}
 		selectedTab.draw(shader);
@@ -38,6 +37,5 @@ public class GuiTabMenu {
 	public void setSelectedTab(GuiTab selectedTab) {
 		this.selectedTab = selectedTab;
 	}
-	
-	
+
 }

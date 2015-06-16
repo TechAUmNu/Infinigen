@@ -3,13 +3,12 @@ package newMain;
 import newRendering.Loader;
 
 public class Globals {
-	
+
 	private static float gravity = 9.81f;
 	private static Loader loader;
-	
-	////////////////////////////////////////////////////////////////////////////////////////
-	
-	
+
+	// //////////////////////////////////////////////////////////////////////////////////////
+
 	public static float getGravity() {
 		return gravity;
 	}
@@ -25,8 +24,5 @@ public class Globals {
 	public static void setLoader(Loader loader) {
 		Globals.loader = loader;
 	}
-
-	
-		
 
 }

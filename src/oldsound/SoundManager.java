@@ -2,8 +2,6 @@ package oldsound;
 
 import java.util.ArrayList;
 
-
-
 public class SoundManager implements Runnable {
 
 	ArrayList<Sound> tracks;
@@ -15,7 +13,6 @@ public class SoundManager implements Runnable {
 		player = null;
 
 		addToQueue(new Sound("Res/Sound/StickEngine.wav", true));
-		
 
 	}
 
@@ -69,7 +66,7 @@ public class SoundManager implements Runnable {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
+
 		}
 
 	}

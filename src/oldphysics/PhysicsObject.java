@@ -15,19 +15,19 @@ import static org.lwjgl.opengl.GL11.*;
 
 public class PhysicsObject {
 	public RigidBody body;
-	
-	public Vector3f getPosition(){
+
+	public Vector3f getPosition() {
 		return body.getWorldTransform(new Transform()).origin;
 	}
-		
-	public void translateToPosition(){
+
+	public void translateToPosition() {
 		// These can be pre-allocated.
 		float[] matrix = new float[16];
 		Transform transform = new Transform();
 		FloatBuffer transformationBuffer = BufferUtils.createFloatBuffer(16);
 
 		// Get the transformation matrix from JBullet.
-	
+
 		MotionState motionState = body.getMotionState();
 		motionState.getWorldTransform(transform);
 		transform.getOpenGLMatrix(matrix);
@@ -37,11 +37,8 @@ public class PhysicsObject {
 		transformationBuffer.put(matrix);
 		transformationBuffer.flip();
 
-		
-		glMultMatrix(transformationBuffer); // Apply the object transformation 
-		
+		glMultMatrix(transformationBuffer); // Apply the object transformation
+
 	}
-	
-	
-	
+
 }

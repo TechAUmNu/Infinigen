@@ -58,28 +58,29 @@ public class Chunk {
 
 	/**
 	 * Updates this chunk
-	 * @param i 
+	 * 
+	 * @param i
 	 */
 	public void Update() {
-		//boolean changed = false;
-		
+		// boolean changed = false;
+
 		// Update the chunk
-		//for (int x = 0; x < CHUNK_SIZE; x++) {
-		//	for (int y = 0; y < CHUNK_SIZE; y++) {
-		//		for (int z = 0; z < CHUNK_SIZE; z++) {
-		//			if(rnd.nextInt(100) > 95){
-		//				Blocks[x][y][z] = new Block(BlockType.BlockType_Air);
-		//				changed = true;
-		//			}
-		//		}
-		//	}
-		//}
-		
+		// for (int x = 0; x < CHUNK_SIZE; x++) {
+		// for (int y = 0; y < CHUNK_SIZE; y++) {
+		// for (int z = 0; z < CHUNK_SIZE; z++) {
+		// if(rnd.nextInt(100) > 95){
+		// Blocks[x][y][z] = new Block(BlockType.BlockType_Air);
+		// changed = true;
+		// }
+		// }
+		// }
+		// }
+
 		// If something changed then
-		//if(changed){
-			RebuildChunk();
-		//}
-		// 
+		// if(changed){
+		RebuildChunk();
+		// }
+		//
 	}
 
 	/**
@@ -89,8 +90,7 @@ public class Chunk {
 	 */
 	public Boolean Save() {
 		System.out.println("Saving Chunk: " + x + "." + y + "." + z);
-		try (FileOutputStream file = new FileOutputStream(worldLocation + ""
-				+ x + "." + y + "." + z + ".chunk")) {
+		try (FileOutputStream file = new FileOutputStream(worldLocation + "" + x + "." + y + "." + z + ".chunk")) {
 			byte[] buf = new byte[4096];
 			int i = 0;
 
@@ -126,30 +126,31 @@ public class Chunk {
 	 * @return If the load was successful
 	 */
 	public Boolean Load() {
-//		try (FileInputStream file = new FileInputStream(worldLocation + "" + x
-//				+ "." + y + "." + z + ".chunk")) {
-//			XZInputStream in = new XZInputStream(file);
-//			byte fileContent[] = new byte[CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE];
-//			in.read(fileContent);
-//			int i = 0;
-//			for (int x = 0; x < CHUNK_SIZE; x++) {
-//				for (int y = 0; y < CHUNK_SIZE; y++) {
-//					for (int z = 0; z < CHUNK_SIZE; z++) {
-//						Blocks[x][y][z] = new Block(
-//								BlockType.fromByte(fileContent[i]));
-//						i++;
-//					}
-//				}
-//			}
-//			file.close();
-//			RebuildChunk();
-//			return true;
-//		} catch (FileNotFoundException e) {
-			init();
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+		// try (FileInputStream file = new FileInputStream(worldLocation + "" +
+		// x
+		// + "." + y + "." + z + ".chunk")) {
+		// XZInputStream in = new XZInputStream(file);
+		// byte fileContent[] = new byte[CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE];
+		// in.read(fileContent);
+		// int i = 0;
+		// for (int x = 0; x < CHUNK_SIZE; x++) {
+		// for (int y = 0; y < CHUNK_SIZE; y++) {
+		// for (int z = 0; z < CHUNK_SIZE; z++) {
+		// Blocks[x][y][z] = new Block(
+		// BlockType.fromByte(fileContent[i]));
+		// i++;
+		// }
+		// }
+		// }
+		// file.close();
+		// RebuildChunk();
+		// return true;
+		// } catch (FileNotFoundException e) {
+		init();
+		// } catch (IOException e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// }
 		return false;
 	}
 
@@ -193,14 +194,14 @@ public class Chunk {
 	}
 
 	public void CleanUp() {
-		//Remove chunk from rendering queue
+		// Remove chunk from rendering queue
 		DataStore.getInstance().removeChunkBatch(batch);
-		//Delete buffers on GPU to free memory
+		// Delete buffers on GPU to free memory
 		glDeleteBuffers(VBOVertexHandle);
 		glDeleteBuffers(VBOColorHandle);
 		glDeleteBuffers(VBONormalHandle);
 		glDeleteBuffers(VBOUVHandle);
-		
+
 	}
 
 	/**
@@ -224,38 +225,28 @@ public class Chunk {
 	 * Creates the visible mesh for the chunk
 	 */
 	public void RebuildMesh() {
-		
-		//Create FloatBuffers for all data
-		FloatBuffer VertexPositionData = BufferUtils
-				.createFloatBuffer(visibleFaces * 12);
-		FloatBuffer VertexColorData = BufferUtils
-				.createFloatBuffer(visibleFaces * 12);
-		FloatBuffer VertexNormalData = BufferUtils
-				.createFloatBuffer(visibleFaces * 12);
-		FloatBuffer VertexUVData = BufferUtils
-				.createFloatBuffer(visibleFaces * 8);
 
-		//Loop through all blocks in chunk adding visible faces to buffers
+		// Create FloatBuffers for all data
+		FloatBuffer VertexPositionData = BufferUtils.createFloatBuffer(visibleFaces * 12);
+		FloatBuffer VertexColorData = BufferUtils.createFloatBuffer(visibleFaces * 12);
+		FloatBuffer VertexNormalData = BufferUtils.createFloatBuffer(visibleFaces * 12);
+		FloatBuffer VertexUVData = BufferUtils.createFloatBuffer(visibleFaces * 8);
+
+		// Loop through all blocks in chunk adding visible faces to buffers
 		for (int x = 0; x < CHUNK_SIZE; x++) {
 			for (int y = 0; y < CHUNK_SIZE; y++) {
 				for (int z = 0; z < CHUNK_SIZE; z++) {
 					if (Blocks[(int) x][(int) y][(int) z].IsVisible()) {
 
 						// Add position data to buffer
-						VertexPositionData.put(Blocks[x][y][z].getVf()
-								.genVertexes(
-										this.x * MULTIPLIER + x * CUBE_LENGTH,
-										this.y * MULTIPLIER + y * CUBE_LENGTH,
-										this.z * MULTIPLIER + z * CUBE_LENGTH,
-										CUBE_LENGTH));
+						VertexPositionData.put(Blocks[x][y][z].getVf().genVertexes(this.x * MULTIPLIER + x * CUBE_LENGTH,
+								this.y * MULTIPLIER + y * CUBE_LENGTH, this.z * MULTIPLIER + z * CUBE_LENGTH, CUBE_LENGTH));
 
 						// Add colour data to buffer
-						VertexColorData
-								.put(Blocks[x][y][z].getVf().genColors());
+						VertexColorData.put(Blocks[x][y][z].getVf().genColors());
 
 						// Add normal data to buffer
-						VertexNormalData.put(Blocks[x][y][z].getVf()
-								.genNormals());
+						VertexNormalData.put(Blocks[x][y][z].getVf().genNormals());
 
 						// Add UV coordinates to buffer
 						VertexUVData.put(Blocks[x][y][z].getVf().genUV());
@@ -282,7 +273,7 @@ public class Chunk {
 		glBindBuffer(GL_ARRAY_BUFFER, VBOUVHandle);
 		glBufferData(GL_ARRAY_BUFFER, VertexUVData, GL_STATIC_DRAW);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		
+
 		if (batch != null) {
 			DataStore.getInstance().removeChunkBatch(batch);
 		}
@@ -312,8 +303,7 @@ public class Chunk {
 		Blocks[x][y][z].SetVisible(false);
 		int visible = 0;
 		if (y < 15) {
-			if (Blocks[x][y + 1][z].GetType() == BlockType.BlockType_Air
-					.GetType()) {
+			if (Blocks[x][y + 1][z].GetType() == BlockType.BlockType_Air.GetType()) {
 				vf.top = true;
 				Blocks[x][y][z].SetVisible(true);
 				visible++;
@@ -327,8 +317,7 @@ public class Chunk {
 			visible++;
 		}
 		if (y > 0) {
-			if (Blocks[x][y - 1][z].GetType() == BlockType.BlockType_Air
-					.GetType()) {
+			if (Blocks[x][y - 1][z].GetType() == BlockType.BlockType_Air.GetType()) {
 				vf.bottom = true;
 				Blocks[x][y][z].SetVisible(true);
 				visible++;
@@ -342,8 +331,7 @@ public class Chunk {
 			visible++;
 		}
 		if (x < 15) {
-			if (Blocks[x + 1][y][z].GetType() == BlockType.BlockType_Air
-					.GetType()) {
+			if (Blocks[x + 1][y][z].GetType() == BlockType.BlockType_Air.GetType()) {
 				vf.right = true;
 				Blocks[x][y][z].SetVisible(true);
 				visible++;
@@ -358,8 +346,7 @@ public class Chunk {
 		}
 
 		if (x > 0) {
-			if (Blocks[x - 1][y][z].GetType() == BlockType.BlockType_Air
-					.GetType()) {
+			if (Blocks[x - 1][y][z].GetType() == BlockType.BlockType_Air.GetType()) {
 				vf.left = true;
 				Blocks[x][y][z].SetVisible(true);
 				visible++;
@@ -373,8 +360,7 @@ public class Chunk {
 			visible++;
 		}
 		if (z < 15) {
-			if (Blocks[x][y][z + 1].GetType() == BlockType.BlockType_Air
-					.GetType()) {
+			if (Blocks[x][y][z + 1].GetType() == BlockType.BlockType_Air.GetType()) {
 				vf.front = true;
 				Blocks[x][y][z].SetVisible(true);
 				visible++;
@@ -388,8 +374,7 @@ public class Chunk {
 			visible++;
 		}
 		if (z > 0) {
-			if (Blocks[x][y][z - 1].GetType() == BlockType.BlockType_Air
-					.GetType()) {
+			if (Blocks[x][y][z - 1].GetType() == BlockType.BlockType_Air.GetType()) {
 				vf.back = true;
 				Blocks[x][y][z].SetVisible(true);
 				visible++;

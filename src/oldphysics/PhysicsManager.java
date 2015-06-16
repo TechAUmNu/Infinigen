@@ -24,7 +24,7 @@ import com.bulletphysics.linearmath.MotionState;
 import com.bulletphysics.linearmath.Transform;
 
 public class PhysicsManager {
-	
+
 	private static PhysicsManager instance;
 
 	static {
@@ -32,7 +32,8 @@ public class PhysicsManager {
 	}
 
 	// Initialise variables.
-	private PhysicsManager() {}
+	private PhysicsManager() {
+	}
 
 	public static PhysicsManager getInstance() {
 		return instance;
@@ -41,24 +42,18 @@ public class PhysicsManager {
 	public static void setInstance(PhysicsManager instance) {
 		PhysicsManager.instance = instance;
 	}
-	
 
-	public void stepSimulate(float delta){		
+	public void stepSimulate(float delta) {
 		DataStore.getInstance().triggerStepSimulateBarrier();
 	}
-	
-	
 
 	public void cleanUp() {
 		// TODO Auto-generated method stub
-		
-	}
 
+	}
 
 	public void addPhysicsObject(RigidBody p, int id) {
-		DataStore.getInstance().addPhysicsObject(p, id);		
+		DataStore.getInstance().addPhysicsObject(p, id);
 	}
-
-	
 
 }

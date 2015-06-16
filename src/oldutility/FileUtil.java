@@ -8,42 +8,35 @@ import java.io.InputStreamReader;
  * 
  * @author Sri Harsha Chilakapati
  */
-public class FileUtil
-{
-    /**
-     * @return The entire source of a file as a single string
-     */
-    public static String readFromFile(String name)
-    {
-        StringBuilder source = new StringBuilder();
-        try
-	        {
-        	
-        	InputStreamReader isr =  new InputStreamReader(ShaderProgram.class.getClassLoader().getResourceAsStream(name));
-            BufferedReader reader = new BufferedReader(isr);
+public class FileUtil {
+	/**
+	 * @return The entire source of a file as a single string
+	 */
+	public static String readFromFile(String name) {
+		StringBuilder source = new StringBuilder();
+		try {
 
-            String line;
-            while ((line = reader.readLine()) != null)
-            {
-                source.append(line).append("\n");
-            }
+			InputStreamReader isr = new InputStreamReader(ShaderProgram.class.getClassLoader().getResourceAsStream(name));
+			BufferedReader reader = new BufferedReader(isr);
 
-            reader.close();
-        }
-        catch (Exception e)
-        {
-            System.err.println("Error loading source code: " + name);
-            e.printStackTrace();            
-        }
+			String line;
+			while ((line = reader.readLine()) != null) {
+				source.append(line).append("\n");
+			}
 
-        return source.toString();
-    }
+			reader.close();
+		} catch (Exception e) {
+			System.err.println("Error loading source code: " + name);
+			e.printStackTrace();
+		}
 
-    /**
-     * @return An array of all the lines of a file
-     */
-    public static String[] readAllLines(String name)
-    {
-        return readFromFile(name).split("\n");
-    }
+		return source.toString();
+	}
+
+	/**
+	 * @return An array of all the lines of a file
+	 */
+	public static String[] readAllLines(String name) {
+		return readFromFile(name).split("\n");
+	}
 }

@@ -4,31 +4,30 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GuiTab {
-	
+
 	private List<GuiButton> buttons;
 	private List<GuiElement> elements;
 	private List<GuiTextElement> textElements;
 	private GuiButton menuButton;
-	
-	
-	public GuiTab(){
+
+	public GuiTab() {
 		buttons = new ArrayList<GuiButton>();
 		elements = new ArrayList<GuiElement>();
 		textElements = new ArrayList<GuiTextElement>();
 	}
-	
-	public void addButton(GuiButton button){
+
+	public void addButton(GuiButton button) {
 		buttons.add(button);
 	}
-	
-	public void addElement(GuiElement element){
+
+	public void addElement(GuiElement element) {
 		elements.add(element);
 	}
-	
-	public void addTextElement(GuiTextElement textElement){
+
+	public void addTextElement(GuiTextElement textElement) {
 		textElements.add(textElement);
 	}
-	
+
 	public List<GuiButton> getButtons() {
 		return buttons;
 	}
@@ -53,14 +52,14 @@ public class GuiTab {
 		this.textElements = textElements;
 	}
 
-	public void draw(GuiShader shader){
-		for(GuiButton b : buttons){
+	public void draw(GuiShader shader) {
+		for (GuiButton b : buttons) {
 			b.draw(shader);
 		}
-		for(GuiElement e : elements){
+		for (GuiElement e : elements) {
 			e.draw(shader);
 		}
-		for(GuiTextElement te : textElements){
+		for (GuiTextElement te : textElements) {
 			te.draw(shader);
 		}
 	}
@@ -72,6 +71,5 @@ public class GuiTab {
 	public void setMenuButton(GuiButton menuButton) {
 		this.menuButton = menuButton;
 	}
-	
-	
+
 }

@@ -8,20 +8,21 @@ import org.magicwerk.brownies.collections.GapList;
 
 /**
  * Class to manage loading and rendering of chunks
+ * 
  * @author Euan
  *
  */
 public class ChunkManager {
-	
-private static ChunkManager instance;
-	
+
+	private static ChunkManager instance;
+
 	static {
 		setInstance(new ChunkManager());
-	}	
-	
-	//Initialise variables.
-	private ChunkManager() {				
-	}	
+	}
+
+	// Initialise variables.
+	private ChunkManager() {
+	}
 
 	public static ChunkManager getInstance() {
 		return instance;
@@ -30,58 +31,65 @@ private static ChunkManager instance;
 	public static void setInstance(ChunkManager instance) {
 		ChunkManager.instance = instance;
 	}
-		
+
 	/**
 	 * The current view distance
 	 */
 	private int viewDistance = 10;
-	
+
 	/**
 	 * The max number of loaded chunks allowed
 	 */
 	private int maxLoadedChunks = 1000;
-	
+
 	/**
 	 * The location of the world on disk
 	 */
 	private String worldLocation = "C:\\Testing\\ChunkTesting\\";
-	
-	
+
 	private ChunkHolder chunks = new ChunkHolder();
 
 	/**
-	 * Gets a chunk from the holder, if it is not loaded it loads it only if specified
-	 * @param x X Chunk Location
-	 * @param y	Y Chunk Location
-	 * @param z Z Chunk Location
-	 * @param load Should the chunk be loaded if it is not already
+	 * Gets a chunk from the holder, if it is not loaded it loads it only if
+	 * specified
+	 * 
+	 * @param x
+	 *            X Chunk Location
+	 * @param y
+	 *            Y Chunk Location
+	 * @param z
+	 *            Z Chunk Location
+	 * @param load
+	 *            Should the chunk be loaded if it is not already
 	 * @return The chunk
 	 */
 	public Chunk getChunk(int x, int y, int z, Boolean load, BlockType type) {
 		if (chunks.chunkLoaded(x, y, z)) {
 			return chunks.GetChunk(x, y, z);
-		} else if(load) {
+		} else if (load) {
 			return chunks.LoadChunk(x, y, z, worldLocation, type);
-		}else{
+		} else {
 			return null;
 		}
 	}
-	
+
 	/**
 	 * Unloads all loaded chunks
 	 */
-	public void UnloadChunks(){			
+	public void UnloadChunks() {
 		System.out.println("UNLOAD CHUNKS");
-		chunks.UnloadChunks();		
+		chunks.UnloadChunks();
 	}
 
-	
-	
 	/**
 	 * Generates a chunk if it is not already generated
-	 * @param x X Chunk Location
-	 * @param y	Y Chunk Location
-	 * @param z Z Chunk Location
+	 * 
+	 * @param x
+	 *            X Chunk Location
+	 * @param y
+	 *            Y Chunk Location
+	 * @param z
+	 *            Z Chunk Location
 	 * @return The generated chunk
 	 */
 	public Chunk GenerateChunk(int x, int y, int z, BlockType type) {
@@ -90,35 +98,38 @@ private static ChunkManager instance;
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Generates chunks
-	 * @param xL The number of chunks in the x axis to generate
-	 * @param yL The number of chunks in the y axis to generate
-	 * @param zL The number of chunks in the z axis to generate
+	 * 
+	 * @param xL
+	 *            The number of chunks in the x axis to generate
+	 * @param yL
+	 *            The number of chunks in the y axis to generate
+	 * @param zL
+	 *            The number of chunks in the z axis to generate
 	 */
-	public void genTest(int xL, int yL, int zL, BlockType type){
-		for(int x = 0; x<xL; x++){
-			for(int y = 0; y<yL; y++){
-				for(int z = 0; z<zL; z++){
-					GenerateChunk(x, y, z, type);	
-					
+	public void genTest(int xL, int yL, int zL, BlockType type) {
+		for (int x = 0; x < xL; x++) {
+			for (int y = 0; y < yL; y++) {
+				for (int z = 0; z < zL; z++) {
+					GenerateChunk(x, y, z, type);
+
 				}
 			}
-		}	
+		}
 	}
-	
-	public void updateTest(int i){
-		
+
+	public void updateTest(int i) {
+
 	}
 
 	public void update() {
-		for(ChunkID cid : chunks.loadedChunks){
+		for (ChunkID cid : chunks.loadedChunks) {
 			Chunk c = chunks.GetChunk(cid.x, cid.y, cid.z);
 			c.Update();
 		}
-		
+
 	}
-	
 
 }

@@ -92,48 +92,38 @@ public class VisibleFaces {
 	private float[] genBottom() {
 		return new float[] {
 				// BOTTOM QUAD
-				x + offset, y - offset, z, x - offset, y - offset, z,
-				x - offset, y - offset, z - CUBE_LENGTH, x + offset,
-				y - offset, z - CUBE_LENGTH };
+				x + offset, y - offset, z, x - offset, y - offset, z, x - offset, y - offset, z - CUBE_LENGTH, x + offset, y - offset, z - CUBE_LENGTH };
 	}
 
 	private float[] genTop() {
 		return new float[] {
 				// TOP
-				x + offset, y + offset, z - CUBE_LENGTH, x - offset,
-				y + offset, z - CUBE_LENGTH, x - offset, y + offset, z,
-				x + offset, y + offset, z };
+				x + offset, y + offset, z - CUBE_LENGTH, x - offset, y + offset, z - CUBE_LENGTH, x - offset, y + offset, z, x + offset, y + offset, z };
 	}
 
 	private float[] genFront() {
 		return new float[] {
 				// FRONT QUAD
-				x + offset, y + offset, z, x - offset, y + offset, z,
-				x - offset, y - offset, z, x + offset, y - offset, z };
+				x + offset, y + offset, z, x - offset, y + offset, z, x - offset, y - offset, z, x + offset, y - offset, z };
 	}
 
 	private float[] genBack() {
 		return new float[] {
 				// BACK QUAD
-				x + offset, y - offset, z - CUBE_LENGTH, x - offset,
-				y - offset, z - CUBE_LENGTH, x - offset, y + offset,
-				z - CUBE_LENGTH, x + offset, y + offset, z - CUBE_LENGTH };
+				x + offset, y - offset, z - CUBE_LENGTH, x - offset, y - offset, z - CUBE_LENGTH, x - offset, y + offset, z - CUBE_LENGTH, x + offset,
+				y + offset, z - CUBE_LENGTH };
 	}
 
 	private float[] genLeft() {
 		return new float[] {
 				// LEFT QUAD
-				x - offset, y + offset, z, x - offset, y + offset,
-				z - CUBE_LENGTH, x - offset, y - offset, z - CUBE_LENGTH,
-				x - offset, y - offset, z };
+				x - offset, y + offset, z, x - offset, y + offset, z - CUBE_LENGTH, x - offset, y - offset, z - CUBE_LENGTH, x - offset, y - offset, z };
 	}
 
 	private float[] genRight() {
 		return new float[] {
 				// RIGHT QUAD
-				x + offset, y + offset, z - CUBE_LENGTH, x + offset,
-				y + offset, z, x + offset, y - offset, z, x + offset,
-				y - offset, z - CUBE_LENGTH };
+				x + offset, y + offset, z - CUBE_LENGTH, x + offset, y + offset, z, x + offset, y - offset, z, x + offset, y - offset, z - CUBE_LENGTH };
 	}
 
 	private float[] genBottomColors() {
@@ -211,37 +201,37 @@ public class VisibleFaces {
 	private float[] genBottomUVs() {
 		return new float[] {
 
-		0,0,1,0,1,1,0,1 };
+		0, 0, 1, 0, 1, 1, 0, 1 };
 	}
 
 	private float[] genTopUVs() {
 		return new float[] {
 
-		0,1,1,1,1,0,0,0		};
+		0, 1, 1, 1, 1, 0, 0, 0 };
 	}
 
 	private float[] genFrontUVs() {
 		return new float[] {
 
-				0,1,1,1,1,0,0,0 };
+		0, 1, 1, 1, 1, 0, 0, 0 };
 	}
 
 	private float[] genBackUVs() {
 		return new float[] {
 
-				0,1,1,1,1,0,0,0 };
+		0, 1, 1, 1, 1, 0, 0, 0 };
 	}
 
 	private float[] genLeftUVs() {
 		return new float[] {
 
-				0,1,1,1,1,0,0,0 };
+		0, 1, 1, 1, 1, 0, 0, 0 };
 	}
 
 	private float[] genRightUVs() {
 		return new float[] {
 
-				0,1,1,1,1,0,0,0 };
+		0, 1, 1, 1, 1, 0, 0, 0 };
 	}
 
 }

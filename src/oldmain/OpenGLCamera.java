@@ -1,8 +1,5 @@
 package oldmain;
 
-
-
-
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.*;
 import static org.lwjgl.opengl.GL14.*;
@@ -44,31 +41,26 @@ import com.bulletphysics.dynamics.RigidBodyConstructionInfo;
 import com.bulletphysics.linearmath.DefaultMotionState;
 import com.bulletphysics.linearmath.Transform;
 
-
 public class OpenGLCamera implements Runnable {
 	private static final String WINDOW_TITLE = "Infinigen Tech Demo";
 	private static final int[] WINDOW_DIMENSIONS = { 1920, 1080 };
-	private static final float ASPECT_RATIO = (float) WINDOW_DIMENSIONS[0]
-			/ (float) WINDOW_DIMENSIONS[1];
+	private static final float ASPECT_RATIO = (float) WINDOW_DIMENSIONS[0] / (float) WINDOW_DIMENSIONS[1];
 
-	private static final EulerCamera camera = new EulerCamera.Builder()
-			.setPosition(140f, 100000f, 140f).setRotation(50, 320, 0)
-			.setAspectRatio(ASPECT_RATIO).setFieldOfView(60)
-			.setFarClippingPane(10000f).setNearClippingPane(0.1f).build();
+	private static final EulerCamera camera = new EulerCamera.Builder().setPosition(140f, 100000f, 140f).setRotation(50, 320, 0).setAspectRatio(ASPECT_RATIO)
+			.setFieldOfView(60).setFarClippingPane(10000f).setNearClippingPane(0.1f).build();
 
 	private static int fps;
 	private static int fpsCounter;
-	private static long lastFPS;	
-	//private HUDBuilder hud;
+	private static long lastFPS;
+	// private HUDBuilder hud;
 	private double lastFrame;
 	private boolean mouse0, mouse1;
 	private long downStart;
 
-	
 	private Texture textureHandle;
 	private boolean createNewShape;
 	private int id;
-	
+
 	// Render
 	private void render() {
 		System.out.println("----------------render----------------");
@@ -79,36 +71,34 @@ public class OpenGLCamera implements Runnable {
 		glLoadIdentity();
 		// Apply the camera position and orientation to the scene
 		camera.applyTranslations();
-		 glLight(GL_LIGHT0, GL_POSITION,
-		BufferTools.asFlippedFloatBuffer(35f, 100f, 35f, 1));
+		glLight(GL_LIGHT0, GL_POSITION, BufferTools.asFlippedFloatBuffer(35f, 100f, 35f, 1));
 		// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 		// Render all chunks
 		for (ChunkBatch cb : DataStore.getInstance().getChunkBatches()) {
 			cb.draw(camera.x(), camera.y(), camera.z(), textureHandle);
 		}
-		
-		//EntityManager.getInstance().drawAll();
-		
+
+		// EntityManager.getInstance().drawAll();
+
 		// System.out.print("FPS: " + fpsCounter);
-		//hud.render(fpsCounter, camera);
+		// hud.render(fpsCounter, camera);
 	}
 
 	// Process Input
 	private void input(float delta) {
 		System.out.println("----------------input----------------");
-		
-		
-		while(Keyboard.next()){
-			if(Keyboard.getEventKey() == Keyboard.KEY_ESCAPE){
+
+		while (Keyboard.next()) {
+			if (Keyboard.getEventKey() == Keyboard.KEY_ESCAPE) {
 				cleanUp(false);
 			}
-			
-			if(Keyboard.getEventKey() == Keyboard.KEY_G){
+
+			if (Keyboard.getEventKey() == Keyboard.KEY_G) {
 				createNewShape = true;
-				
-			}else{
-				//createNewShape = false;
+
+			} else {
+				// createNewShape = false;
 			}
 		}
 		// We can only set the mouse to be grabbed once, if you set it again
@@ -133,13 +123,12 @@ public class OpenGLCamera implements Runnable {
 			// Get Clicks
 			if (Mouse.getEventButton() == 0) {
 				if (!Mouse.getEventButtonState()) {
-					if(checkClick()){
+					if (checkClick()) {
 						camera.moveFromLook(5, 5, 5);
 					}
 				}
-			}		
-			
-			
+			}
+
 		}
 
 		if (Mouse.isGrabbed()) {
@@ -153,21 +142,21 @@ public class OpenGLCamera implements Runnable {
 
 	private boolean checkClick() {
 		boolean click = false;
-		if(mouse0){
-			long downTime = getTime() - downStart;			
-			if(downTime < 100){	
-				click = true;			
+		if (mouse0) {
+			long downTime = getTime() - downStart;
+			if (downTime < 100) {
+				click = true;
 			}
-		}		
+		}
 		mouse0 = false;
 		return click;
-	
+
 	}
 
-	private void cleanUp(boolean asCrash) {		
+	private void cleanUp(boolean asCrash) {
 		System.out.println("----------------Cleanup----------------");
 		ChunkManager.getInstance().UnloadChunks();
-		//EntityManager.getInstance().cleanUp();
+		// EntityManager.getInstance().cleanUp();
 		PhysicsManager.getInstance().cleanUp();
 		System.err.println(GLU.gluErrorString(glGetError()));
 		Display.destroy();
@@ -182,75 +171,75 @@ public class OpenGLCamera implements Runnable {
 		System.out.println("----------------Set up States----------------");
 		glShadeModel(GL_SMOOTH);
 		glEnable(GL_DEPTH_TEST);
-		//glDepthFunc(GL_LEQUAL);
-		 glEnable(GL_LIGHTING);
-		 glEnable(GL_LIGHT0);
-		 glLightModel(GL_LIGHT_MODEL_AMBIENT,
-		 BufferTools.asFlippedFloatBuffer(new float[] { 0.01f, 0.01f, 0.01f, 0.01f }));
-		 glLight(GL_LIGHT0, GL_CONSTANT_ATTENUATION,
-		 BufferTools.asFlippedFloatBuffer(new float[] { 1, 1, 1, 1 }));
+		// glDepthFunc(GL_LEQUAL);
+		glEnable(GL_LIGHTING);
+		glEnable(GL_LIGHT0);
+		glLightModel(GL_LIGHT_MODEL_AMBIENT, BufferTools.asFlippedFloatBuffer(new float[] { 0.01f, 0.01f, 0.01f, 0.01f }));
+		glLight(GL_LIGHT0, GL_CONSTANT_ATTENUATION, BufferTools.asFlippedFloatBuffer(new float[] { 1, 1, 1, 1 }));
 
 		glEnable(GL_COLOR_MATERIAL);
 		glColorMaterial(GL_FRONT, GL_DIFFUSE);
 		glMaterialf(GL_FRONT, GL_SHININESS, 50f);
 		camera.applyOptimalStates();
-		
+
 		glEnable(GL_CULL_FACE);
 		glCullFace(GL_BACK);
 
-
 		glClearColor(0.529f, 0.8078f, 0.980f, 0f);
-		
 
 		glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
-		
+
 	}
 
-	private void logic(float delta) {		
+	private void logic(float delta) {
 		System.out.println("----------------Logic----------------");
 		// Reset the model-view matrix.
-        glLoadIdentity();
-        // Apply the camera's position and orientation to the model-view matrix.
-        camera.applyTranslations();
-        // Runs the JBullet physics simulation for the specified time in seconds.
-        //PhysicsManager.getInstance().stepSimulate(delta);
-        // Create a set of bodies that are to be removed.
-        Set<RigidBody> bodiesToBeRemoved = new HashSet<RigidBody>();
-        // For every physics ball ...
-        //EntityManager.getInstance().process(delta);
-        
-        if (createNewShape) {
-            // Create the collision shape (sphere with radius of 3 metres).
-            CollisionShape shape = new BoxShape(new Vector3f(1f,1f,1f));
-            // Create the motion state (x and z are the same as the camera's).
-            DefaultMotionState motionState = new DefaultMotionState(new Transform(new Matrix4f(new Quat4f(0, 0, 0, 1), new Vector3f(100, 100, 100), 1.0f)));
-            // Calculate the inertia (resistance to movement) using the ball's mass of 1 kilogram.
-            Vector3f inertia = new Vector3f(0, 0, 0);
-            shape.calculateLocalInertia(1.0f, inertia);
-            RigidBodyConstructionInfo constructionInfo = new RigidBodyConstructionInfo(1, motionState, shape, inertia);
-            constructionInfo.restitution = 0.75f;
-            RigidBody rigidBody = new RigidBody(constructionInfo);
-            //EntityManager.getInstance().addEntity(rigidBody, id);
-            id++;
-            if(id >= DataStore.getInstance().calcNumberCores()){
-            	id = 0;
-            }
-           
-        }        
+		glLoadIdentity();
+		// Apply the camera's position and orientation to the model-view matrix.
+		camera.applyTranslations();
+		// Runs the JBullet physics simulation for the specified time in
+		// seconds.
+		// PhysicsManager.getInstance().stepSimulate(delta);
+		// Create a set of bodies that are to be removed.
+		Set<RigidBody> bodiesToBeRemoved = new HashSet<RigidBody>();
+		// For every physics ball ...
+		// EntityManager.getInstance().process(delta);
+
+		if (createNewShape) {
+			// Create the collision shape (sphere with radius of 3 metres).
+			CollisionShape shape = new BoxShape(new Vector3f(1f, 1f, 1f));
+			// Create the motion state (x and z are the same as the camera's).
+			DefaultMotionState motionState = new DefaultMotionState(new Transform(new Matrix4f(new Quat4f(0, 0, 0, 1), new Vector3f(100, 100, 100), 1.0f)));
+			// Calculate the inertia (resistance to movement) using the ball's
+			// mass of 1 kilogram.
+			Vector3f inertia = new Vector3f(0, 0, 0);
+			shape.calculateLocalInertia(1.0f, inertia);
+			RigidBodyConstructionInfo constructionInfo = new RigidBodyConstructionInfo(1, motionState, shape, inertia);
+			constructionInfo.restitution = 0.75f;
+			RigidBody rigidBody = new RigidBody(constructionInfo);
+			// EntityManager.getInstance().addEntity(rigidBody, id);
+			id++;
+			if (id >= DataStore.getInstance().calcNumberCores()) {
+				id = 0;
+			}
+
+		}
 	}
-	
-	private void update(float delta) {	
+
+	private void update(float delta) {
 		System.out.println("----------------update----------------");
 		Display.update();
-		//Display.sync(120);
-		//createNewShape = true;
+		// Display.sync(120);
+		// createNewShape = true;
 	}
 
 	private void enterGameLoop() {
 		lastFPS = getTime();
 		while (!Display.isCloseRequested()) {
 			float delta = getDelta();
-			if(delta <= 0){delta = 1;}
+			if (delta <= 0) {
+				delta = 1;
+			}
 			DataStore.getInstance().setDelta(delta);
 			render();
 			input(delta);
@@ -259,8 +248,6 @@ public class OpenGLCamera implements Runnable {
 			updateFPS();
 		}
 	}
-
-	
 
 	/**
 	 * Calculate how many milliseconds have passed since last frame.
@@ -271,7 +258,7 @@ public class OpenGLCamera implements Runnable {
 		float time = getTime();
 		float delta = (float) (time - lastFrame);
 		lastFrame = time;
-		//System.out.println(" Delta: " + delta);
+		// System.out.println(" Delta: " + delta);
 		return delta;
 	}
 
@@ -293,7 +280,7 @@ public class OpenGLCamera implements Runnable {
 
 	private void setUpDisplay() {
 		try {
-			//Display.setDisplayMode(new DisplayMode(1280,720));
+			// Display.setDisplayMode(new DisplayMode(1280,720));
 			Display.setVSyncEnabled(false);
 			Display.setFullscreen(true);
 			Display.setResizable(false);
@@ -312,8 +299,8 @@ public class OpenGLCamera implements Runnable {
 		setUpDisplay();
 		setUpStates();
 		setUpChunks();
-		//Designer d = new Designer();
-		//d.initDesigner(camera);
+		// Designer d = new Designer();
+		// d.initDesigner(camera);
 		setUpHUD();
 		setUpMatrices();
 		setUpTextures();
@@ -324,34 +311,33 @@ public class OpenGLCamera implements Runnable {
 
 	private void setUpTextures() {
 		try {
-			textureHandle = TextureLoader.getTexture("PNG",
-					ResourceLoader.getResourceAsStream("res/textures/grassy.png"));
-			
+			textureHandle = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/textures/grassy.png"));
+
 			glGenerateMipmap(GL_TEXTURE_2D);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_LOD_BIAS, -0.3f);
-			
+
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}		
+		}
 	}
 
-	private void setUpChunks() {		
-		 ChunkManager.getInstance().genTest(10, 1, 10, BlockType.BlockType_Dirt);
+	private void setUpChunks() {
+		ChunkManager.getInstance().genTest(10, 1, 10, BlockType.BlockType_Dirt);
 	}
 
 	private void setUpHUD() {
-		//hud = new HUDBuilder();
-		//try {
-		//	hud.setUpTextures();
-		//} catch (IOException e) {
-			// TODO Auto-generated catch block
-		//	e.printStackTrace();
-		//}
+		// hud = new HUDBuilder();
+		// try {
+		// hud.setUpTextures();
+		// } catch (IOException e) {
+		// TODO Auto-generated catch block
+		// e.printStackTrace();
+		// }
 	}
 
-	public static void main(String[] args) {	
+	public static void main(String[] args) {
 		System.setProperty("org.lwjgl.librarypath", new File("natives/windows").getAbsolutePath());
 		(new Thread(new OpenGLCamera())).start();
 	}

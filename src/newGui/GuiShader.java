@@ -4,21 +4,16 @@ import newShaders.ShaderProgram;
 
 import org.lwjgl.util.vector.Matrix4f;
 
+public class GuiShader extends ShaderProgram {
 
-
-public class GuiShader extends ShaderProgram{
-	
 	private static final String VERTEX_FILE = "src/newGui/guiVertexShader.txt";
 	private static final String FRAGMENT_FILE = "src/newGui/guiFragmentShader.txt";
-	
-	
+
 	private int location_mouseOver;
-	
+
 	public GuiShader() {
 		super(VERTEX_FILE, FRAGMENT_FILE);
 	}
-	
-
 
 	@Override
 	protected void bindAttributes() {
@@ -28,12 +23,11 @@ public class GuiShader extends ShaderProgram{
 
 	@Override
 	protected void getAllUniformLoactions() {
-		location_mouseOver = super.getUniformLocation("mouseOver");		
+		location_mouseOver = super.getUniformLocation("mouseOver");
 	}
-	
-	public void loadMouseOver(boolean mouseOver){
+
+	public void loadMouseOver(boolean mouseOver) {
 		super.loadBoolean(location_mouseOver, mouseOver);
 	}
-	
 
 }

@@ -13,19 +13,15 @@ import newTextures.ModelTexture;
 public class TexturedPhysicsModel extends TexturedModel {
 
 	private CollisionShape collisionShape;
-	
-	
+
 	public TexturedPhysicsModel(PhysicsModel model, ModelTexture texture) {
 		super(model, texture);
 		this.collisionShape = model.getCollisionShape();
-	
+
 	}
 
 	public CollisionShape getCollisionShape() {
 		return collisionShape;
 	}
-	
-	
-	
-	
+
 }

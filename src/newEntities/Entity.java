@@ -14,9 +14,8 @@ public class Entity {
 	protected Matrix4f transformationMatrix;
 
 	private int textureIndex = 0;
-	
-	public Entity(TexturedModel model, Vector3f position, float rotX,
-			float rotY, float rotZ, float scale) {
+
+	public Entity(TexturedModel model, Vector3f position, float rotX, float rotY, float rotZ, float scale) {
 		super();
 		this.model = model;
 		this.position = position;
@@ -25,9 +24,8 @@ public class Entity {
 		this.rotZ = rotZ;
 		this.scale = scale;
 	}
-	
-	public Entity(TexturedModel model, int index, Vector3f position, float rotX,
-			float rotY, float rotZ, float scale) {
+
+	public Entity(TexturedModel model, int index, Vector3f position, float rotX, float rotY, float rotZ, float scale) {
 		super();
 		this.textureIndex = index;
 		this.model = model;
@@ -37,13 +35,13 @@ public class Entity {
 		this.rotZ = rotZ;
 		this.scale = scale;
 	}
-	
-	public float getTextureXOffset(){
+
+	public float getTextureXOffset() {
 		int column = textureIndex % model.getTexture().getNumberOfRows();
 		return (float) column / (float) model.getTexture().getNumberOfRows();
 	}
-	
-	public float getTextureYOffset(){
+
+	public float getTextureYOffset() {
 		int row = textureIndex / model.getTexture().getNumberOfRows();
 		return (float) row / (float) model.getTexture().getNumberOfRows();
 	}
@@ -115,9 +113,9 @@ public class Entity {
 	public void setTransformationMatrix(Matrix4f transformationMatrix) {
 		this.transformationMatrix = transformationMatrix;
 	}
-	
-	public Matrix4f updateTransformationMatrix(){
-		return Maths.createTransformationMatrix(getPosition(), getRotX(), getRotY(), getRotZ(), 1,getScale(), false);
+
+	public Matrix4f updateTransformationMatrix() {
+		return Maths.createTransformationMatrix(getPosition(), getRotX(), getRotY(), getRotZ(), 1, getScale(), false);
 	}
 
 }

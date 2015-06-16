@@ -93,8 +93,7 @@ public final class EulerCamera implements Camera {
 	 */
 	public EulerCamera(float aspectRatio) {
 		if (aspectRatio <= 0) {
-			throw new IllegalArgumentException("aspectRatio " + aspectRatio
-					+ " was 0 or was smaller than 0");
+			throw new IllegalArgumentException("aspectRatio " + aspectRatio + " was 0 or was smaller than 0");
 		}
 		this.aspectRatio = aspectRatio;
 		this.zNear = 0.3f;
@@ -145,8 +144,7 @@ public final class EulerCamera implements Camera {
 	 * @throws IllegalArgumentException
 	 *             if aspectRatio is 0 or smaller than 0
 	 */
-	public EulerCamera(float aspectRatio, float x, float y, float z,
-			float pitch, float yaw, float roll) {
+	public EulerCamera(float aspectRatio, float x, float y, float z, float pitch, float yaw, float roll) {
 		this(aspectRatio, x, y, z);
 		this.pitch = pitch;
 		this.yaw = yaw;
@@ -176,19 +174,15 @@ public final class EulerCamera implements Camera {
 	 *             if aspectRatio is 0 or smaller than 0 or if zNear is 0 or
 	 *             smaller than 0 or if zFar is the same or smaller than zNear
 	 */
-	public EulerCamera(float aspectRatio, float x, float y, float z,
-			float pitch, float yaw, float roll, float zNear, float zFar) {
+	public EulerCamera(float aspectRatio, float x, float y, float z, float pitch, float yaw, float roll, float zNear, float zFar) {
 		if (aspectRatio <= 0) {
-			throw new IllegalArgumentException("aspectRatio " + aspectRatio
-					+ " was 0 or was smaller than 0");
+			throw new IllegalArgumentException("aspectRatio " + aspectRatio + " was 0 or was smaller than 0");
 		}
 		if (zNear <= 0) {
-			throw new IllegalArgumentException("zNear " + zNear
-					+ " was 0 or was smaller than 0");
+			throw new IllegalArgumentException("zNear " + zNear + " was 0 or was smaller than 0");
 		}
 		if (zFar <= zNear) {
-			throw new IllegalArgumentException("zFar " + zFar
-					+ " was smaller or the same as zNear " + zNear);
+			throw new IllegalArgumentException("zFar " + zFar + " was smaller or the same as zNear " + zNear);
 		}
 		this.aspectRatio = aspectRatio;
 		this.x = x;
@@ -260,12 +254,11 @@ public final class EulerCamera implements Camera {
 	 * @param maxLookDown
 	 *            the maximum angle in degrees at which you can look down
 	 */
-	public void processMouse(float mouseSpeed, float maxLookUp,
-			float maxLookDown) {
+	public void processMouse(float mouseSpeed, float maxLookUp, float maxLookDown) {
 
-		float mouseDX =  Mouse.getDX() * mouseSpeed * 0.16f;
+		float mouseDX = Mouse.getDX() * mouseSpeed * 0.16f;
 
-		float mouseDY =  Mouse.getDY() * mouseSpeed * 0.16f;
+		float mouseDY = Mouse.getDY() * mouseSpeed * 0.16f;
 
 		if (yaw + mouseDX >= 360) {
 			yaw = yaw + mouseDX - 360;
@@ -299,18 +292,13 @@ public final class EulerCamera implements Camera {
 	 */
 	public void processKeyboard(float delta) {
 		if (delta <= 0) {
-			throw new IllegalArgumentException("delta " + delta
-					+ " is 0 or is smaller than 0");
+			throw new IllegalArgumentException("delta " + delta + " is 0 or is smaller than 0");
 		}
 
-		boolean keyUp = Keyboard.isKeyDown(Keyboard.KEY_UP)
-				|| Keyboard.isKeyDown(Keyboard.KEY_W);
-		boolean keyDown = Keyboard.isKeyDown(Keyboard.KEY_DOWN)
-				|| Keyboard.isKeyDown(Keyboard.KEY_S);
-		boolean keyLeft = Keyboard.isKeyDown(Keyboard.KEY_LEFT)
-				|| Keyboard.isKeyDown(Keyboard.KEY_A);
-		boolean keyRight = Keyboard.isKeyDown(Keyboard.KEY_RIGHT)
-				|| Keyboard.isKeyDown(Keyboard.KEY_D);
+		boolean keyUp = Keyboard.isKeyDown(Keyboard.KEY_UP) || Keyboard.isKeyDown(Keyboard.KEY_W);
+		boolean keyDown = Keyboard.isKeyDown(Keyboard.KEY_DOWN) || Keyboard.isKeyDown(Keyboard.KEY_S);
+		boolean keyLeft = Keyboard.isKeyDown(Keyboard.KEY_LEFT) || Keyboard.isKeyDown(Keyboard.KEY_A);
+		boolean keyRight = Keyboard.isKeyDown(Keyboard.KEY_RIGHT) || Keyboard.isKeyDown(Keyboard.KEY_D);
 		boolean flyUp = Keyboard.isKeyDown(Keyboard.KEY_SPACE);
 		boolean flyDown = Keyboard.isKeyDown(Keyboard.KEY_LSHIFT);
 
@@ -359,18 +347,13 @@ public final class EulerCamera implements Camera {
 	 */
 	public void processKeyboard(float delta, float speed) {
 		if (delta <= 0) {
-			throw new IllegalArgumentException("delta " + delta
-					+ " is 0 or is smaller than 0");
+			throw new IllegalArgumentException("delta " + delta + " is 0 or is smaller than 0");
 		}
 
-		boolean keyUp = Keyboard.isKeyDown(Keyboard.KEY_UP)
-				|| Keyboard.isKeyDown(Keyboard.KEY_W);
-		boolean keyDown = Keyboard.isKeyDown(Keyboard.KEY_DOWN)
-				|| Keyboard.isKeyDown(Keyboard.KEY_S);
-		boolean keyLeft = Keyboard.isKeyDown(Keyboard.KEY_LEFT)
-				|| Keyboard.isKeyDown(Keyboard.KEY_A);
-		boolean keyRight = Keyboard.isKeyDown(Keyboard.KEY_RIGHT)
-				|| Keyboard.isKeyDown(Keyboard.KEY_D);
+		boolean keyUp = Keyboard.isKeyDown(Keyboard.KEY_UP) || Keyboard.isKeyDown(Keyboard.KEY_W);
+		boolean keyDown = Keyboard.isKeyDown(Keyboard.KEY_DOWN) || Keyboard.isKeyDown(Keyboard.KEY_S);
+		boolean keyLeft = Keyboard.isKeyDown(Keyboard.KEY_LEFT) || Keyboard.isKeyDown(Keyboard.KEY_A);
+		boolean keyRight = Keyboard.isKeyDown(Keyboard.KEY_RIGHT) || Keyboard.isKeyDown(Keyboard.KEY_D);
 		boolean flyUp = Keyboard.isKeyDown(Keyboard.KEY_SPACE);
 		boolean flyDown = Keyboard.isKeyDown(Keyboard.KEY_LSHIFT);
 
@@ -422,21 +405,15 @@ public final class EulerCamera implements Camera {
 	 * @throws IllegalArgumentException
 	 *             if delta is 0 or delta is smaller than 0
 	 */
-	public void processKeyboard(float delta, float speedX, float speedY,
-			float speedZ) {
+	public void processKeyboard(float delta, float speedX, float speedY, float speedZ) {
 		if (delta <= 0) {
-			throw new IllegalArgumentException("delta " + delta
-					+ " is 0 or is smaller than 0");
+			throw new IllegalArgumentException("delta " + delta + " is 0 or is smaller than 0");
 		}
 
-		boolean keyUp = Keyboard.isKeyDown(Keyboard.KEY_UP)
-				|| Keyboard.isKeyDown(Keyboard.KEY_W);
-		boolean keyDown = Keyboard.isKeyDown(Keyboard.KEY_DOWN)
-				|| Keyboard.isKeyDown(Keyboard.KEY_S);
-		boolean keyLeft = Keyboard.isKeyDown(Keyboard.KEY_LEFT)
-				|| Keyboard.isKeyDown(Keyboard.KEY_A);
-		boolean keyRight = Keyboard.isKeyDown(Keyboard.KEY_RIGHT)
-				|| Keyboard.isKeyDown(Keyboard.KEY_D);
+		boolean keyUp = Keyboard.isKeyDown(Keyboard.KEY_UP) || Keyboard.isKeyDown(Keyboard.KEY_W);
+		boolean keyDown = Keyboard.isKeyDown(Keyboard.KEY_DOWN) || Keyboard.isKeyDown(Keyboard.KEY_S);
+		boolean keyLeft = Keyboard.isKeyDown(Keyboard.KEY_LEFT) || Keyboard.isKeyDown(Keyboard.KEY_A);
+		boolean keyRight = Keyboard.isKeyDown(Keyboard.KEY_RIGHT) || Keyboard.isKeyDown(Keyboard.KEY_D);
 		boolean flyUp = Keyboard.isKeyDown(Keyboard.KEY_SPACE);
 		boolean flyDown = Keyboard.isKeyDown(Keyboard.KEY_LSHIFT);
 
@@ -485,12 +462,9 @@ public final class EulerCamera implements Camera {
 	 *            the movement along the z-axis
 	 */
 	public void moveFromLook(float dx, float dy, float dz) {
-		this.z += dx * (float) cos(toRadians(yaw - 90)) + dz
-				* cos(toRadians(yaw));
-		this.x -= dx * (float) sin(toRadians(yaw - 90)) + dz
-				* sin(toRadians(yaw));
-		this.y += dy * (float) sin(toRadians(pitch - 90)) + dz
-				* sin(toRadians(pitch));
+		this.z += dx * (float) cos(toRadians(yaw - 90)) + dz * cos(toRadians(yaw));
+		this.x -= dx * (float) sin(toRadians(yaw - 90)) + dz * sin(toRadians(yaw));
+		this.y += dy * (float) sin(toRadians(pitch - 90)) + dz * sin(toRadians(pitch));
 		// float hypotenuseX = dx;
 		// float adjacentX = hypotenuseX * (float) Math.cos(Math.toRadians(yaw -
 		// 90));
@@ -544,7 +518,7 @@ public final class EulerCamera implements Camera {
 	 */
 	public void applyOptimalStates() {
 		if (GLContext.getCapabilities().GL_ARB_depth_clamp) {
-			//glEnable(GL_DEPTH_CLAMP);
+			// glEnable(GL_DEPTH_CLAMP);
 		}
 	}
 
@@ -637,8 +611,7 @@ public final class EulerCamera implements Camera {
 	@Override
 	public void setAspectRatio(float aspectRatio) {
 		if (aspectRatio <= 0) {
-			throw new IllegalArgumentException("aspectRatio " + aspectRatio
-					+ " is 0 or less");
+			throw new IllegalArgumentException("aspectRatio " + aspectRatio + " is 0 or less");
 		}
 		this.aspectRatio = aspectRatio;
 	}
@@ -660,10 +633,8 @@ public final class EulerCamera implements Camera {
 
 	@Override
 	public String toString() {
-		return "EulerCamera [x=" + x + ", y=" + y + ", z=" + z + ", pitch="
-				+ pitch + ", yaw=" + yaw + ", " + "roll=" + roll + ", fov="
-				+ fov + ", aspectRatio=" + aspectRatio + ", zNear=" + zNear
-				+ ", " + "zFar=" + zFar + "]";
+		return "EulerCamera [x=" + x + ", y=" + y + ", z=" + z + ", pitch=" + pitch + ", yaw=" + yaw + ", " + "roll=" + roll + ", fov=" + fov
+				+ ", aspectRatio=" + aspectRatio + ", zNear=" + zNear + ", " + "zFar=" + zFar + "]";
 	}
 
 	/** A builder helper class for the EulerCamera class. */
@@ -690,8 +661,7 @@ public final class EulerCamera implements Camera {
 		 */
 		public Builder setAspectRatio(float aspectRatio) {
 			if (aspectRatio <= 0) {
-				throw new IllegalArgumentException("aspectRatio " + aspectRatio
-						+ " was 0 or was smaller than 0");
+				throw new IllegalArgumentException("aspectRatio " + aspectRatio + " was 0 or was smaller than 0");
 			}
 			this.aspectRatio = aspectRatio;
 			return this;
@@ -710,8 +680,7 @@ public final class EulerCamera implements Camera {
 		 */
 		public Builder setNearClippingPane(float nearClippingPane) {
 			if (nearClippingPane <= 0) {
-				throw new IllegalArgumentException("nearClippingPane "
-						+ nearClippingPane + " is 0 or less");
+				throw new IllegalArgumentException("nearClippingPane " + nearClippingPane + " is 0 or less");
 			}
 			this.zNear = nearClippingPane;
 			return this;
@@ -730,8 +699,7 @@ public final class EulerCamera implements Camera {
 		 */
 		public Builder setFarClippingPane(float farClippingPane) {
 			if (farClippingPane <= 0) {
-				throw new IllegalArgumentException("farClippingPane "
-						+ farClippingPane + " is 0 or less");
+				throw new IllegalArgumentException("farClippingPane " + farClippingPane + " is 0 or less");
 			}
 			this.zFar = farClippingPane;
 			return this;
@@ -797,9 +765,7 @@ public final class EulerCamera implements Camera {
 		 */
 		public EulerCamera build() {
 			if (zFar <= zNear) {
-				throw new IllegalArgumentException("farClippingPane " + zFar
-						+ " is the same or less than " + "nearClippingPane "
-						+ zNear);
+				throw new IllegalArgumentException("farClippingPane " + zFar + " is the same or less than " + "nearClippingPane " + zNear);
 			}
 			return new EulerCamera(this);
 		}

@@ -3,21 +3,21 @@ package newTextures;
 import javax.vecmath.Vector3f;
 
 public class ModelTexture {
-	
+
 	private Vector3f textureID;
-	
+
 	private float shineDamper = 1;
 	private float reflectivity = 0;
-	
+
 	private boolean hasTransparency = false;
 	private boolean useFakeLighting = false;
-	
+
 	private int numberOfRows = 1;
-	
-	public ModelTexture(Vector3f vector3f){
+
+	public ModelTexture(Vector3f vector3f) {
 		this.textureID = vector3f;
 	}
-	
+
 	public int getNumberOfRows() {
 		return numberOfRows;
 	}
@@ -35,7 +35,7 @@ public class ModelTexture {
 		this.useFakeLighting = useFakeLighting;
 	}
 
-	public int getID(){
+	public int getID() {
 		return (int) textureID.z;
 	}
 
@@ -62,6 +62,5 @@ public class ModelTexture {
 	public void setHasTransparency(boolean hasTransparency) {
 		this.hasTransparency = hasTransparency;
 	}
-	
-	
+
 }

@@ -27,6 +27,7 @@ public class ClientConnection implements Runnable, ActionListener {
 	Message message;
 	Client client;
 	ArrayList<Message> sentMessages;
+
 	ClientConnection(Socket socket) {
 		connection = socket;
 		sentMessages = new ArrayList<Message>();
@@ -36,30 +37,29 @@ public class ClientConnection implements Runnable, ActionListener {
 	public void run() {
 		// try {
 
-		System.out.println("Connection received from "
-				+ connection.getInetAddress().getHostName());
+		System.out.println("Connection received from " + connection.getInetAddress().getHostName());
 		// 3. get Input and Output streams
 		try {
 			connection.setPerformancePreferences(2, 2, 1);
 			connection.setTcpNoDelay(true);
 			out = new ObjectOutputStream(new BufferedOutputStream(connection.getOutputStream()));
 			out.flush();
-		
+
 			in = new ObjectInputStream(new BufferedInputStream(connection.getInputStream()));
 
-			System.out
-					.println("Sending First world instance and pathability map");
+			System.out.println("Sending First world instance and pathability map");
 			sendMessage(new Message(null, false, null, false, null, false, "Downloading Map"));
-			sendMessage(new Message(InterthreadHolder.getInstance()
-					.getNetworkWorld(), false, null, false, null, false, null));
+			sendMessage(new Message(InterthreadHolder.getInstance().getNetworkWorld(), false, null, false, null, false, null));
 			sendMessage(new Message(null, false, null, false, null, false, "Downloading Pathfinding Map"));
-			sendMessage(new Message(null, false, null, false, InterthreadHolder
-					.getInstance().getWalkability(), true, "done"));
-			//Timer which fires the send message event, this should be on a fast time since we want to send the message as soon as possible.
-			Timer timer = new Timer(50, this); //With 50ms it will send the message less than 50ms after it was created. Checking for messages 200 times a second.
-			timer.start(); 
-			
-			
+			sendMessage(new Message(null, false, null, false, InterthreadHolder.getInstance().getWalkability(), true, "done"));
+			// Timer which fires the send message event, this should be on a
+			// fast time since we want to send the message as soon as possible.
+			Timer timer = new Timer(50, this); // With 50ms it will send the
+												// message less than 50ms after
+												// it was created. Checking for
+												// messages 200 times a second.
+			timer.start();
+
 			// 4. The two parts communicate via the input and output streams
 			do {
 
@@ -67,7 +67,7 @@ public class ClientConnection implements Runnable, ActionListener {
 
 					message = (Message) in.readObject();
 					if (message.disconnect) {
-						System.out.println(client.username + " disconnected");						
+						System.out.println(client.username + " disconnected");
 					} else {
 
 						// Do something based on client input presumably a
@@ -98,17 +98,14 @@ public class ClientConnection implements Runnable, ActionListener {
 							client.ip = connection.getInetAddress();
 
 						}
-						// Send the current world to the client. This will only occur if a client is
-						// desynced and is to stop the game from just ending or becoming unplayable.
-						//TODO: use this... by adding desync checks
+						// Send the current world to the client. This will only
+						// occur if a client is
+						// desynced and is to stop the game from just ending or
+						// becoming unplayable.
+						// TODO: use this... by adding desync checks
 						if (message.requestUpdate) {
-							System.out
-									.println("Sending updated world to client: "
-											+ connection.getInetAddress()
-													.getHostName());
-							sendMessage(new Message(InterthreadHolder
-									.getInstance().getNetworkWorld(), false,
-									null, false, null, false, null));
+							System.out.println("Sending updated world to client: " + connection.getInetAddress().getHostName());
+							sendMessage(new Message(InterthreadHolder.getInstance().getNetworkWorld(), false, null, false, null, false, null));
 						}
 					}
 
@@ -124,11 +121,11 @@ public class ClientConnection implements Runnable, ActionListener {
 				in.close();
 				out.close();
 				connection.close();
-				
+
 			} catch (Exception e) {
-				//Don't really care the connection is already dead anyway
+				// Don't really care the connection is already dead anyway
 			}
-			
+
 		}
 	}
 
@@ -139,17 +136,17 @@ public class ClientConnection implements Runnable, ActionListener {
 		switch (cmd.commandType) {
 		case "Select":
 			System.out.println("Client sent Select order");
-			for (UnitSprite s : InterthreadHolder.getInstance().getWorld()
-					.getSprites()) {
+			for (UnitSprite s : InterthreadHolder.getInstance().getWorld().getSprites()) {
 				for (UnitSprite sp : cmd.selectedUnits) {
-					if (s.spriteID == sp.spriteID
-							&& s.getTeamID() == client.teamID) { // Check that
-																	// the
-																	// client
-																	// can
-																	// actually
-																	// select
-																	// the item
+					if (s.spriteID == sp.spriteID && s.getTeamID() == client.teamID) { // Check
+																						// that
+																						// the
+																						// client
+																						// can
+																						// actually
+																						// select
+																						// the
+																						// item
 						s.setSelected(true, client.teamID);
 						// System.out.println("Selecting unit:" + s.spriteID);
 					}
@@ -159,8 +156,7 @@ public class ClientConnection implements Runnable, ActionListener {
 			break;
 		case "deSelectAll":
 			System.out.println("Client sent deSelectAll order");
-			for (UnitSprite s : InterthreadHolder.getInstance().getWorld()
-					.getSprites()) {
+			for (UnitSprite s : InterthreadHolder.getInstance().getWorld().getSprites()) {
 				if (s.getTeamID() == client.teamID) {
 					s.setSelected(false, client.teamID);
 				}
@@ -170,8 +166,7 @@ public class ClientConnection implements Runnable, ActionListener {
 			break;
 		case "Move":
 			System.out.println("Client send move order");
-			for (UnitSprite s : InterthreadHolder.getInstance().getWorld()
-					.getSprites()) {
+			for (UnitSprite s : InterthreadHolder.getInstance().getWorld().getSprites()) {
 				if (s.isSelected()) {
 					s.moveTo(cmd.x + cmd.camX, cmd.y + cmd.camY);
 					// System.out.println("Moving unit:" + s.spriteID);
@@ -197,35 +192,33 @@ public class ClientConnection implements Runnable, ActionListener {
 		}
 	}
 
-	//sends the waiting messages to the client
-		void sendMessages(){
-			//System.out.println("Starting sending messages to client");
-			
-			
-			//Loop through the list of messages
-			for (Message m : InterthreadHolder.getInstance().getMessages()) {
-				//If the message is not from this client then
-				if(!m.client.username.equals(client.username)){
-					//if the message has not already been sent to this client.
-					if(!sentMessages.contains(m)){
-						//Send the message
-						sendMessage(m);
-						//Add it to the list of sent messages.
-						sentMessages.add(m);
-					}
+	// sends the waiting messages to the client
+	void sendMessages() {
+		// System.out.println("Starting sending messages to client");
+
+		// Loop through the list of messages
+		for (Message m : InterthreadHolder.getInstance().getMessages()) {
+			// If the message is not from this client then
+			if (!m.client.username.equals(client.username)) {
+				// if the message has not already been sent to this client.
+				if (!sentMessages.contains(m)) {
+					// Send the message
+					sendMessage(m);
+					// Add it to the list of sent messages.
+					sentMessages.add(m);
 				}
-				
-				//System.out.println("Sending message to client: " + m.command.commandType);
 			}
-			
-				
-			
+
+			// System.out.println("Sending message to client: " +
+			// m.command.commandType);
 		}
-	
+
+	}
+
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		sendMessages();
-		
+
 	}
 
 }

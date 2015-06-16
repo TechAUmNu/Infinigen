@@ -2,6 +2,7 @@ package newWorld;
 
 /**
  * Class for the type of block this is.
+ * 
  * @author Euan
  *
  */

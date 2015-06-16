@@ -25,42 +25,39 @@ import com.bulletphysics.linearmath.MotionState;
 import com.bulletphysics.linearmath.Transform;
 
 public class PhysicsProcessor {
-	
+
 	private DiscreteDynamicsWorld dynamicsWorld;
-	
-	
-	public void addPhysicsEntity(PhysicsEntity entity){
+
+	public void addPhysicsEntity(PhysicsEntity entity) {
 		dynamicsWorld.addRigidBody(entity.getBody());
 	}
-	
-	public void removePhysicsEntity(PhysicsEntity entity){
+
+	public void removePhysicsEntity(PhysicsEntity entity) {
 		dynamicsWorld.removeRigidBody(entity.getBody());
 	}
-	
-	public void simulate(){
+
+	public void simulate() {
 		dynamicsWorld.stepSimulation(DisplayManager.getFrameTimeSeconds());
 	}
-	
+
 	public void setUpPhysics() {
 		/**
 		 * The object that will roughly find out whether bodies are colliding.
 		 */
 		BroadphaseInterface broadphase = new DbvtBroadphase();
 		CollisionConfiguration collisionConfiguration = new DefaultCollisionConfiguration();
-		
+
 		/**
 		 * The object that will accurately find out whether, when, how, and
 		 * where bodies are colliding.
 		 */
-		CollisionDispatcher dispatcher = new CollisionDispatcher(
-				collisionConfiguration);
+		CollisionDispatcher dispatcher = new CollisionDispatcher(collisionConfiguration);
 		/**
 		 * The object that will determine what to do after collision.
 		 */
 		ConstraintSolver solver = new SequentialImpulseConstraintSolver();
 		// Initialise the JBullet world.
-		dynamicsWorld = new DiscreteDynamicsWorld(dispatcher, broadphase,
-				solver, collisionConfiguration);
+		dynamicsWorld = new DiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration);
 		// Set the gravity to 10 metres per second squared (m/s^2). Gravity
 		// affects all bodies with a mass larger than
 		// zero.
@@ -71,20 +68,16 @@ public class PhysicsProcessor {
 		// colliding bodies, used to prevent the bodies
 		// from partially going through the floor. It is also possible to think
 		// of this as the plane being lifted 0.25m.
-		CollisionShape groundShape = new StaticPlaneShape(
-				new Vector3f(0, 1, 0), 0f);
+		CollisionShape groundShape = new StaticPlaneShape(new Vector3f(0, 1, 0), 0f);
 
 		// Initialise 'groundMotionState' to a motion state that simply assigns
 		// the origin [0, 0, 0] as the origin of
 		// the ground.
-		MotionState groundMotionState = new DefaultMotionState(new Transform(
-				new Matrix4f(new Quat4f(0, 0, 0, 1), new Vector3f(0, 0, 0),
-						1.0f)));
+		MotionState groundMotionState = new DefaultMotionState(new Transform(new Matrix4f(new Quat4f(0, 0, 0, 1), new Vector3f(0, 0, 0), 1.0f)));
 		// Initialise 'groundBodyConstructionInfo' to a value that contains the
 		// mass, the motion state, the shape, and the inertia (= resistance to
 		// change).
-		RigidBodyConstructionInfo groundBodyConstructionInfo = new RigidBodyConstructionInfo(
-				0, groundMotionState, groundShape, new Vector3f(0, 0, 0));
+		RigidBodyConstructionInfo groundBodyConstructionInfo = new RigidBodyConstructionInfo(0, groundMotionState, groundShape, new Vector3f(0, 0, 0));
 		// Set the restitution, also known as the bounciness or spring, to 0.25.
 		// The restitution may range from 0.0
 		// not bouncy) to 1.0 (extremely bouncy).
@@ -94,10 +87,8 @@ public class PhysicsProcessor {
 		// assigned construction information.
 		RigidBody groundRigidBody = new RigidBody(groundBodyConstructionInfo);
 		// Add the ground to the JBullet world.
-		dynamicsWorld.addRigidBody(groundRigidBody);	
-		
+		dynamicsWorld.addRigidBody(groundRigidBody);
 
 	}
-	
-	
+
 }

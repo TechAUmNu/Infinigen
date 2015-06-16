@@ -1,18 +1,16 @@
 package oldshaders;
 
-	public enum Shader {
-		Chunk(0);
-		
-		private int shaderID;
+public enum Shader {
+	Chunk(0);
 
-		Shader(int i) {
-			shaderID = i;
-		}
+	private int shaderID;
 
-		public int GetID() {
-			return shaderID;
-		}
-		
+	Shader(int i) {
+		shaderID = i;
 	}
 
+	public int GetID() {
+		return shaderID;
+	}
 
+}

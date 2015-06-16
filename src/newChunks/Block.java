@@ -1,7 +1,7 @@
 package newChunks;
 
 public class Block {
-	
+
 	private boolean IsVisible;
 	private BlockType Type;
 	private VisibleFaces vf;
@@ -17,17 +17,18 @@ public class Block {
 		public byte GetType() {
 			return BlockID;
 		}
+
 		public static BlockType fromByte(byte b) {
-	        switch(b) {
-	        case (byte) 0:
-	            return BlockType_Air;
-	        case (byte) 1:
-	            return BlockType_Dirt;
-	        case (byte) 2:
-	        	return BlockType_Stone;	        	
-	        }
-	        return null;
-	    }
+			switch (b) {
+			case (byte) 0:
+				return BlockType_Air;
+			case (byte) 1:
+				return BlockType_Dirt;
+			case (byte) 2:
+				return BlockType_Stone;
+			}
+			return null;
+		}
 	}
 
 	public Block(BlockType type) {
@@ -45,7 +46,8 @@ public class Block {
 	public byte GetType() {
 		return Type.GetType();
 	}
-	public void setType(BlockType b){
+
+	public void setType(BlockType b) {
 		Type = b;
 	}
 
@@ -56,5 +58,5 @@ public class Block {
 	public void setVf(VisibleFaces vf) {
 		this.vf = vf;
 	}
-		
+
 }

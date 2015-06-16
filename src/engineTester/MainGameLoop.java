@@ -46,14 +46,14 @@ public class MainGameLoop {
 	private List<PhysicsEntity> entities;
 	private List<Light> lights;
 	private Terrain currentTerrain;
-	
-	
+
 	private List<IModule> loadedModules, unloadedModules;
 
 	/**
 	 * Main entry point to the game
 	 * 
-	 * @param args Arguments
+	 * @param args
+	 *            Arguments
 	 */
 	public static void main(String[] args) {
 		MainGameLoop g = new MainGameLoop();
@@ -68,7 +68,7 @@ public class MainGameLoop {
 	public void mainGame() {
 		loadAssets();
 
-		setUpTerrain();
+		// setUpTerrain();
 		generateGui();
 
 		while (!Display.isCloseRequested()) {
@@ -94,41 +94,38 @@ public class MainGameLoop {
 		DisplayManager.createDisplay();
 
 		loadedModules = new ArrayList<IModule>();
-		
+
 		loader = new Loader();
 		gui = new GuiManager(loader);
-		
+
 		renderer = new MasterRenderer(loader);
 		physics = new PhysicsManager();
 		entities = new ArrayList<PhysicsEntity>();
 		lights = new ArrayList<Light>();
-		
+
 		physics.setUp();
 
 		PhysicsModel pmodel = OBJFileLoader.loadOBJtoVAOWithGeneratedPhysics("box", loader);
 		TexturedPhysicsModel testPhysics = new TexturedPhysicsModel(pmodel, new ModelTexture(loader.loadTexture("white")));
 		player = new Player(testPhysics, new Vector3f(100, 0, -50), 0, 0, 0, 1, physics.getProcessor());
-		
-		
+
 		camera = new Camera(player);
 		picker = new MousePicker(camera, renderer.getProjectionMatrix());
-		
-		//Core modules
+
+		// Core modules
 		loadedModules.add(loader);
 		loadedModules.add(gui);
 		loadedModules.add(renderer);
 		loadedModules.add(physics);
-		
-		
+
 		loadedModules.add(player);
 		loadedModules.add(camera);
 		loadedModules.add(picker);
-		
-		
-		//Add anything to the globals that might be needed elsewhere.
+
+		// Add anything to the globals that might be needed elsewhere.
 		Globals.setLoader(loader);
-		
-		for(IModule module : loadedModules){
+
+		for (IModule module : loadedModules) {
 			module.setUp();
 		}
 
@@ -159,7 +156,7 @@ public class MainGameLoop {
 	 * Anything to do with setting up the gui
 	 */
 	private void generateGui() {
-		gui.generateElement(0, 0, "uvgrid01");		
+		gui.generateElement(0, 0, "uvgrid01");
 	}
 
 	/**
@@ -167,10 +164,10 @@ public class MainGameLoop {
 	 */
 	private void update() {
 		DisplayManager.updateDisplay();
-		
-		for(IModule module : loadedModules){
+
+		for (IModule module : loadedModules) {
 			module.update();
-		}		
+		}
 	}
 
 	/**
@@ -195,8 +192,8 @@ public class MainGameLoop {
 		if (Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) {
 			cleanUp();
 		}
-		
-		for(IModule module : loadedModules){
+
+		for (IModule module : loadedModules) {
 			module.process();
 		}
 	}
@@ -218,11 +215,11 @@ public class MainGameLoop {
 	 * Called every frame Put any renderer here
 	 */
 	private void render() {
-		
+
 		renderer.render(lights, camera);
 		gui.render();
-		
-		for(IModule module : loadedModules){
+
+		for (IModule module : loadedModules) {
 			module.render();
 		}
 	}
@@ -231,8 +228,8 @@ public class MainGameLoop {
 		gui.cleanUp();
 		renderer.cleanUp();
 		loader.cleanUp();
-		
-		for(IModule module : loadedModules){
+
+		for (IModule module : loadedModules) {
 			module.cleanUp();
 		}
 		DisplayManager.closeDisplay();
