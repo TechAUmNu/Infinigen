@@ -68,7 +68,7 @@ public class MasterRenderer implements IModule {
 	}
 
 	public void render(List<Light> lights, Camera camera) {
-		prepare();
+		prepareRender();
 		shader.start();
 		shader.loadSkyColour(RED, GREEN, BLUE);
 		shader.loadLights(lights);
@@ -111,7 +111,7 @@ public class MasterRenderer implements IModule {
 		return projectionMatrix;
 	}
 
-	public void prepare() {
+	public void prepareRender() {
 		glEnable(GL_DEPTH_TEST);
 		// glDepthFunc(GL_LEQUAL);
 		// glEnable(GL_DEPTH_CLAMP);
@@ -159,5 +159,11 @@ public class MasterRenderer implements IModule {
 	public void update() {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public ArrayList<PhysicsEntity> prepare() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

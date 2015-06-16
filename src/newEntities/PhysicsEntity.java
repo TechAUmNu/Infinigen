@@ -39,9 +39,9 @@ public class PhysicsEntity extends Entity {
 				position.y, position.z), scale)));
 		Vector3f inertia = new Vector3f(0, 0, 0);
 		CollisionShape shape = model.getCollisionShape();
-		shape.calculateLocalInertia(1.0f, inertia);
+		shape.calculateLocalInertia(mass, inertia);
 
-		RigidBodyConstructionInfo constructionInfo = new RigidBodyConstructionInfo(1, motionState, shape, inertia);
+		RigidBodyConstructionInfo constructionInfo = new RigidBodyConstructionInfo(mass, motionState, shape, inertia);
 		constructionInfo.restitution = 0f;
 		RigidBody rigidBody = new RigidBody(constructionInfo);
 

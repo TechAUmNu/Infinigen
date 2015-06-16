@@ -108,4 +108,23 @@ public class Maths {
 		coord.y *= Display.getHeight();
 		return coord;
 	}
+	
+	public static javax.vecmath.Vector3f convertVector(Vector3f vector){
+		javax.vecmath.Vector3f newVector = new javax.vecmath.Vector3f();
+		newVector.x = vector.x;
+		newVector.y = vector.y;
+		newVector.z = vector.z;
+		return newVector;
+		
+	}
+	
+	
+	public static Vector3f convertVectorBtoL(javax.vecmath.Vector3f vector){
+		Vector3f newVector = new Vector3f();
+		newVector.x = vector.x;
+		newVector.y = vector.y;
+		newVector.z = vector.z;
+		return newVector;
+		
+	}
 }

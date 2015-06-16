@@ -40,7 +40,11 @@ public class PhysicsProcessor {
 		dynamicsWorld.stepSimulation(DisplayManager.getFrameTimeSeconds());
 	}
 
-	public void setUpPhysics() {
+	public DiscreteDynamicsWorld getDynamicsWorld() {
+		return dynamicsWorld;
+	}
+
+	public void setUpPhysics(boolean floor) {
 		/**
 		 * The object that will roughly find out whether bodies are colliding.
 		 */
@@ -87,7 +91,8 @@ public class PhysicsProcessor {
 		// assigned construction information.
 		RigidBody groundRigidBody = new RigidBody(groundBodyConstructionInfo);
 		// Add the ground to the JBullet world.
-		dynamicsWorld.addRigidBody(groundRigidBody);
+		
+		if(floor) dynamicsWorld.addRigidBody(groundRigidBody);
 
 	}
 

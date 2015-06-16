@@ -11,6 +11,7 @@ import java.util.List;
 
 import javax.vecmath.Vector3f;
 
+import newEntities.PhysicsEntity;
 import newMain.IModule;
 import newModels.PhysicsModel;
 import newModels.RawModel;
@@ -225,5 +226,11 @@ public class Loader implements IModule {
 	public void update() {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public ArrayList<PhysicsEntity> prepare() {
+		// TODO Auto-generated method stub
+		return new ArrayList<PhysicsEntity>();
 	}
 }

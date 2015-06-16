@@ -1,5 +1,7 @@
 package newEntities;
 
+import java.util.ArrayList;
+
 import javax.vecmath.Quat4f;
 
 import newMain.IModule;
@@ -121,6 +123,12 @@ public class Player extends PhysicsEntity implements IModule {
 	public void render() {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public ArrayList<PhysicsEntity> prepare() {
+		// TODO Auto-generated method stub
+		return new ArrayList<PhysicsEntity>();
 	}
 
 }

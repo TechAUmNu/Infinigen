@@ -1,5 +1,10 @@
 package newMain;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
+import newEntities.PhysicsEntity;
+
 public interface IModule {
 	/**
 	 * A module is a container for anything that needs to run. The modules are
@@ -19,4 +24,6 @@ public interface IModule {
 	public void render();
 
 	public void update();
+
+	public ArrayList<PhysicsEntity> prepare();
 }

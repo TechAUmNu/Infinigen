@@ -1,5 +1,8 @@
 package newGui;
 
+import java.util.ArrayList;
+
+import newEntities.PhysicsEntity;
 import newMain.IModule;
 import newRendering.Loader;
 import newUtility.Maths;
@@ -46,6 +49,12 @@ public class GuiManager implements IModule {
 	public void setUp() {
 		// TODO Gui Setup code here
 
+	}
+
+	@Override
+	public ArrayList<PhysicsEntity> prepare() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

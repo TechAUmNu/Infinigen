@@ -1,6 +1,10 @@
 package newUtility;
 
+import java.util.ArrayList;
+
 import newEntities.Camera;
+import newEntities.PhysicsEntity;
+import newMain.Globals;
 import newMain.IModule;
 import newRendering.DisplayManager;
 
@@ -32,6 +36,8 @@ public class MousePicker implements IModule {
 	public void update() {
 		viewMatrix = Maths.createViewMatrix(camera);
 		currentRay = calculateMouseRay();
+		currentRay.normalise();
+		Globals.setCurrentMouseRay(currentRay);
 	}
 
 	private Vector3f calculateMouseRay() {
@@ -84,7 +90,12 @@ public class MousePicker implements IModule {
 
 	@Override
 	public void render() {
-		// TODO Auto-generated method stub
+		
+	}
 
+	@Override
+	public ArrayList<PhysicsEntity> prepare() {
+		// TODO Auto-generated method stub
+		return new ArrayList<PhysicsEntity>();
 	}
 }

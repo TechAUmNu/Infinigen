@@ -26,6 +26,7 @@ import newTerrains.Terrain;
 import newTextures.ModelTexture;
 import newTextures.TerrainTexture;
 import newTextures.TerrainTexturePack;
+import newUnitBuilder.UnitBuilderManager;
 import newUtility.MousePicker;
 import newUtility.OSValidator;
 import newobjConverter.OBJFileLoader;
@@ -46,6 +47,7 @@ public class MainGameLoop {
 	private List<PhysicsEntity> entities;
 	private List<Light> lights;
 	private Terrain currentTerrain;
+	private UnitBuilderManager unitBuilder;
 
 	private List<IModule> loadedModules, unloadedModules;
 
@@ -102,6 +104,8 @@ public class MainGameLoop {
 		physics = new PhysicsManager();
 		entities = new ArrayList<PhysicsEntity>();
 		lights = new ArrayList<Light>();
+		
+		unitBuilder = new UnitBuilderManager();
 
 		physics.setUp();
 
@@ -121,9 +125,11 @@ public class MainGameLoop {
 		loadedModules.add(player);
 		loadedModules.add(camera);
 		loadedModules.add(picker);
+		loadedModules.add(unitBuilder);
 
 		// Add anything to the globals that might be needed elsewhere.
 		Globals.setLoader(loader);
+
 
 		for (IModule module : loadedModules) {
 			module.setUp();
@@ -202,9 +208,16 @@ public class MainGameLoop {
 	 * Called every frame Put anything that needs added to the render here
 	 */
 	private void prepareRender() {
+		entities.clear();
 
-		renderer.processEntity(player);
+		//renderer.processEntity(player);
 		renderer.processTerrain(currentTerrain);
+		for(IModule module : loadedModules){
+			ArrayList<PhysicsEntity> toAdd = module.prepare();
+			if(toAdd != null){
+				entities.addAll(toAdd);
+			}
+		}
 
 		for (PhysicsEntity entity : entities) {
 			renderer.processEntity(entity);

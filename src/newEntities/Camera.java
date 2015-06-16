@@ -3,9 +3,12 @@ package newEntities;
 import static org.lwjgl.opengl.ARBDepthClamp.GL_DEPTH_CLAMP;
 import static org.lwjgl.opengl.GL11.glEnable;
 
+import java.util.ArrayList;
+
 import javax.vecmath.Quat4d;
 import javax.vecmath.Quat4f;
 
+import newMain.Globals;
 import newMain.IModule;
 import newTerrains.Terrain;
 import newUtility.Maths;
@@ -50,6 +53,8 @@ public class Camera implements IModule {
 		calculateCameraPosition(horizontalDistance, verticalDistance, rotationDegrees, transform);
 
 		this.yaw = 180 - (angleAroundPlayer);
+		
+		Globals.setCameraPosition(position);
 	}
 
 	/*
@@ -156,6 +161,12 @@ public class Camera implements IModule {
 	public void render() {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public ArrayList<PhysicsEntity> prepare() {
+		// TODO Auto-generated method stub
+		return new ArrayList<PhysicsEntity>();
 	}
 
 }

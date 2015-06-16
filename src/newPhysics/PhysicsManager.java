@@ -1,5 +1,8 @@
 package newPhysics;
 
+import java.util.ArrayList;
+
+import newEntities.PhysicsEntity;
 import newMain.IModule;
 
 public class PhysicsManager implements IModule {
@@ -23,7 +26,7 @@ public class PhysicsManager implements IModule {
 	@Override
 	public void setUp() {
 		processor = new PhysicsProcessor();
-		processor.setUpPhysics();
+		processor.setUpPhysics(true);
 
 	}
 
@@ -37,6 +40,12 @@ public class PhysicsManager implements IModule {
 	public void render() {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public ArrayList<PhysicsEntity> prepare() {
+		// TODO Auto-generated method stub
+		return new ArrayList<PhysicsEntity>();
 	}
 
 }
