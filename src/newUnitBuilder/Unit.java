@@ -40,6 +40,7 @@ public class Unit {
 		
 		PhysicsEntity base = new PhysicsEntity(boxModel, new Vector3f(100, 0, -50), 0, 0, 0, 1000, 10, processor);
 		entities.add(base);
+		System.out.println("Body Hash: "+  base.getBody().hashCode());
 	}
 
 	public List<PhysicsEntity> getEntities() {
@@ -48,6 +49,18 @@ public class Unit {
 
 	public List<TypedConstraint> getJoints() {
 		return joints;
+	}
+
+	public void highlight(int hashCode) {
+		for(PhysicsEntity entity : entities){
+			if(entity.getBody().hashCode() == hashCode){
+				entity.highlight(true);
+			}
+			else{
+				entity.highlight(false);
+			}
+		}
+		
 	}
 	
 	

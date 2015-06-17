@@ -19,6 +19,7 @@ public class PhysicsEntity extends Entity {
 	protected TexturedPhysicsModel model;
 	protected RigidBody body;
 	protected boolean physicsBody = false;
+	protected boolean highlight = false;
 
 	public PhysicsEntity(TexturedPhysicsModel model, org.lwjgl.util.vector.Vector3f position, float rotX, float rotY, float rotZ, float scale, float mass,
 			PhysicsProcessor processor) {
@@ -64,6 +65,14 @@ public class PhysicsEntity extends Entity {
 
 	public RigidBody getBody() {
 		return body;
+	}
+
+	public void highlight(boolean highlight) {
+		this.highlight = highlight;		
+	}
+
+	public boolean isHighlighted() {
+		return highlight;
 	}
 
 }

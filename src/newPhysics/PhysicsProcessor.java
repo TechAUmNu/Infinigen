@@ -44,7 +44,7 @@ public class PhysicsProcessor {
 		return dynamicsWorld;
 	}
 
-	public void setUpPhysics(boolean floor) {
+	public void setUpPhysics(boolean floor, boolean gravity) {
 		/**
 		 * The object that will roughly find out whether bodies are colliding.
 		 */
@@ -65,7 +65,9 @@ public class PhysicsProcessor {
 		// Set the gravity to 10 metres per second squared (m/s^2). Gravity
 		// affects all bodies with a mass larger than
 		// zero.
-		dynamicsWorld.setGravity(new Vector3f(0, -10, 0));
+		
+		if(gravity)	dynamicsWorld.setGravity(new Vector3f(0, -10, 0));
+		else dynamicsWorld.setGravity(new Vector3f(0, 0, 0));
 		// Initialise 'groundShape' to a static plane shape on the origin facing
 		// upwards ([0, 1, 0] is the normal).
 		// 0.25 metres is an added buffer between the ground and potential

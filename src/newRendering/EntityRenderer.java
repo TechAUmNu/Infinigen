@@ -71,9 +71,13 @@ public class EntityRenderer {
 	}
 
 	private void prepareInstance(PhysicsEntity entity) {
+		shader.highlightEntity(false);
 		if (entity.isPhysicsBody()) {
 			float[] transformationMatrix = entity.updateTransformationMatrixFloat();
 			shader.loadTransformationMatrix(transformationMatrix);
+			if(entity.isHighlighted()){			
+				shader.highlightEntity(true);
+			}
 		} else {
 			Matrix4f transformationMatrix = entity.updateTransformationMatrix();
 			shader.loadTransformationMatrix(transformationMatrix);

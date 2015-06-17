@@ -38,7 +38,7 @@ public class UnitBuilderManager implements IModule {
 		
 		temp = new ArrayList<PhysicsEntity>();
 		processor = new PhysicsProcessor();
-		processor.setUpPhysics(true);
+		processor.setUpPhysics(true, true);
 		
 		
 		Unit unit = new Unit();
@@ -68,34 +68,30 @@ public class UnitBuilderManager implements IModule {
 
 	private void mousePointing() {
 		
+		Vector3f rayFrom = Maths.convertVector(Globals.getCameraPosition());
+		Vector3f rayTo = Maths.convertVector(Globals.getMouseRay());
+		Vector3f shootRay = Maths.convertVector(Globals.getMouseRay());
+		
+		rayTo.scale(1000);
+		rayTo.add(rayFrom);
+		
+		
 		if(Mouse.isButtonDown(2) && timeLeft < 0){
 		
-		Vector3f destination = Maths.convertVector(Globals.getMouseRay());
 		
-		float mass = 1f;
-		Transform startTransform = new Transform();
-		startTransform.setIdentity();
+	
 		Vector3f camPos = new Vector3f(Maths.convertVector(Globals.getCameraPosition()));
-		startTransform.origin.set(camPos);
-
 		
-			
-			
-			PhysicsEntity model = new PhysicsEntity(boxModel, Maths.convertVectorBtoL(camPos), 0, 0, 0, 1, 10, processor);
-			temp.add(model);
+		PhysicsEntity model = new PhysicsEntity(boxModel, Maths.convertVectorBtoL(camPos), 0, 0, 0, 1, 10, processor);
+		temp.add(model);
 		
 
 		RigidBody body = model.getBody();
 
-		Vector3f linVel = destination;
-		System.out.println(linVel);
+		Vector3f linVel = shootRay;	
 		linVel.normalize();
 		linVel.scale(10);
 
-		Transform worldTrans = body.getWorldTransform(new Transform());
-		worldTrans.origin.set(camPos);
-		worldTrans.setRotation(new Quat4f(0f, 0f, 0f, 1f));
-		body.setWorldTransform(worldTrans);
 		
 		body.setLinearVelocity(linVel);
 		body.setAngularVelocity(new Vector3f(0f, 0f, 0f));
@@ -103,27 +99,23 @@ public class UnitBuilderManager implements IModule {
 		body.setCcdMotionThreshold(1f);
 		body.setCcdSweptSphereRadius(0.2f);
 		
-		timeLeft = 1;
+		timeLeft = 100;
 		
 		}
 		timeLeft--;
-		CollisionWorld.ClosestRayResultCallback rayCallback = new CollisionWorld.ClosestRayResultCallback(Maths.convertVector(Globals.getCameraPosition()), Maths.convertVector(Globals.getMouseRay()));
-		processor.getDynamicsWorld().rayTest(Maths.convertVector(Globals.getCameraPosition()), Maths.convertVector(Globals.getMousePhysicsRay()), rayCallback);
+		CollisionWorld.ClosestRayResultCallback rayCallback = new CollisionWorld.ClosestRayResultCallback(rayFrom, rayTo);
+		processor.getDynamicsWorld().rayTest(rayFrom, rayTo, rayCallback);
 		
-
 		
-		System.out.println(Maths.convertVector(Globals.getCameraPosition()));
-		System.out.println(Maths.convertVector(Globals.getMousePhysicsRay()));
+		
+		//System.out.println("RayFrom : " + rayFrom);
+		//System.out.println("RayTo : " + rayTo);
 		if (rayCallback.hasHit()) {
 			RigidBody body = RigidBody.upcast(rayCallback.collisionObject);
-			Vector3f com = new Vector3f();
-			com = body.getCenterOfMassPosition(com);
-			System.out.println(com);
+			
+			area.getUnit().highlight(body.hashCode());
 			
 			
-			System.out.println("WE HIT IT!!");
-			Vector3f hitPointWorld = rayCallback.hitPointWorld;
-			System.out.println(hitPointWorld);
 		}
 	}
 
@@ -146,11 +138,11 @@ public class UnitBuilderManager implements IModule {
 	public ArrayList<PhysicsEntity> prepare() {
 		Unit unit = area.getUnit();
 		
-		ArrayList<PhysicsEntity> todraw = new ArrayList<PhysicsEntity>();
+		ArrayList<PhysicsEntity> todraw = temp;
 		 todraw.addAll(unit.getEntities());
 		
 		
-		return (ArrayList<PhysicsEntity>) unit.getEntities();
+		return (ArrayList<PhysicsEntity>) todraw;
 	}
 
 }

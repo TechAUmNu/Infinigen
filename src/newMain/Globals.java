@@ -37,12 +37,7 @@ public class Globals {
 		return mouseRay;
 	}
 	
-	public static Vector3f getMousePhysicsRay(){
-		
-		Vector3f ray = mouseRay;
-		ray.scale(1000);
-		return ray;
-	}
+	
 
 	public static void setCameraPosition(Vector3f position) {
 		cameraPosition = position;		

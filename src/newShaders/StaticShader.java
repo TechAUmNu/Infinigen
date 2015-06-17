@@ -29,6 +29,7 @@ public class StaticShader extends ShaderProgram {
 	private int location_skyColour;
 	private int location_numberOfRows;
 	private int location_offset;
+	private int location_highlight;
 
 	public StaticShader() {
 		super(VERTEX_FILE, FRAGMENT_FILE);
@@ -52,6 +53,7 @@ public class StaticShader extends ShaderProgram {
 		location_skyColour = super.getUniformLocation("skyColour");
 		location_numberOfRows = super.getUniformLocation("numberOfRows");
 		location_offset = super.getUniformLocation("offset");
+		location_highlight = super.getUniformLocation("highlight");
 
 		location_lightPosition = new int[MAX_LIGHTS];
 		location_lightColour = new int[MAX_LIGHTS];
@@ -114,6 +116,10 @@ public class StaticShader extends ShaderProgram {
 	public void loadViewMatrix(Camera camera) {
 		Matrix4f viewMatrix = Maths.createViewMatrix(camera);
 		super.loadMatrix(location_viewMatrix, viewMatrix);
+	}
+
+	public void highlightEntity(boolean highlight) {
+		super.loadBoolean(location_highlight, highlight);		
 	}
 
 }

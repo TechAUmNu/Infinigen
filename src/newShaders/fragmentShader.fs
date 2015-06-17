@@ -14,7 +14,7 @@ uniform vec3 attenuation[4];
 uniform float shineDamper;
 uniform float reflectivity;
 uniform vec3 skyColour;
-
+uniform float highlight;
 
 void main(void){
 
@@ -48,5 +48,10 @@ void main(void){
 	}
 	
 	out_Color = vec4(totalDiffuse, 1.0) * texture(textureSampler, pass_textureCoords) + vec4(totalSpecular, 1.0);
+	
+	if(highlight > 0.5){
+		out_Color = mix(vec4(0.5, 0.5, 0.5, 1.0), out_Color, 0.5);
+	}
+	
 	//out_Color = mix(vec4(skyColour, 1.0), out_Color, visibility);
 }
