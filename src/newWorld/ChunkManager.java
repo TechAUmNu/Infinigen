@@ -4,12 +4,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import newEntities.PhysicsEntity;
 import newMain.IModule;
 
 public class ChunkManager implements IModule {
 
 	int chunkSize, blockSize;
-	List<Chunk> loadedChunks;
+	ArrayList<Chunk> loadedChunks;
 	HashMap<ChunkID, Chunk> chunks;
 
 	WorldRenderer renderer;
@@ -36,14 +37,20 @@ public class ChunkManager implements IModule {
 
 	@Override
 	public void render() {
-		// TODO Auto-generated method stub
-
+		renderer.render();
 	}
 
 	@Override
 	public void update() {
-		// TODO Auto-generated method stub
+		for(Chunk c : loadedChunks){
+			c.update();
+		}
+	}
 
+	@Override
+	public ArrayList<PhysicsEntity> prepare() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

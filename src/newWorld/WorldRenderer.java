@@ -1,6 +1,7 @@
 package newWorld;
 
-import java.util.List;
+import java.util.ArrayList;
+
 
 /**
  * Rendering chunks
@@ -10,6 +11,14 @@ import java.util.List;
  */
 public class WorldRenderer {
 
-	private List<Chunk> visibleChunks;
+	private ArrayList<Chunk> visibleChunks;
+	
+	
+	public void render(){
+		//Check which direction the camera is looking, then decide which faces of the chunks to draw.
+	}
+
+
+	
 
 }
