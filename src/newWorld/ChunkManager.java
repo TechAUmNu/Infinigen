@@ -12,6 +12,7 @@ public class ChunkManager implements IModule {
 	int chunkSize, blockSize;
 	ArrayList<Chunk> loadedChunks;
 	HashMap<ChunkID, Chunk> chunks;
+	
 
 	WorldRenderer renderer;
 
@@ -45,6 +46,11 @@ public class ChunkManager implements IModule {
 		for(Chunk c : loadedChunks){
 			c.update();
 		}
+	}
+	
+	
+	public void loadChunk(int x, int y, int z){
+		Chunk c = new Chunk(x, y, z, chunkSize, blockSize);
 	}
 
 	@Override
