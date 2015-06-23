@@ -24,22 +24,29 @@ public class ChunkManager implements IModule {
 
 	@Override
 	public void setUp() {
+		long startTime = System.currentTimeMillis();
 		loadedChunks = new ArrayList<Chunk>();
-		chunks = new HashMap<ChunkID, Chunk>();
-		renderer = new WorldRenderer();
-
+		chunks = new HashMap<ChunkID, Chunk>();	
+		
+		for(int i = 0; i < 10000; i++){
+			Chunk testChunk = new Chunk(i, i, i, 16, 2);
+			chunks.put(new ChunkID(i,i,i), testChunk);
+			loadedChunks.add(testChunk);
+		}
+		
+		
+		
+		
+		long endTime = System.currentTimeMillis();
+		long total = endTime - startTime;
+		System.out.println("Total Time: " + total);
 	}
 
 	@Override
 	public void cleanUp() {
 		// TODO Auto-generated method stub
 
-	}
-
-	@Override
-	public void render() {
-		renderer.render();
-	}
+	}	
 
 	@Override
 	public void update() {
@@ -57,6 +64,12 @@ public class ChunkManager implements IModule {
 	public ArrayList<PhysicsEntity> prepare() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void render() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

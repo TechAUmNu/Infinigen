@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
+import newModels.RawModel;
 import newWorld.BlockType;
 
 /**
@@ -20,8 +21,11 @@ public class Chunk {
 	boolean visible;
 	boolean changed;
 	int visibleFaces;
+	
+	RawModel bottomModel, topModel, frontModel, backModel, leftModel, rightModel;
 
 	public Chunk(int x, int y, int z, int size, int blockSize) {
+		
 		this.x = x;
 		this.y = y;
 		this.z = z;
@@ -29,6 +33,7 @@ public class Chunk {
 		this.blockSize = blockSize;
 		setUp();
 		rebuild();
+		
 	}
 
 	private void setUp() {
@@ -109,11 +114,40 @@ public class Chunk {
 				}
 			}
 		}
+		
+		frontModel = front.getModel();
+		backModel = back.getModel();
+		topModel = top.getModel();
+		bottomModel = bottom.getModel();
+		leftModel = left.getModel();
+		rightModel = right.getModel();
+		
+		
+	}
+	
 
+	public RawModel getBottomModel() {
+		return bottomModel;
 	}
 
-	public void render() {
+	public RawModel getTopModel() {
+		return topModel;
+	}
 
+	public RawModel getFrontModel() {
+		return frontModel;
+	}
+
+	public RawModel getBackModel() {
+		return backModel;
+	}
+
+	public RawModel getLeftModel() {
+		return leftModel;
+	}
+
+	public RawModel getRightModel() {
+		return rightModel;
 	}
 
 	/**

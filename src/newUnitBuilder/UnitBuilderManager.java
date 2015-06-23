@@ -84,7 +84,7 @@ public class UnitBuilderManager implements IModule {
 		
 		PhysicsEntity model = new PhysicsEntity(boxModel, Maths.convertVectorBtoL(camPos), 0, 0, 0, 1, 10, processor);
 		temp.add(model);
-		
+		System.out.println(temp.size());
 
 		RigidBody body = model.getBody();
 
@@ -99,7 +99,7 @@ public class UnitBuilderManager implements IModule {
 		body.setCcdMotionThreshold(1f);
 		body.setCcdSweptSphereRadius(0.2f);
 		
-		timeLeft = 100;
+		timeLeft = 1;
 		
 		}
 		timeLeft--;
@@ -138,7 +138,8 @@ public class UnitBuilderManager implements IModule {
 	public ArrayList<PhysicsEntity> prepare() {
 		Unit unit = area.getUnit();
 		
-		ArrayList<PhysicsEntity> todraw = temp;
+		ArrayList<PhysicsEntity> todraw = new ArrayList<PhysicsEntity>();
+		todraw.addAll(temp);
 		 todraw.addAll(unit.getEntities());
 		
 		

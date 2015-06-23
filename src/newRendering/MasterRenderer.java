@@ -23,9 +23,11 @@ import newMain.IModule;
 import newModels.TexturedModel;
 import newModels.TexturedPhysicsModel;
 import newShaders.StaticShader;
-import newShaders.TerrainShader;
+import newShaders.ChunkShader;
 import newSkybox.SkyboxRenderer;
 import newTerrains.Terrain;
+import newWorld.Chunk;
+import newWorld.WorldRenderer;
 
 public class MasterRenderer implements IModule {
 
@@ -42,11 +44,11 @@ public class MasterRenderer implements IModule {
 	private StaticShader shader = new StaticShader();
 	private EntityRenderer renderer;
 
-	private TerrainRenderer terrainRenderer;
-	private TerrainShader terrainShader = new TerrainShader();
+	private WorldRenderer terrainRenderer;
+	private ChunkShader terrainShader = new ChunkShader();
 
 	private Map<TexturedPhysicsModel, List<PhysicsEntity>> entities = new HashMap<TexturedPhysicsModel, List<PhysicsEntity>>();
-	private List<Terrain> terrains = new ArrayList<Terrain>();
+	private ArrayList<Chunk> visibleChunks = new ArrayList<Chunk>();
 
 	private SkyboxRenderer skyboxRenderer;
 
@@ -54,7 +56,7 @@ public class MasterRenderer implements IModule {
 		enableCulling();
 		createProjectionMatrix();
 		renderer = new EntityRenderer(shader, projectionMatrix);
-		terrainRenderer = new TerrainRenderer(terrainShader, projectionMatrix);
+		terrainRenderer = new WorldRenderer(terrainShader, projectionMatrix);
 		skyboxRenderer = new SkyboxRenderer(loader, projectionMatrix);
 	}
 
@@ -75,19 +77,19 @@ public class MasterRenderer implements IModule {
 		shader.loadViewMatrix(camera);
 		renderer.render(entities);
 		shader.stop();
-		// terrainShader.start();
-		// terrainShader.loadSkyColour(RED, GREEN, BLUE);
-		// terrainShader.loadLights(lights);
-		// terrainShader.loadViewMatrix(camera);
-		// terrainRenderer.render(terrains);
-		// terrainShader.stop();
+		terrainShader.start();
+		//terrainShader.loadSkyColour(RED, GREEN, BLUE);
+		terrainShader.loadLights(lights);
+		terrainShader.loadViewMatrix(camera);
+		terrainRenderer.render(visibleChunks);
+		terrainShader.stop();
 		skyboxRenderer.render(camera, RED, GREEN, BLUE);
-		terrains.clear();
+		//terrains.clear();
 		entities.clear();
 	}
 
 	public void processTerrain(Terrain terrain) {
-		terrains.add(terrain);
+		//terrains.add(terrain);
 	}
 
 	public void processEntity(PhysicsEntity entity) {

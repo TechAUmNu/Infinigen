@@ -9,7 +9,7 @@ import newUtility.Maths;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
-public class TerrainShader extends ShaderProgram {
+public class ChunkShader extends ShaderProgram {
 
 	private static final int MAX_LIGHTS = 4;
 
@@ -31,7 +31,7 @@ public class TerrainShader extends ShaderProgram {
 	private int location_bTexture;
 	private int location_blendMap;
 
-	public TerrainShader() {
+	public ChunkShader() {
 		super(VERTEX_FILE, FRAGMENT_FILE);
 	}
 

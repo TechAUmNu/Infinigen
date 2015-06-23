@@ -52,6 +52,16 @@ public class Loader implements IModule {
 		unbindVAO();
 		return new RawModel(vaoID, indices.length);
 	}
+	
+	public RawModel loadToVAO(float[] positions, float[] textureCoords, float[] normals, int vertexCount) {
+		int vaoID = createVAO();
+		
+		storeDataInAttributeList(0, 3, positions);
+		storeDataInAttributeList(1, 2, textureCoords);
+		storeDataInAttributeList(2, 3, normals);
+		unbindVAO();
+		return new RawModel(vaoID, vertexCount);
+	}
 
 	public PhysicsModel loadToVAOWithGeneratedPhysics(float[] positions, List<Vertex> vertices, float[] textureCoords, float[] normals, int[] indices) {
 		int vaoID = createVAO();

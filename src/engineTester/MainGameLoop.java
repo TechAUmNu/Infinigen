@@ -29,6 +29,7 @@ import newTextures.TerrainTexturePack;
 import newUnitBuilder.UnitBuilderManager;
 import newUtility.MousePicker;
 import newUtility.OSValidator;
+import newWorld.ChunkManager;
 import newobjConverter.OBJFileLoader;
 
 public class MainGameLoop {
@@ -50,6 +51,7 @@ public class MainGameLoop {
 	private UnitBuilderManager unitBuilder;
 
 	private List<IModule> loadedModules, unloadedModules;
+	private ChunkManager world;
 
 	/**
 	 * Main entry point to the game
@@ -105,6 +107,8 @@ public class MainGameLoop {
 		entities = new ArrayList<PhysicsEntity>();
 		lights = new ArrayList<Light>();
 		
+		world = new ChunkManager();
+		
 		unitBuilder = new UnitBuilderManager();
 
 		physics.setUp();
@@ -126,6 +130,7 @@ public class MainGameLoop {
 		loadedModules.add(camera);
 		loadedModules.add(picker);
 		loadedModules.add(unitBuilder);
+		loadedModules.add(world);
 
 		// Add anything to the globals that might be needed elsewhere.
 		Globals.setLoader(loader);
