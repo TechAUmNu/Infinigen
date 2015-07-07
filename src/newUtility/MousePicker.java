@@ -2,7 +2,7 @@ package newUtility;
 
 import java.util.ArrayList;
 
-import newEntities.Camera;
+import newEntities.ICamera;
 import newEntities.PhysicsEntity;
 import newMain.Globals;
 import newMain.IModule;
@@ -21,9 +21,9 @@ public class MousePicker implements IModule {
 
 	private Matrix4f projectionMatrix;
 	private Matrix4f viewMatrix;
-	private Camera camera;
+	private ICamera camera;
 
-	public MousePicker(Camera cam, Matrix4f projection) {
+	public MousePicker(ICamera cam, Matrix4f projection) {
 		this.camera = cam;
 		this.projectionMatrix = projection;
 		this.viewMatrix = Maths.createViewMatrix(camera);

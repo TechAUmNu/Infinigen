@@ -8,7 +8,9 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.util.vector.Vector3f;
 
-import newEntities.Camera;
+import newEntities.ICamera;
+import newEntities.RTSCamera;
+import newEntities.ThirdPersonCamera;
 import newEntities.Light;
 import newEntities.PhysicsEntity;
 import newEntities.Player;
@@ -37,11 +39,19 @@ public class MainGameLoop {
 	/**
 	 * Globals that are used a lot go here.
 	 */
+	
+	private int keyDelayTime = 20;
+	private int keyTimer = 0;
+	
+	
 	private GuiManager gui;
 	private Loader loader;
 	private PhysicsManager physics;
 	private MousePicker picker;
-	private Camera camera;
+	private ICamera activeCamera;
+	private int activeCameraID;
+	private ThirdPersonCamera thirdPersonCamera;
+	private RTSCamera rtsCamera;
 	private Player player;
 	private MasterRenderer renderer;
 	private boolean mouse0, mouse1 = false;
@@ -115,10 +125,12 @@ public class MainGameLoop {
 
 		PhysicsModel pmodel = OBJFileLoader.loadOBJtoVAOWithGeneratedPhysics("box", loader);
 		TexturedPhysicsModel testPhysics = new TexturedPhysicsModel(pmodel, new ModelTexture(loader.loadTexture("white")));
-		player = new Player(testPhysics, new Vector3f(100, 0, -50), 0, 0, 0, 1, physics.getProcessor());
+		player = new Player(testPhysics, new Vector3f(0, (float) -1, 0), 0, 0, 0, 1, physics.getProcessor());
 
-		camera = new Camera(player);
-		picker = new MousePicker(camera, renderer.getProjectionMatrix());
+		thirdPersonCamera = new ThirdPersonCamera(player);
+		rtsCamera = new RTSCamera();
+		activeCamera = rtsCamera;
+		picker = new MousePicker(activeCamera, renderer.getProjectionMatrix());
 
 		// Core modules
 		loadedModules.add(loader);
@@ -127,7 +139,9 @@ public class MainGameLoop {
 		loadedModules.add(physics);
 
 		loadedModules.add(player);
-		loadedModules.add(camera);
+		//loadedModules.add(thirdPersonCamera);
+		loadedModules.add(rtsCamera);
+		activeCameraID = 2;
 		loadedModules.add(picker);
 		loadedModules.add(unitBuilder);
 		loadedModules.add(world);
@@ -203,10 +217,36 @@ public class MainGameLoop {
 		if (Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) {
 			cleanUp();
 		}
+		
+		if(Keyboard.isKeyDown(Keyboard.KEY_C)){
+			if(keyTimer < 0){
+				switchCamera();
+			}
+		}
+		keyTimer--;
 
 		for (IModule module : loadedModules) {
 			module.process();
 		}
+		
+		
+	}
+
+	private void switchCamera() {		
+		if(activeCameraID == 1){
+			loadedModules.remove(thirdPersonCamera);
+			loadedModules.add(rtsCamera);
+			activeCamera = rtsCamera;
+			activeCameraID = 2;
+			keyTimer = keyDelayTime;
+		}
+		else if(activeCameraID == 2){
+			loadedModules.remove(rtsCamera);
+			loadedModules.add(thirdPersonCamera);
+			activeCamera = thirdPersonCamera;
+			activeCameraID = 1;
+			keyTimer = keyDelayTime;
+		}		
 	}
 
 	/**
@@ -215,8 +255,8 @@ public class MainGameLoop {
 	private void prepareRender() {
 		entities.clear();
 
-		//renderer.processEntity(player);
-		renderer.processTerrain(currentTerrain);
+		renderer.processEntity(player);
+		
 		for(IModule module : loadedModules){
 			ArrayList<PhysicsEntity> toAdd = module.prepare();
 			if(toAdd != null){
@@ -234,12 +274,12 @@ public class MainGameLoop {
 	 */
 	private void render() {
 
-		renderer.render(lights, camera);
+		renderer.render(lights, activeCamera);
 		gui.render();
 
-		for (IModule module : loadedModules) {
-			module.render();
-		}
+		//for (IModule module : loadedModules) {
+		///	module.render();
+		//}
 	}
 
 	private void cleanUp() {

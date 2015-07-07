@@ -17,14 +17,15 @@ import newWorld.BlockType;
 public class Chunk {
 
 	Block[][][] blocks;
-	int x, y, z, size, blockSize;
+	int x, y, z, size;
+	float blockSize;
 	boolean visible;
-	boolean changed;
-	int visibleFaces;
+	boolean changed = false;
+
 	
 	RawModel bottomModel, topModel, frontModel, backModel, leftModel, rightModel;
 
-	public Chunk(int x, int y, int z, int size, int blockSize) {
+	public Chunk(int x, int y, int z, int size, float blockSize) {
 		
 		this.x = x;
 		this.y = y;
@@ -92,7 +93,7 @@ public class Chunk {
 					if (blocks[x][y][z].isVisible()) {
 						Block b = blocks[x][y][z];
 						if (b.isFrontVisible()) {
-							front.addFace(x, y, z, blockSize, Face.Front);
+							front.addFace(x, y, z, blockSize, Face.Front);							
 						}
 						if (b.isBackVisible()) {
 							back.addFace(x, y, z, blockSize, Face.Back);
@@ -168,7 +169,7 @@ public class Chunk {
 
 		blocks[x][y][z].SetVisible(false);
 
-		if (y < 15) {
+		if (y < size - 1) {
 			if (blocks[x][y + 1][z].GetType() == BlockType.BlockType_Air.GetType()) {
 				blocks[x][y][z].setTop(true);
 				blocks[x][y][z].SetVisible(true);
@@ -196,7 +197,7 @@ public class Chunk {
 			blocks[x][y][z].SetVisible(true);
 
 		}
-		if (x < 15) {
+		if (x <  size - 1) {
 			if (blocks[x + 1][y][z].GetType() == BlockType.BlockType_Air.GetType()) {
 				blocks[x][y][z].setRight(true);
 				blocks[x][y][z].SetVisible(true);
@@ -225,7 +226,7 @@ public class Chunk {
 			blocks[x][y][z].SetVisible(true);
 
 		}
-		if (z < 15) {
+		if (z <  size - 1) {
 			if (blocks[x][y][z + 1].GetType() == BlockType.BlockType_Air.GetType()) {
 				blocks[x][y][z].setFront(true);
 				blocks[x][y][z].SetVisible(true);

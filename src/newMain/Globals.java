@@ -1,8 +1,11 @@
 package newMain;
 
+import java.util.ArrayList;
+
 import org.lwjgl.util.vector.Vector3f;
 
 import newRendering.Loader;
+import newWorld.Chunk;
 
 public class Globals {
 
@@ -10,6 +13,8 @@ public class Globals {
 	private static Loader loader;
 	private static Vector3f mouseRay;
 	private static Vector3f cameraPosition;
+	private static ArrayList<Chunk> visibleChunks;
+	
 
 	// //////////////////////////////////////////////////////////////////////////////////////
 
@@ -30,7 +35,7 @@ public class Globals {
 	}
 	
 	public static void setCurrentMouseRay(Vector3f ray){
-		mouseRay = ray;
+		Globals.mouseRay = ray;
 	}
 	
 	public static Vector3f getMouseRay(){
@@ -39,8 +44,16 @@ public class Globals {
 	
 	
 
+	public static void setVisibleChunks(ArrayList<Chunk> visibleChunks) {
+		Globals.visibleChunks = visibleChunks;
+	}
+
+	public static ArrayList<Chunk> getVisibleChunks(){
+		return visibleChunks;
+	}
+
 	public static void setCameraPosition(Vector3f position) {
-		cameraPosition = position;		
+		Globals.cameraPosition = position;		
 	}
 	
 	public static Vector3f getCameraPosition(){

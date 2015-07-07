@@ -11,49 +11,53 @@ import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
 import newEntities.Entity;
+import newEntities.PhysicsEntity;
+import newMain.Globals;
+import newMain.IModule;
 import newModels.RawModel;
 import newModels.TexturedModel;
 import newShaders.ChunkShader;
 import newTerrains.Terrain;
 import newTextures.ModelTexture;
+import newTextures.TerrainTexture;
 import newTextures.TerrainTexturePack;
 import newUtility.Maths;
 
-public class WorldRenderer {
+public class WorldRenderer implements IModule {
 
 	private ChunkShader shader;
-	private static int CHUNK_SIZE = 32;
+	//private static int CHUNK_SIZE = 32;
+	private TerrainTexture texture;
+	
 
 	public WorldRenderer(ChunkShader shader, Matrix4f projectionMatrix) {
 		this.shader = shader;
 		shader.start();
-		shader.loadProjectionMatrix(projectionMatrix);
-		shader.connectTextureUnits();
+		shader.loadProjectionMatrix(projectionMatrix);		
 		shader.stop();
+		
+		
 	}
 
-	public void render(ArrayList<Chunk> visibleChunks) {
-		for (Chunk chunk : visibleChunks) {
-			
+	public void renderChunks() {
+		bindTextures();
+		for (Chunk chunk : Globals.getVisibleChunks()) {		
 			
 			loadModelMatrix(chunk);
-			renderFace(chunk.getBottomModel());
+			//renderFace(chunk.getBottomModel());
 			renderFace(chunk.getTopModel());
-			renderFace(chunk.getBackModel());
-			renderFace(chunk.getFrontModel());
-			renderFace(chunk.getLeftModel());
-			renderFace(chunk.getRightModel());
-			
-			
-			
-			
+			//renderFace(chunk.getBackModel());
+			//renderFace(chunk.getFrontModel());
+			//renderFace(chunk.getLeftModel());
+			//renderFace(chunk.getRightModel());
 		}
 	}
 
 	private void renderFace(RawModel rawModel) {
 		prepareChunkFace(rawModel);		
-		GL11.glDrawArrays(GL11.GL_QUADS, 0, rawModel.getVertexCount());
-		unbindChunk();
+		//System.out.println(rawModel.getVertexCount());
+		GL11.glDrawElements(GL11.GL_TRIANGLES, rawModel.getVertexCount(), GL11.GL_UNSIGNED_INT, 0);
+		unbindFace();
 	}
 
 	private void prepareChunkFace(RawModel rawModel) {		
@@ -61,27 +65,16 @@ public class WorldRenderer {
 		GL20.glEnableVertexAttribArray(0);
 		GL20.glEnableVertexAttribArray(1);
 		GL20.glEnableVertexAttribArray(2);
-		//bindTextures(terrain);
+		
 		shader.loadShineVariables(1, 0);
 	}
 
-	private void bindTextures(Chunk terrain) {
-		/*
-		TerrainTexturePack texturePack = terrain.getTexturePack();
+	private void bindTextures() {	
 		GL13.glActiveTexture(GL13.GL_TEXTURE0);
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, texturePack.getBackgroundTexture().getTextureID());
-		GL13.glActiveTexture(GL13.GL_TEXTURE1);
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, texturePack.getrTexture().getTextureID());
-		GL13.glActiveTexture(GL13.GL_TEXTURE2);
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, texturePack.getgTexture().getTextureID());
-		GL13.glActiveTexture(GL13.GL_TEXTURE3);
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, texturePack.getbTexture().getTextureID());
-		GL13.glActiveTexture(GL13.GL_TEXTURE4);
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, terrain.getBlendMap().getTextureID());
-		*/
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, texture.getTextureID());
 	}
 
-	private void unbindChunk() {
+	private void unbindFace() {
 		GL20.glDisableVertexAttribArray(0);
 		GL20.glDisableVertexAttribArray(1);
 		GL20.glDisableVertexAttribArray(2);
@@ -89,8 +82,45 @@ public class WorldRenderer {
 	}
 
 	private void loadModelMatrix(Chunk chunk) {
-		Matrix4f transformationMatrix = Maths.createTransformationMatrix(new Vector3f(chunk.x * CHUNK_SIZE, chunk.y * CHUNK_SIZE, chunk.z * CHUNK_SIZE), 0, 0, 0, 1, 1, false);
+		Vector3f position = new Vector3f(chunk.x * chunk.size * chunk.blockSize,chunk.y * chunk.size * chunk.blockSize, chunk.z * chunk.size * chunk.blockSize);
+		//System.out.println(position);
+		Matrix4f transformationMatrix = Maths.createTransformationMatrix(position, 0, 0, 0, 1, 1, false);
 		shader.loadTransformationMatrix(transformationMatrix);
+	}
+
+	@Override
+	public void process() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setUp() {
+		texture = new TerrainTexture(Globals.getLoader().loadTexture("grassy"));		
+	}
+
+	@Override
+	public void cleanUp() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void update() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public ArrayList<PhysicsEntity> prepare() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void render() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

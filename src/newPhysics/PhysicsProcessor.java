@@ -79,7 +79,7 @@ public class PhysicsProcessor {
 		// Initialise 'groundMotionState' to a motion state that simply assigns
 		// the origin [0, 0, 0] as the origin of
 		// the ground.
-		MotionState groundMotionState = new DefaultMotionState(new Transform(new Matrix4f(new Quat4f(0, 0, 0, 1), new Vector3f(0, 0, 0), 1.0f)));
+		MotionState groundMotionState = new DefaultMotionState(new Transform(new Matrix4f(new Quat4f(0, 0, 0, 1), new Vector3f(0,-1, 0), 1.0f)));
 		// Initialise 'groundBodyConstructionInfo' to a value that contains the
 		// mass, the motion state, the shape, and the inertia (= resistance to
 		// change).

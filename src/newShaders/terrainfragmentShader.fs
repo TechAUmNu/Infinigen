@@ -8,11 +8,8 @@ in float visibility;
 
 out vec4 out_Color;
 
-uniform sampler2D backgroundTexture;
-uniform sampler2D rTexture;
-uniform sampler2D gTexture;
-uniform sampler2D bTexture;
-uniform sampler2D blendMap;
+uniform sampler2D textureSampler;
+
 
 uniform vec3 lightColour[4];
 uniform vec3 attenuation[4];
@@ -22,15 +19,7 @@ uniform vec3 skyColour;
 
 void main(void){
 
-	vec4 blendMapColour = texture(blendMap, pass_textureCoords);
-	float backTextureAmount = 1 - (blendMapColour.r + blendMapColour.g + blendMapColour.b);
-	vec2 tiledCoords = pass_textureCoords * 40.0;
-	vec4 backgroundTextureColour = texture(backgroundTexture, tiledCoords) * backTextureAmount;
-	vec4 rTextureColour = texture(rTexture, tiledCoords) * blendMapColour.r;
-	vec4 gTextureColour = texture(gTexture, tiledCoords) * blendMapColour.g;
-	vec4 bTextureColour = texture(bTexture, tiledCoords) * blendMapColour.b;
 	
-	vec4 totalColour = backgroundTextureColour + rTextureColour + gTextureColour + bTextureColour;
 	
 	vec3 unitNormal = normalize(surfaceNormal);
 	
@@ -56,6 +45,6 @@ void main(void){
 	
 	totalDiffuse = max(totalDiffuse, 0.0);
 	out_Color = vec4(1,1,1,0);
-	out_Color = vec4(totalDiffuse, 1.0) * totalColour + vec4(totalSpecular, 1.0);
+	out_Color = vec4(totalDiffuse, 1.0) * texture(textureSampler, pass_textureCoords) + vec4(totalSpecular, 1.0);
 	//out_Color = mix(vec4(skyColour, 1.0), out_Color, visibility);
 }

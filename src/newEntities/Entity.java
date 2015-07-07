@@ -67,6 +67,7 @@ public class Entity {
 	}
 
 	public Vector3f getPosition() {
+		
 		return position;
 	}
 

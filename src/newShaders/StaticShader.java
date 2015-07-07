@@ -2,7 +2,7 @@ package newShaders;
 
 import java.util.List;
 
-import newEntities.Camera;
+import newEntities.ICamera;
 import newEntities.Light;
 import newUtility.Maths;
 
@@ -113,7 +113,7 @@ public class StaticShader extends ShaderProgram {
 		super.loadMatrix(location_projectionMatrix, projection);
 	}
 
-	public void loadViewMatrix(Camera camera) {
+	public void loadViewMatrix(ICamera camera) {
 		Matrix4f viewMatrix = Maths.createViewMatrix(camera);
 		super.loadMatrix(location_viewMatrix, viewMatrix);
 	}

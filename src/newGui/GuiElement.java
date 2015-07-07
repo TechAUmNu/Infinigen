@@ -96,8 +96,8 @@ public class GuiElement {
 		return box;
 	}
 
-	public boolean CheckHover() {
-		if (Mouse.getX() < position.x + detectionSize.x && Mouse.getX() > position.x) {
+	public boolean CheckHover() {	
+		if (Mouse.getX() < position.x + detectionSize.x && Mouse.getX() > position.x && !Mouse.isGrabbed()) {
 			if (Mouse.getY() < position.y + detectionSize.y && Mouse.getY() > position.y) {
 				return true;
 			}

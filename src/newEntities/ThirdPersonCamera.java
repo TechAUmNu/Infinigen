@@ -21,19 +21,19 @@ import org.lwjgl.util.vector.Vector3f;
 import com.bulletphysics.linearmath.Transform;
 import com.sun.corba.se.impl.oa.poa.ActiveObjectMap.Key;
 
-public class Camera implements IModule {
+public class ThirdPersonCamera implements IModule, ICamera {
 
 	private float distanceFromPlayer = 50;
 	private float angleAroundPlayer = -50;
 
-	private Vector3f position = new Vector3f(100, 100, 0);
+	private Vector3f position = new Vector3f(0, 0, 0);
 	private float pitch = -10;
 	private float yaw = 0;
 	private float roll;
 
 	private Player player;
 
-	public Camera(Player player) {
+	public ThirdPersonCamera(Player player) {
 		this.player = player;
 		if (GLContext.getCapabilities().GL_ARB_depth_clamp) {
 			glEnable(GL_DEPTH_CLAMP);
@@ -57,35 +57,24 @@ public class Camera implements IModule {
 		Globals.setCameraPosition(position);
 	}
 
-	/*
-	 * public void processMouse(float mouseSpeed, float maxLookUp, float
-	 * maxLookDown) {
-	 * 
-	 * float mouseDX = Mouse.getDX() * mouseSpeed * 0.16f;
-	 * 
-	 * float mouseDY = Mouse.getDY() * mouseSpeed * 0.16f;
-	 * 
-	 * if (yaw + mouseDX >= 360) { yaw = yaw + mouseDX - 360;
-	 * 
-	 * } else if (yaw + mouseDX < 0) { yaw = 360 - yaw + mouseDX;
-	 * 
-	 * } else { yaw += mouseDX;
-	 * 
-	 * } if (pitch - mouseDY >= maxLookDown && pitch - mouseDY <= maxLookUp) {
-	 * pitch += -mouseDY;
-	 * 
-	 * } else if (pitch - mouseDY < maxLookDown) { pitch = maxLookDown;
-	 * 
-	 * } else if (pitch - mouseDY > maxLookUp) { pitch = maxLookUp; } }
-	 */
+	
+	@Override
 	public Vector3f getPosition() {
 		return position;
 	}
 
+	/* (non-Javadoc)
+	 * @see newEntities.ICamera#getPitch()
+	 */
+	@Override
 	public float getPitch() {
 		return pitch;
 	}
 
+	/* (non-Javadoc)
+	 * @see newEntities.ICamera#getYaw()
+	 */
+	@Override
 	public float getYaw() {
 		return yaw;
 	}
@@ -104,10 +93,10 @@ public class Camera implements IModule {
 		position.x = transform.origin.x - offsetX;
 		position.z = transform.origin.z - offsetZ;
 		position.y = transform.origin.y + verticalDistance;
-		float terrainHeight = 0;
+		float terrainHeight = (float) -1;
 
-		if (position.y < terrainHeight + 2) {
-			position.y = terrainHeight + 2;
+		if (position.y < terrainHeight) {
+			position.y = terrainHeight;
 
 		}
 	}
@@ -129,6 +118,13 @@ public class Camera implements IModule {
 		if (Mouse.isButtonDown(1)) {
 			float pitchChange = Mouse.getDY() * 0.2f;
 			pitch -= pitchChange;
+			if(pitch > 90){
+				pitch = 90;
+			}
+			if(pitch < -25){
+				pitch = -25;
+			}
+			
 		}
 	}
 
@@ -136,6 +132,7 @@ public class Camera implements IModule {
 		if (Mouse.isButtonDown(1)) {
 			float angleChange = Mouse.getDX() * 0.3f;
 			angleAroundPlayer -= angleChange;
+			
 		}
 	}
 

@@ -15,7 +15,7 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Matrix4f;
 
-import newEntities.Camera;
+import newEntities.ICamera;
 import newEntities.Entity;
 import newEntities.Light;
 import newEntities.PhysicsEntity;
@@ -35,9 +35,9 @@ public class MasterRenderer implements IModule {
 	private static final float NEAR_PLANE = 0.1f;
 	private static final float FAR_PLANE = 10000f;
 
-	private static final float RED = 0.5f;
-	private static final float GREEN = 0.5f;
-	private static final float BLUE = 0.5f;
+	private static final float RED = 0f;
+	private static final float GREEN = 0f;
+	private static final float BLUE = 0f;
 
 	private Matrix4f projectionMatrix;
 
@@ -48,12 +48,11 @@ public class MasterRenderer implements IModule {
 	private ChunkShader terrainShader = new ChunkShader();
 
 	private Map<TexturedPhysicsModel, List<PhysicsEntity>> entities = new HashMap<TexturedPhysicsModel, List<PhysicsEntity>>();
-	private ArrayList<Chunk> visibleChunks = new ArrayList<Chunk>();
-
+	
 	private SkyboxRenderer skyboxRenderer;
 
 	public MasterRenderer(Loader loader) {
-		enableCulling();
+		//enableCulling();
 		createProjectionMatrix();
 		renderer = new EntityRenderer(shader, projectionMatrix);
 		terrainRenderer = new WorldRenderer(terrainShader, projectionMatrix);
@@ -69,7 +68,7 @@ public class MasterRenderer implements IModule {
 		GL11.glDisable(GL11.GL_CULL_FACE);
 	}
 
-	public void render(List<Light> lights, Camera camera) {
+	public void render(List<Light> lights, ICamera camera) {
 		prepareRender();
 		shader.start();
 		shader.loadSkyColour(RED, GREEN, BLUE);
@@ -77,20 +76,16 @@ public class MasterRenderer implements IModule {
 		shader.loadViewMatrix(camera);
 		renderer.render(entities);
 		shader.stop();
-		terrainShader.start();
-		//terrainShader.loadSkyColour(RED, GREEN, BLUE);
+		terrainShader.start();		
 		terrainShader.loadLights(lights);
 		terrainShader.loadViewMatrix(camera);
-		terrainRenderer.render(visibleChunks);
+		terrainRenderer.renderChunks();
 		terrainShader.stop();
-		skyboxRenderer.render(camera, RED, GREEN, BLUE);
-		//terrains.clear();
+		skyboxRenderer.render(camera, RED, GREEN, BLUE);		
 		entities.clear();
 	}
 
-	public void processTerrain(Terrain terrain) {
-		//terrains.add(terrain);
-	}
+	
 
 	public void processEntity(PhysicsEntity entity) {
 		TexturedPhysicsModel entityModel = entity.getModel();
@@ -103,6 +98,9 @@ public class MasterRenderer implements IModule {
 			entities.put(entityModel, newBatch);
 		}
 	}
+	
+	
+	
 
 	public void cleanUp() {
 		shader.cleanUp();
@@ -147,7 +145,7 @@ public class MasterRenderer implements IModule {
 
 	@Override
 	public void setUp() {
-		// TODO Auto-generated method stub
+		terrainRenderer.setUp();
 
 	}
 
@@ -168,4 +166,6 @@ public class MasterRenderer implements IModule {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	
 }

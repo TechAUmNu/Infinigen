@@ -38,7 +38,7 @@ public class Unit {
 		PhysicsModel pmodel = OBJFileLoader.loadOBJtoVAOWithGeneratedPhysics("box", Globals.getLoader());
 		TexturedPhysicsModel boxModel = new TexturedPhysicsModel(pmodel, new ModelTexture(Globals.getLoader().loadTexture("box")));
 		
-		PhysicsEntity base = new PhysicsEntity(boxModel, new Vector3f(100, 0, -50), 0, 0, 0, 1000, 10, processor);
+		PhysicsEntity base = new PhysicsEntity(boxModel, new Vector3f(0, 0, 0), 0, 0, 0, 1000, 10, processor);
 		entities.add(base);
 		System.out.println("Body Hash: "+  base.getBody().hashCode());
 	}
