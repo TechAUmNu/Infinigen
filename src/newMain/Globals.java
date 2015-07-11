@@ -14,6 +14,7 @@ public class Globals {
 	private static Vector3f mouseRay;
 	private static Vector3f cameraPosition;
 	private static ArrayList<Chunk> visibleChunks;
+	private static boolean isServer;
 	
 
 	// //////////////////////////////////////////////////////////////////////////////////////
@@ -43,6 +44,14 @@ public class Globals {
 	}
 	
 	
+
+	public static boolean isServer() {
+		return isServer;
+	}
+
+	public static void setServer(boolean isServer) {
+		Globals.isServer = isServer;
+	}
 
 	public static void setVisibleChunks(ArrayList<Chunk> visibleChunks) {
 		Globals.visibleChunks = visibleChunks;

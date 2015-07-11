@@ -40,6 +40,21 @@ public class Chunk {
 	private void setUp() {
 		blocks = new Block[size][size][size];
 		generateGeneric(BlockType.BlockType_Stone);
+		generateType(BlockType.BlockType_Grass);
+	}
+
+	private void generateType(BlockType type) {
+		for (int x = 0; x < size; x++) {
+			for (int y = 0; y < size; y++) {
+				for (int z = 0; z < size; z++) {
+					blocks[x][y][z] = new Block(type);
+				}
+			}
+		}
+		
+		
+		blocks[15][15][15] = new Block(BlockType.BlockType_Air);
+		
 	}
 
 	/**

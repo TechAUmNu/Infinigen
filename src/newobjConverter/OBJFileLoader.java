@@ -38,8 +38,8 @@ public class OBJFileLoader {
 				line = reader.readLine();
 				if (line.startsWith("v ")) {
 					String[] currentLine = line.split(" ");
-					Vector3f vertex = new Vector3f((float) Float.valueOf(currentLine[1]) / 10, (float) Float.valueOf(currentLine[2]) / 10,
-							(float) Float.valueOf(currentLine[3]) / 10);
+					Vector3f vertex = new Vector3f((float) Float.valueOf(currentLine[1]) , (float) Float.valueOf(currentLine[2]) ,
+							(float) Float.valueOf(currentLine[3]) );
 					Vertex newVertex = new Vertex(vertices.size(), vertex);
 					vertices.add(newVertex);
 

@@ -7,7 +7,7 @@ package newWorld;
  *
  */
 public enum BlockType {
-	BlockType_Air((byte) 0), BlockType_Dirt((byte) 1), BlockType_Stone((byte) 2);
+	BlockType_Air((byte) 0), BlockType_Dirt((byte) 1), BlockType_Stone((byte) 2), BlockType_Grass ((byte) 3);
 
 	private byte BlockID;
 
@@ -27,6 +27,8 @@ public enum BlockType {
 			return BlockType_Dirt;
 		case (byte) 2:
 			return BlockType_Stone;
+		case (byte) 3:
+			return BlockType_Grass;
 		}
 		return null;
 	}

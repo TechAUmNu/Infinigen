@@ -44,12 +44,12 @@ public class WorldRenderer implements IModule {
 		for (Chunk chunk : Globals.getVisibleChunks()) {		
 			
 			loadModelMatrix(chunk);
-			//renderFace(chunk.getBottomModel());
+			renderFace(chunk.getBottomModel());
 			renderFace(chunk.getTopModel());
-			//renderFace(chunk.getBackModel());
-			//renderFace(chunk.getFrontModel());
-			//renderFace(chunk.getLeftModel());
-			//renderFace(chunk.getRightModel());
+		renderFace(chunk.getBackModel());
+			renderFace(chunk.getFrontModel());
+			renderFace(chunk.getLeftModel());
+			renderFace(chunk.getRightModel());
 		}
 	}
 
@@ -96,7 +96,7 @@ public class WorldRenderer implements IModule {
 
 	@Override
 	public void setUp() {
-		texture = new TerrainTexture(Globals.getLoader().loadTexture("grassy"));		
+		texture = new TerrainTexture(Globals.getLoader().loadTexture("grassMinecraft"));		
 	}
 
 	@Override
