@@ -7,6 +7,7 @@ import java.util.List;
 import newEntities.PhysicsEntity;
 import newMain.Globals;
 import newMain.IModule;
+import newNetworking.ChunkData;
 
 public class ChunkManager implements IModule {
 
@@ -18,32 +19,34 @@ public class ChunkManager implements IModule {
 
 	@Override
 	public void process() {
-		Globals.setVisibleChunks(loadedChunks);
-
+		Globals.setLoadedChunks(loadedChunks);
 	}
 
 	@Override
 	public void setUp() {
 
-		long startTime = System.currentTimeMillis();
 		loadedChunks = new ArrayList<Chunk>();
 		chunks = new HashMap<ChunkID, Chunk>();
 
-		for (int x = -10; x < 10; x++) {
-			for (int y = -1; y < 0; y++) {
-				for (int z = -10; z < 10; z++) {
+		if (Globals.isServer()) { // We only initialise the chunks on the server
+									// since the client downloads them when they
+									// connect.
 
-					Chunk testChunk = new Chunk(x, y, z, 16, (float) 2);
-					chunks.put(new ChunkID(x, y, z), testChunk);
-					loadedChunks.add(testChunk);
+			for (int x = -10; x < 10; x++) {
+				for (int y = -1; y < 0; y++) {
+					for (int z = -10; z < 10; z++) {
+						Chunk testChunk = new Chunk(x, y, z, 16, (float) 2);
+						chunks.put(new ChunkID(x, y, z), testChunk);
+						loadedChunks.add(testChunk);
+					}
 				}
+
 			}
+
+			Globals.setLoadedChunks(loadedChunks);
 
 		}
 
-		long endTime = System.currentTimeMillis();
-		long total = endTime - startTime;
-		System.out.println("Total Time: " + total);
 	}
 
 	@Override
@@ -56,6 +59,18 @@ public class ChunkManager implements IModule {
 	public void update() {
 		for (Chunk c : loadedChunks) {
 			c.update();
+		}
+
+		if (!Globals.isServer()) {
+			if (!Globals.getChunkUpdate().isEmpty()) {
+				for (ChunkData cd : Globals.getChunkUpdate()) {
+					Chunk c = new Chunk(cd);
+					chunks.put(new ChunkID(cd.x, cd.y, cd.z), c);
+					loadedChunks.add(c);
+				}
+				Globals.setLoadedChunks(loadedChunks);
+				Globals.getChunkUpdate().clear();
+			}
 		}
 	}
 

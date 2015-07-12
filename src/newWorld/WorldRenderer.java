@@ -41,7 +41,7 @@ public class WorldRenderer implements IModule {
 
 	public void renderChunks() {
 		bindTextures();
-		for (Chunk chunk : Globals.getVisibleChunks()) {		
+		for (Chunk chunk : Globals.getLoadedChunks()) {		
 			
 			loadModelMatrix(chunk);
 			renderFace(chunk.getBottomModel());

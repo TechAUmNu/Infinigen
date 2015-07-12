@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
+import newMain.Globals;
 import newModels.RawModel;
+import newNetworking.ChunkData;
 import newWorld.BlockType;
 
 /**
@@ -22,19 +24,35 @@ public class Chunk {
 	boolean visible;
 	boolean changed = false;
 
-	
 	RawModel bottomModel, topModel, frontModel, backModel, leftModel, rightModel;
 
 	public Chunk(int x, int y, int z, int size, float blockSize) {
-		
+
 		this.x = x;
 		this.y = y;
 		this.z = z;
 		this.size = size;
 		this.blockSize = blockSize;
 		setUp();
-		rebuild();
+
+		if (!Globals.isServer()) {
+			rebuild();
+		}
+
+	}
+	
+	public Chunk(ChunkData cd){
+		this.x = cd.x;
+		this.y = cd.y;
+		this.z = cd.z;
+		this.size = cd.size;
+		this.blockSize = cd.blockSize;
 		
+		setUp();
+
+		if (!Globals.isServer()) {
+			rebuild();
+		}
 	}
 
 	private void setUp() {
@@ -51,10 +69,9 @@ public class Chunk {
 				}
 			}
 		}
-		
-		
+
 		blocks[15][15][15] = new Block(BlockType.BlockType_Air);
-		
+
 	}
 
 	/**
@@ -76,7 +93,9 @@ public class Chunk {
 		// Check if chunk has changed, if it has then we need to change what we
 		// render#
 		if (changed) {
-			rebuild();
+			if (!Globals.isServer()) { //We don't do this on server since we don't draw anything
+				rebuild();
+			}
 		}
 	}
 
@@ -91,10 +110,8 @@ public class Chunk {
 		rebuildRendering();
 	}
 
-	private void rebuildRendering() {		
-		
-		
-		
+	private void rebuildRendering() {
+
 		RenderingFace front = new RenderingFace();
 		RenderingFace back = new RenderingFace();
 		RenderingFace top = new RenderingFace();
@@ -108,7 +125,7 @@ public class Chunk {
 					if (blocks[x][y][z].isVisible()) {
 						Block b = blocks[x][y][z];
 						if (b.isFrontVisible()) {
-							front.addFace(x, y, z, blockSize, Face.Front);							
+							front.addFace(x, y, z, blockSize, Face.Front);
 						}
 						if (b.isBackVisible()) {
 							back.addFace(x, y, z, blockSize, Face.Back);
@@ -130,17 +147,15 @@ public class Chunk {
 				}
 			}
 		}
-		
+
 		frontModel = front.getModel();
 		backModel = back.getModel();
 		topModel = top.getModel();
 		bottomModel = bottom.getModel();
 		leftModel = left.getModel();
 		rightModel = right.getModel();
-		
-		
+
 	}
-	
 
 	public RawModel getBottomModel() {
 		return bottomModel;
@@ -212,7 +227,7 @@ public class Chunk {
 			blocks[x][y][z].SetVisible(true);
 
 		}
-		if (x <  size - 1) {
+		if (x < size - 1) {
 			if (blocks[x + 1][y][z].GetType() == BlockType.BlockType_Air.GetType()) {
 				blocks[x][y][z].setRight(true);
 				blocks[x][y][z].SetVisible(true);
@@ -241,7 +256,7 @@ public class Chunk {
 			blocks[x][y][z].SetVisible(true);
 
 		}
-		if (z <  size - 1) {
+		if (z < size - 1) {
 			if (blocks[x][y][z + 1].GetType() == BlockType.BlockType_Air.GetType()) {
 				blocks[x][y][z].setFront(true);
 				blocks[x][y][z].SetVisible(true);
@@ -270,6 +285,17 @@ public class Chunk {
 
 		}
 
+	}
+
+	public ChunkData getData() {
+		ChunkData cd = new ChunkData();
+		cd.blocks = blocks;
+		cd.x = x;
+		cd.y = y;
+		cd.z = z;
+		cd.blockSize = blockSize;
+		cd.size = size;
+		return cd;
 	}
 
 }

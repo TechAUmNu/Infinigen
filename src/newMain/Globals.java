@@ -4,8 +4,10 @@ import java.util.ArrayList;
 
 import org.lwjgl.util.vector.Vector3f;
 
+import newNetworking.ChunkData;
 import newRendering.Loader;
 import newWorld.Chunk;
+
 
 public class Globals {
 
@@ -15,9 +17,41 @@ public class Globals {
 	private static Vector3f cameraPosition;
 	private static ArrayList<Chunk> visibleChunks;
 	private static boolean isServer;
+	private static boolean loading;
+	
+	private static ArrayList<ChunkData> chunkUpdate;
+	private static String ip;
+	private static int port;
 	
 
 	// //////////////////////////////////////////////////////////////////////////////////////
+
+	public static int getPort() {
+		return port;
+	}
+
+	public static void setPort(int port) {
+		Globals.port = port;
+	}
+
+	public static String getIp() {
+		return ip;
+	}
+
+	public static void setIp(String ip) {
+		Globals.ip = ip;
+	}
+
+	public static ArrayList<ChunkData> getChunkUpdate() {
+		if(chunkUpdate == null){
+			chunkUpdate = new ArrayList<ChunkData>();
+		}
+		return chunkUpdate;
+	}
+
+	public static void setChunkUpdate(ArrayList<ChunkData> chunkUpdate) {
+		Globals.chunkUpdate = chunkUpdate;
+	}
 
 	public static float getGravity() {
 		return gravity;
@@ -43,6 +77,9 @@ public class Globals {
 		return mouseRay;
 	}
 	
+	public static void setLoading(boolean loading){
+		Globals.loading = loading;
+	}
 	
 
 	public static boolean isServer() {
@@ -53,11 +90,11 @@ public class Globals {
 		Globals.isServer = isServer;
 	}
 
-	public static void setVisibleChunks(ArrayList<Chunk> visibleChunks) {
+	public static void setLoadedChunks(ArrayList<Chunk> visibleChunks) {
 		Globals.visibleChunks = visibleChunks;
 	}
 
-	public static ArrayList<Chunk> getVisibleChunks(){
+	public static ArrayList<Chunk> getLoadedChunks(){
 		return visibleChunks;
 	}
 
@@ -68,4 +105,15 @@ public class Globals {
 	public static Vector3f getCameraPosition(){
 		return cameraPosition;
 	}
+
+	public static boolean showFPS() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public static boolean loading() {		
+		return loading;
+	}
+
+	
 }

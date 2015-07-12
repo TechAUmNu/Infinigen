@@ -1,7 +1,13 @@
 package newWorld;
 
-public class Block {
+import java.io.Serializable;
 
+public class Block implements Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3524884246455631273L;
 	BlockType type;
 	boolean visible, top, bottom, left, right, front, back;
 	

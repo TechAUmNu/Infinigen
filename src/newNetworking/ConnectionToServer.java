@@ -10,42 +10,60 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 
-public class ConnectionToServer implements Runnable, ActionListener{
-	
+import newMain.Globals;
+import newWorld.ChunkID;
+
+public class ConnectionToServer implements Runnable, ActionListener {
+
 	Socket socket;
 	ObjectOutputStream out;
 	ObjectInputStream in;
 	Client client;
-	NetworkMessage message;
+	NetworkMessage inMessage, outMessage;
+	int chunkCount = 0, currentChunk = 0;;
+	ArrayList<ChunkData> chunkUpdate;
 	
+
 	ConnectionToServer(Client c) {
 		client = c;
+		
 	}
-	
-	
 
 	public void run() {
 		try {
 			// 1. creating a socket to connect to the server
-			
-			System.out.println("about to connect to server");
-			socket = new Socket("localhost", 19987);
+
+			System.out.println("about to connect to server at: " + Globals.getIp() + ":" + Globals.getPort());
+			socket = new Socket(Globals.getIp(), Globals.getPort());
 			socket.setPerformancePreferences(0, 1, 2);
 			socket.setTcpNoDelay(true);
-			System.out.println("Connected to play2.ghsgaming.com in port 19987");
+			System.out.println("Connected to localhost in port " + + Globals.getPort());
 			// 2. get Input and Output streams
 			out = new ObjectOutputStream(new BufferedOutputStream(socket.getOutputStream()));
 			out.flush();
 			in = new ObjectInputStream(new BufferedInputStream(socket.getInputStream()));
 			// 3: Communicating with the server
-			
+			System.out.println("Connected to server, sending client info");
+			// Send our client info to the server.
+			outMessage = new NetworkMessage();
+			outMessage.client = client;
+			sendMessage();
+
+			// Now we want to know what the current terrain is, so we get a
+			// chunk update
+
+			outMessage = new NetworkMessage();
+			outMessage.chunkUpdate = true;
+			sendMessage();
+
 			do {
 				try {
-					// System.out.println("Waiting on message from server");
-					message = (NetworkMessage) in.readObject();
-					// System.out.println("Message received from server");
-					if (!message.disconnect) {
+					System.out.println("Waiting on message from server");
+					inMessage = (NetworkMessage) in.readObject();
+					System.out.println("Message received from server");
+					if (!inMessage.disconnect) {
 						processMessage();
 					}
 
@@ -55,7 +73,7 @@ public class ConnectionToServer implements Runnable, ActionListener{
 					// Ignore this error since it will always occur when you
 					// quit.
 				}
-			} while (!message.disconnect);
+			} while (!inMessage.disconnect);
 		} catch (UnknownHostException unknownHost) {
 			System.err.println("You are trying to connect to an unknown host!");
 		} catch (IOException ioException) {
@@ -73,20 +91,54 @@ public class ConnectionToServer implements Runnable, ActionListener{
 		}
 	}
 
-
-
 	private void processMessage() {
-		// TODO Auto-generated method stub
-		
+		if (inMessage.chunkUpdate) {
+			chunkUpdate();
+		}
 	}
 
+	private void chunkUpdate() {
 
+		// We are now updating our chunks
+
+		// First we will receive the number of chunks that are being loaded
+		if (inMessage.chunkCount > 0) {
+			chunkCount = inMessage.chunkCount;
+			chunkUpdate = new ArrayList<ChunkData>();
+			currentChunk = 0;
+		}
+
+		// Then we will receive the chunks
+
+		if (inMessage.chunkData != null) {
+			chunkUpdate.add(inMessage.chunkData);
+			currentChunk++;
+			
+		}
+		
+		if(inMessage.chunkUpdateComplete){
+			System.out.println("Recieved: " + currentChunk + "/" + chunkCount + " Chunks in chunk update");
+			Globals.setChunkUpdate(chunkUpdate);
+		}
+
+	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
-			
-			
+
+	void sendMessage() {
+		try {
+			out.writeObject(outMessage);
+			out.flush();
+			out.reset();
+			outMessage = null; // This makes sure we don't ever send the same
+								// message twice.
+		} catch (IOException ioException) {
+			ioException.printStackTrace();
+		}
+	}
+
 }

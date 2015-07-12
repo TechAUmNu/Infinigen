@@ -1,5 +1,7 @@
 package newRendering;
 
+import newMain.Globals;
+
 import org.lwjgl.LWJGLException;
 import org.lwjgl.Sys;
 import org.lwjgl.opengl.ContextAttribs;
@@ -59,7 +61,9 @@ public class DisplayManager {
 
 		if (getCurrentTime() - lastFPS > 1000f) {
 
-			System.out.println("FPS: " + fps);
+			if(Globals.showFPS()){
+				System.out.println("FPS: " + fps);
+			}
 			fpsCounter = fps;
 			fps = 0;
 			lastFPS += 1000f;

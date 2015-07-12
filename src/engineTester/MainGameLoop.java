@@ -18,8 +18,8 @@ import newGui.GuiManager;
 import newMain.Globals;
 import newMain.IModule;
 import newModels.PhysicsModel;
-import newModels.TexturedModel;
 import newModels.TexturedPhysicsModel;
+import newNetworking.NetworkingManager;
 import newPhysics.PhysicsManager;
 import newRendering.DisplayManager;
 import newRendering.Loader;
@@ -39,11 +39,11 @@ public class MainGameLoop {
 	/**
 	 * Globals that are used a lot go here.
 	 */
-	
+
 	private int keyDelayTime = 20;
 	private int keyTimer = 0;
-	
-	
+	private boolean gameEnd;
+
 	private GuiManager gui;
 	private Loader loader;
 	private PhysicsManager physics;
@@ -54,13 +54,13 @@ public class MainGameLoop {
 	private RTSCamera rtsCamera;
 	private Player player;
 	private MasterRenderer renderer;
-	private boolean mouse0, mouse1 = false;
+	private boolean mouse1 = false;
 	private List<PhysicsEntity> entities;
 	private List<Light> lights;
-	private Terrain currentTerrain;
 	private UnitBuilderManager unitBuilder;
+	private NetworkingManager networking;
 
-	private List<IModule> loadedModules, unloadedModules;
+	private List<IModule> loadedModules;
 	private ChunkManager world;
 
 	/**
@@ -70,7 +70,21 @@ public class MainGameLoop {
 	 *            Arguments
 	 */
 	public static void main(String[] args) {
+
 		MainGameLoop g = new MainGameLoop();
+		if (args.length > 0) {
+			if (args[0].equals("server")) {
+				Globals.setPort(Integer.parseInt(args[1]));
+				Globals.setServer(true);
+			} else if (args[0].equals("client")) {
+				Globals.setServer(false);
+				Globals.setIp(args[1]);
+				Globals.setPort(Integer.parseInt(args[2]));
+			}
+
+		}
+
+		Globals.setLoading(true);
 		g.setup();
 		g.mainGame();
 		g.cleanUp();
@@ -80,20 +94,28 @@ public class MainGameLoop {
 	 * Main Game method
 	 */
 	public void mainGame() {
-		loadAssets();
+		if (!Globals.isServer()) {
+			loadAssets();
 
-		// setUpTerrain();
-		generateGui();
-
-		while (!Display.isCloseRequested()) {
-
-			update();
-			process();
-			prepareRender();
-			render();
-
+			// setUpTerrain();
+			generateGui();
 		}
+		Globals.setLoading(false);
 
+		if (!Globals.isServer()) {
+			while (!Display.isCloseRequested()) {
+
+				update();
+				process();
+				prepareRender();
+				render();
+
+			}
+		} else {
+			while (!gameEnd) {
+				update();
+			}
+		}
 		cleanUp();
 
 	}
@@ -104,54 +126,85 @@ public class MainGameLoop {
 	 * Put anything global that needs initialised here
 	 */
 	private void setup() {
-		OSValidator.setCorrectNativesLocation();
-		DisplayManager.createDisplay();
+		if (!Globals.isServer()) {
+			OSValidator.setCorrectNativesLocation();
+			DisplayManager.createDisplay();
 
-		loadedModules = new ArrayList<IModule>();
+			loadedModules = new ArrayList<IModule>();
 
-		loader = new Loader();
-		gui = new GuiManager(loader);
+			loader = new Loader();
+			gui = new GuiManager(loader);
 
-		renderer = new MasterRenderer(loader);
-		physics = new PhysicsManager();
-		entities = new ArrayList<PhysicsEntity>();
-		lights = new ArrayList<Light>();
-		
-		world = new ChunkManager();
-		
-		unitBuilder = new UnitBuilderManager();
+			renderer = new MasterRenderer(loader);
+			physics = new PhysicsManager();
+			entities = new ArrayList<PhysicsEntity>();
+			lights = new ArrayList<Light>();
 
-		physics.setUp();
+			world = new ChunkManager();
 
-		PhysicsModel pmodel = OBJFileLoader.loadOBJtoVAOWithGeneratedPhysics("box", loader);
-		TexturedPhysicsModel testPhysics = new TexturedPhysicsModel(pmodel, new ModelTexture(loader.loadTexture("white")));
-		player = new Player(testPhysics, new Vector3f(0, (float) -1, 0), 0, 0, 0, 1, physics.getProcessor());
+			unitBuilder = new UnitBuilderManager();
 
-		thirdPersonCamera = new ThirdPersonCamera(player);
-		rtsCamera = new RTSCamera();
-		activeCamera = rtsCamera;
-		picker = new MousePicker(activeCamera, renderer.getProjectionMatrix());
+			physics.setUp();
 
-		// Core modules
-		loadedModules.add(loader);
-		loadedModules.add(gui);
-		loadedModules.add(renderer);
-		loadedModules.add(physics);
+			PhysicsModel pmodel = OBJFileLoader.loadOBJtoVAOWithGeneratedPhysics("box", loader);
+			TexturedPhysicsModel testPhysics = new TexturedPhysicsModel(pmodel, new ModelTexture(loader.loadTexture("white")));
+			player = new Player(testPhysics, new Vector3f(0, (float) -1, 0), 0, 0, 0, 1, physics.getProcessor());
 
-		loadedModules.add(player);
-		//loadedModules.add(thirdPersonCamera);
-		loadedModules.add(rtsCamera);
-		activeCameraID = 2;
-		loadedModules.add(picker);
-		loadedModules.add(unitBuilder);
-		loadedModules.add(world);
+			thirdPersonCamera = new ThirdPersonCamera(player);
+			rtsCamera = new RTSCamera();
+			activeCamera = rtsCamera;
+			picker = new MousePicker(activeCamera, renderer.getProjectionMatrix());
 
-		// Add anything to the globals that might be needed elsewhere.
-		Globals.setLoader(loader);
+			// Networking
+			networking = new NetworkingManager();
 
+			// Core modules
+			loadedModules.add(loader);
+			loadedModules.add(gui);
+			loadedModules.add(renderer);
+			loadedModules.add(physics);
 
-		for (IModule module : loadedModules) {
-			module.setUp();
+			loadedModules.add(player);
+
+			// Cameras
+			// loadedModules.add(thirdPersonCamera);
+			loadedModules.add(rtsCamera);
+			activeCameraID = 2;
+
+			loadedModules.add(picker);
+			loadedModules.add(unitBuilder);
+			loadedModules.add(world);
+			loadedModules.add(networking);
+
+			// Add anything to the globals that might be needed elsewhere.
+			Globals.setLoader(loader);
+
+			for (IModule module : loadedModules) {
+				module.setUp();
+			}
+		} else {
+			loadedModules = new ArrayList<IModule>();
+
+			// loader = new Loader();
+			physics = new PhysicsManager();
+			entities = new ArrayList<PhysicsEntity>();
+			world = new ChunkManager();
+			physics.setUp();
+			// Networking
+			networking = new NetworkingManager();
+
+			// Core modules
+			// loadedModules.add(loader);
+			loadedModules.add(physics);
+			loadedModules.add(world);
+			loadedModules.add(networking);
+
+			// Add anything to the globals that might be needed elsewhere.
+			Globals.setLoader(loader);
+
+			for (IModule module : loadedModules) {
+				module.setUp();
+			}
 		}
 
 	}
@@ -174,7 +227,7 @@ public class MainGameLoop {
 		TerrainTexture bTexture = new TerrainTexture(loader.loadTexture("path"));
 		TerrainTexturePack texturePack = new TerrainTexturePack(backgroundTexture, rTexture, gTexture, bTexture);
 		TerrainTexture blendMap = new TerrainTexture(loader.loadTexture("blendMap"));
-		currentTerrain = new Terrain(0, -1, loader, texturePack, blendMap, "heightMap");
+		new Terrain(0, -1, loader, texturePack, blendMap, "heightMap");
 	}
 
 	/**
@@ -188,7 +241,9 @@ public class MainGameLoop {
 	 * Called every frame Put anything that needs updated each frame here
 	 */
 	private void update() {
-		DisplayManager.updateDisplay();
+		if (!Globals.isServer()) {
+			DisplayManager.updateDisplay();
+		}
 
 		for (IModule module : loadedModules) {
 			module.update();
@@ -217,9 +272,9 @@ public class MainGameLoop {
 		if (Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) {
 			cleanUp();
 		}
-		
-		if(Keyboard.isKeyDown(Keyboard.KEY_C)){
-			if(keyTimer < 0){
+
+		if (Keyboard.isKeyDown(Keyboard.KEY_C)) {
+			if (keyTimer < 0) {
 				switchCamera();
 			}
 		}
@@ -228,25 +283,23 @@ public class MainGameLoop {
 		for (IModule module : loadedModules) {
 			module.process();
 		}
-		
-		
+
 	}
 
-	private void switchCamera() {		
-		if(activeCameraID == 1){
+	private void switchCamera() {
+		if (activeCameraID == 1) {
 			loadedModules.remove(thirdPersonCamera);
 			loadedModules.add(rtsCamera);
 			activeCamera = rtsCamera;
 			activeCameraID = 2;
 			keyTimer = keyDelayTime;
-		}
-		else if(activeCameraID == 2){
+		} else if (activeCameraID == 2) {
 			loadedModules.remove(rtsCamera);
 			loadedModules.add(thirdPersonCamera);
 			activeCamera = thirdPersonCamera;
 			activeCameraID = 1;
 			keyTimer = keyDelayTime;
-		}		
+		}
 	}
 
 	/**
@@ -256,10 +309,10 @@ public class MainGameLoop {
 		entities.clear();
 
 		renderer.processEntity(player);
-		
-		for(IModule module : loadedModules){
+
+		for (IModule module : loadedModules) {
 			ArrayList<PhysicsEntity> toAdd = module.prepare();
-			if(toAdd != null){
+			if (toAdd != null) {
 				entities.addAll(toAdd);
 			}
 		}
@@ -277,9 +330,9 @@ public class MainGameLoop {
 		renderer.render(lights, activeCamera);
 		gui.render();
 
-		//for (IModule module : loadedModules) {
-		///	module.render();
-		//}
+		// for (IModule module : loadedModules) {
+		// / module.render();
+		// }
 	}
 
 	private void cleanUp() {

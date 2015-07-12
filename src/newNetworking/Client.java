@@ -1,5 +1,11 @@
 package newNetworking;
 
-public class Client {
+import java.io.Serializable;
+
+public class Client implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7772468712651432093L;
 	public String username;
 }
