@@ -9,6 +9,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 import newMain.Globals;
 import newWorld.Chunk;
@@ -18,6 +20,7 @@ public class ConnectionFromClient implements Runnable, ActionListener{
 	Socket socket;
 	ObjectOutputStream out;
 	ObjectInputStream in;
+	GZIPOutputStream gzipOut;
 	NetworkMessage inMessage, outMessage;
 	Client client;
 	
@@ -34,11 +37,15 @@ public class ConnectionFromClient implements Runnable, ActionListener{
 		try {
 			socket.setPerformancePreferences(0, 1, 2);
 			socket.setTcpNoDelay(true);
-			out = new ObjectOutputStream(new BufferedOutputStream(socket.getOutputStream()));
+			System.out.println("Creating output stream");
+			gzipOut = new GZIPOutputStream(socket.getOutputStream(), 4096, true);
+			out = new ObjectOutputStream(new BufferedOutputStream(gzipOut));
 			out.flush();
-	
-			in = new ObjectInputStream(new BufferedInputStream(socket.getInputStream()));
 			
+		
+			System.out.println("Creating input stream");
+			in = new ObjectInputStream(new BufferedInputStream(new GZIPInputStream(socket.getInputStream())));
+			System.out.println("Ready");
 			
 			// 4. The two parts communicate via the input and output streams
 			do {
@@ -142,6 +149,7 @@ public class ConnectionFromClient implements Runnable, ActionListener{
 		try {
 			out.writeObject(outMessage);
 			out.flush();
+		
 			out.reset();
 			outMessage = null;
 		} catch (IOException ioException) {

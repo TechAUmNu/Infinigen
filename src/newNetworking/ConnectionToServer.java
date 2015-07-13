@@ -11,24 +11,25 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 import newMain.Globals;
-import newWorld.ChunkID;
 
 public class ConnectionToServer implements Runnable, ActionListener {
 
 	Socket socket;
 	ObjectOutputStream out;
 	ObjectInputStream in;
+	GZIPOutputStream gzipOut;
 	Client client;
 	NetworkMessage inMessage, outMessage;
 	int chunkCount = 0, currentChunk = 0;;
 	ArrayList<ChunkData> chunkUpdate;
-	
 
 	ConnectionToServer(Client c) {
 		client = c;
-		
+
 	}
 
 	public void run() {
@@ -39,11 +40,17 @@ public class ConnectionToServer implements Runnable, ActionListener {
 			socket = new Socket(Globals.getIp(), Globals.getPort());
 			socket.setPerformancePreferences(0, 1, 2);
 			socket.setTcpNoDelay(true);
-			System.out.println("Connected to localhost in port " + + Globals.getPort());
+			System.out.println("Connected to localhost in port " + +Globals.getPort());
 			// 2. get Input and Output streams
-			out = new ObjectOutputStream(new BufferedOutputStream(socket.getOutputStream()));
+			System.out.println("Creating output stream");
+			gzipOut = new GZIPOutputStream(socket.getOutputStream(), 4096, true);
+			out = new ObjectOutputStream(new BufferedOutputStream(gzipOut));
+			System.out.println("Flushing output");
 			out.flush();
-			in = new ObjectInputStream(new BufferedInputStream(socket.getInputStream()));
+
+			System.out.println("Creating input stream");
+			in = new ObjectInputStream(new BufferedInputStream(new GZIPInputStream(socket.getInputStream())));
+
 			// 3: Communicating with the server
 			System.out.println("Connected to server, sending client info");
 			// Send our client info to the server.
@@ -52,7 +59,9 @@ public class ConnectionToServer implements Runnable, ActionListener {
 			sendMessage();
 
 			// Now we want to know what the current terrain is, so we get a
-			// chunk update
+			// chunk update which will get all currently loaded chunks on the
+			// server (Might be an idea in future to make it only around a
+			// specific area?)
 
 			outMessage = new NetworkMessage();
 			outMessage.chunkUpdate = true;
@@ -60,9 +69,9 @@ public class ConnectionToServer implements Runnable, ActionListener {
 
 			do {
 				try {
-					System.out.println("Waiting on message from server");
+					// System.out.println("Waiting on message from server");
 					inMessage = (NetworkMessage) in.readObject();
-					System.out.println("Message received from server");
+					// System.out.println("Message received from server");
 					if (!inMessage.disconnect) {
 						processMessage();
 					}
@@ -112,11 +121,12 @@ public class ConnectionToServer implements Runnable, ActionListener {
 
 		if (inMessage.chunkData != null) {
 			chunkUpdate.add(inMessage.chunkData);
+			System.out.println("Chunk: " + currentChunk + "/" + chunkCount);
 			currentChunk++;
-			
+
 		}
-		
-		if(inMessage.chunkUpdateComplete){
+
+		if (inMessage.chunkUpdateComplete) {
 			System.out.println("Recieved: " + currentChunk + "/" + chunkCount + " Chunks in chunk update");
 			Globals.setChunkUpdate(chunkUpdate);
 		}
