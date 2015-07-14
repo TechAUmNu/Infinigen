@@ -1,4 +1,4 @@
-package newEntities;
+package newCameras;
 
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import javax.vecmath.Quat4d;
 import javax.vecmath.Quat4f;
 
+import newEntities.ICamera;
+import newEntities.PhysicsEntity;
 import newMain.Globals;
 import newMain.IModule;
 import newRendering.DisplayManager;

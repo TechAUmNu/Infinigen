@@ -62,7 +62,7 @@ public class DisplayManager {
 		if (getCurrentTime() - lastFPS > 1000f) {
 
 			if(Globals.showFPS()){
-				System.out.println("FPS: " + fps);
+				//System.out.println("FPS: " + fps);
 			}
 			fpsCounter = fps;
 			fps = 0;
@@ -70,7 +70,7 @@ public class DisplayManager {
 		}
 		fps++;
 
-		// System.out.println(fpsCounter);
+		 //System.out.println(fpsCounter);
 
 	}
 

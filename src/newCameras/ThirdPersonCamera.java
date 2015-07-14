@@ -1,4 +1,4 @@
-package newEntities;
+package newCameras;
 
 import static org.lwjgl.opengl.ARBDepthClamp.GL_DEPTH_CLAMP;
 import static org.lwjgl.opengl.GL11.glEnable;
@@ -8,6 +8,9 @@ import java.util.ArrayList;
 import javax.vecmath.Quat4d;
 import javax.vecmath.Quat4f;
 
+import newEntities.ICamera;
+import newEntities.PhysicsEntity;
+import newEntities.Player;
 import newMain.Globals;
 import newMain.IModule;
 import newTerrains.Terrain;

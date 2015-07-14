@@ -1,6 +1,7 @@
 package newNetworking;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 public class NetworkMessage implements Serializable{
 	
@@ -14,4 +15,6 @@ public class NetworkMessage implements Serializable{
 	public int chunkCount;
 	public ChunkData chunkData;
 	public boolean chunkUpdateComplete;
+	public boolean physicsUpdate;
+	public ArrayList<PhysicsNetworkBody> physicsData;
 }

@@ -1,5 +1,7 @@
 package newPhysics;
 
+import java.util.ArrayList;
+
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Quat4f;
 import javax.vecmath.Vector3f;
@@ -27,24 +29,35 @@ import com.bulletphysics.linearmath.Transform;
 public class PhysicsProcessor {
 
 	private DiscreteDynamicsWorld dynamicsWorld;
+	private ArrayList<RigidBody> bodies;
+
+	public ArrayList<RigidBody> getBodies() {
+		return bodies;
+	}
 
 	public void addPhysicsEntity(PhysicsEntity entity) {
 		dynamicsWorld.addRigidBody(entity.getBody());
+		bodies.add(entity.getBody());
 	}
 
 	public void removePhysicsEntity(PhysicsEntity entity) {
 		dynamicsWorld.removeRigidBody(entity.getBody());
+		bodies.remove(entity.getBody());
+		
 	}
 
 	public void simulate() {
 		dynamicsWorld.stepSimulation(DisplayManager.getFrameTimeSeconds());
 	}
+	
+	
 
 	public DiscreteDynamicsWorld getDynamicsWorld() {
-		return dynamicsWorld;
+		return dynamicsWorld;		
 	}
 
 	public void setUpPhysics(boolean floor, boolean gravity) {
+		bodies = new ArrayList<RigidBody>();
 		/**
 		 * The object that will roughly find out whether bodies are colliding.
 		 */

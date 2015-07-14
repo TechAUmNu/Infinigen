@@ -9,11 +9,20 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+import javax.swing.Timer;
+
+import com.bulletphysics.dynamics.RigidBody;
+
 import newMain.Globals;
 import newWorld.Chunk;
+
+
+//For physics updates we will run a timer on the server that sends out the updated physics data every 1/10 of a second.
 
 
 public class ConnectionFromClient implements Runnable, ActionListener{
@@ -21,8 +30,12 @@ public class ConnectionFromClient implements Runnable, ActionListener{
 	ObjectOutputStream out;
 	ObjectInputStream in;
 	GZIPOutputStream gzipOut;
-	NetworkMessage inMessage, outMessage;
+	NetworkMessage inMessage;
 	Client client;
+	int physicsUpdateCount = 0;
+	Timer timer;
+	
+	CopyOnWriteArrayList<NetworkMessage> sendQueue = new CopyOnWriteArrayList<NetworkMessage>();
 	
 	
 	ConnectionFromClient(Socket socket) {
@@ -46,6 +59,9 @@ public class ConnectionFromClient implements Runnable, ActionListener{
 			System.out.println("Creating input stream");
 			in = new ObjectInputStream(new BufferedInputStream(new GZIPInputStream(socket.getInputStream())));
 			System.out.println("Ready");
+			
+			
+			timer = new Timer(100, this); timer.start(); //Timer for regular updates to client (100ms)
 			
 			// 4. The two parts communicate via the input and output streams
 			do {
@@ -74,7 +90,9 @@ public class ConnectionFromClient implements Runnable, ActionListener{
 				in.close();
 				out.close();
 				socket.close();
+				timer.stop();
 				System.out.println(client.username + " disconnected"); //if they are print their user name
+				
 			} catch (Exception e) {
 				System.err.println("A problem occured while closing the connection: " + e.getMessage());
 			}
@@ -113,11 +131,11 @@ public class ConnectionFromClient implements Runnable, ActionListener{
 			
 			//First we will send a message with the number of chunks that are to be loaded so the client can make a progress bar for download progress
 			
-			outMessage = new NetworkMessage();
+			NetworkMessage outMessage = new NetworkMessage();
 			outMessage.chunkUpdate = true; // We set this so the client knows it is part of the chunk update			
 			outMessage.chunkCount = Globals.getLoadedChunks().size();
 			System.out.println("Sending chunk count: " + outMessage.chunkCount);
-			sendMessage();
+			queueMessage(outMessage);
 			
 			//Next we need to send all the chunks one by one so the client can easily update the progress of the download.
 			System.out.println("Sending chunk data");
@@ -125,7 +143,7 @@ public class ConnectionFromClient implements Runnable, ActionListener{
 				outMessage = new NetworkMessage();
 				outMessage.chunkUpdate = true;
 				outMessage.chunkData = c.getData();
-				sendMessage();
+				queueMessage(outMessage);
 			}
 			
 			//Now the client has all the chunk data we can send a message to say the chunk update has finished.
@@ -133,25 +151,59 @@ public class ConnectionFromClient implements Runnable, ActionListener{
 			outMessage = new NetworkMessage();
 			outMessage.chunkUpdate = true;
 			outMessage.chunkUpdateComplete = true;
-			sendMessage();
+			queueMessage(outMessage);
 	}
 
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		// TODO Auto-generated method stub
+		//This is called every 100ms and is used for sending updates of current game state to the client
+		
+		//So we want to send the physics data to the client
+		
+		
+		//First we need to make some data structure to store the information. We will need to get the list of all entities first.
+		
+		System.out.println("Physics Update: " + physicsUpdateCount++ );
+		
+		ArrayList<PhysicsNetworkBody> networkBodies = new ArrayList<PhysicsNetworkBody>();
+		ArrayList<RigidBody> bodies =  Globals.getBodies();
+		
+		System.out.println("Physics Bodies: " + bodies.size());
+		
+		for(RigidBody rb : bodies){
+			PhysicsNetworkBody pnb = new PhysicsNetworkBody();
+			pnb.hash = rb.hashCode(); //We use the hash to make sure we update the correct object
+			rb.getAngularVelocity(pnb.angularVelocity);
+			rb.getLinearVelocity(pnb.linearVelocity);
+			rb.getOrientation(pnb.orientation);
+			rb.getWorldTransform(pnb.worldTransform);			
+			networkBodies.add(pnb);
+		}	
+			
+		NetworkMessage outMessage = new NetworkMessage();
+		outMessage.physicsUpdate = true;
+		outMessage.physicsData = networkBodies;
+		queueMessage(outMessage);
+		
+		
+		//Once we have done all this we can process the waiting messages to be sent.
+		for(NetworkMessage msg : sendQueue){
+			sendMessage(msg);
+		}
 		
 	}
 				
-				
+	void queueMessage(NetworkMessage msg){
+		sendQueue.add(msg);
+	}
 	
-	void sendMessage() {
+	void sendMessage(NetworkMessage msg) {
 		try {
-			out.writeObject(outMessage);
-			out.flush();
-		
+			out.writeObject(msg);
+			out.flush();		
 			out.reset();
-			outMessage = null;
+			sendQueue.remove(msg);			
 		} catch (IOException ioException) {
 			ioException.printStackTrace();
 		}

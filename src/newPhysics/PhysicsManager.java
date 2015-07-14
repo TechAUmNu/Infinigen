@@ -3,6 +3,7 @@ package newPhysics;
 import java.util.ArrayList;
 
 import newEntities.PhysicsEntity;
+import newMain.Globals;
 import newMain.IModule;
 
 public class PhysicsManager implements IModule {
@@ -14,7 +15,8 @@ public class PhysicsManager implements IModule {
 	}
 
 	public void update() {
-		processor.simulate();
+		processor.simulate();				
+		Globals.setBodies(processor.getBodies());
 	}
 
 	@Override

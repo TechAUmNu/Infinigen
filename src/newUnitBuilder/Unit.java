@@ -54,7 +54,7 @@ public class Unit {
 	public void highlight(int hashCode) {
 		for(PhysicsEntity entity : entities){
 			if(entity.getBody().hashCode() == hashCode){
-				entity.highlight(true);
+				entity.highlight(true);				
 			}
 			else{
 				entity.highlight(false);

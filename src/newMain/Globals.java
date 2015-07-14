@@ -1,9 +1,13 @@
 package newMain;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.lwjgl.util.vector.Vector3f;
 
+import com.bulletphysics.dynamics.RigidBody;
+
+import newEntities.PhysicsEntity;
 import newNetworking.ChunkData;
 import newRendering.Loader;
 import newWorld.Chunk;
@@ -22,9 +26,14 @@ public class Globals {
 	private static ArrayList<ChunkData> chunkUpdate;
 	private static String ip;
 	private static int port;
+	private static ArrayList<RigidBody> bodies;
 	
 
 	// //////////////////////////////////////////////////////////////////////////////////////
+
+	public static ArrayList<RigidBody> getBodies() {
+		return bodies;
+	}
 
 	public static int getPort() {
 		return port;
@@ -113,6 +122,10 @@ public class Globals {
 
 	public static boolean loading() {		
 		return loading;
+	}
+
+	public static void setBodies(ArrayList<RigidBody> bodies) {
+		Globals.bodies = bodies;		
 	}
 
 	

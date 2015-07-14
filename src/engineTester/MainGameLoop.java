@@ -8,9 +8,11 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.util.vector.Vector3f;
 
+import com.bulletphysics.dynamics.RigidBody;
+
+import newCameras.RTSCamera;
+import newCameras.ThirdPersonCamera;
 import newEntities.ICamera;
-import newEntities.RTSCamera;
-import newEntities.ThirdPersonCamera;
 import newEntities.Light;
 import newEntities.PhysicsEntity;
 import newEntities.Player;
@@ -55,13 +57,15 @@ public class MainGameLoop {
 	private Player player;
 	private MasterRenderer renderer;
 	private boolean mouse1 = false;
-	private List<PhysicsEntity> entities;
+	private ArrayList<PhysicsEntity> entities;
 	private List<Light> lights;
 	private UnitBuilderManager unitBuilder;
 	private NetworkingManager networking;
 
 	private List<IModule> loadedModules;
 	private ChunkManager world;
+	
+	
 
 	/**
 	 * Main entry point to the game
@@ -178,6 +182,7 @@ public class MainGameLoop {
 
 			// Add anything to the globals that might be needed elsewhere.
 			Globals.setLoader(loader);
+			
 
 			for (IModule module : loadedModules) {
 				module.setUp();
@@ -191,6 +196,7 @@ public class MainGameLoop {
 			world = new ChunkManager();
 			physics.setUp();
 			// Networking
+			Globals.setBodies(new ArrayList<RigidBody>());
 			networking = new NetworkingManager();
 
 			// Core modules
@@ -200,7 +206,7 @@ public class MainGameLoop {
 			loadedModules.add(networking);
 
 			// Add anything to the globals that might be needed elsewhere.
-			Globals.setLoader(loader);
+			Globals.setLoader(loader);			
 
 			for (IModule module : loadedModules) {
 				module.setUp();
@@ -248,6 +254,8 @@ public class MainGameLoop {
 		for (IModule module : loadedModules) {
 			module.update();
 		}
+		
+
 	}
 
 	/**
@@ -320,6 +328,9 @@ public class MainGameLoop {
 		for (PhysicsEntity entity : entities) {
 			renderer.processEntity(entity);
 		}
+		
+		
+		
 	}
 
 	/**
