@@ -9,6 +9,8 @@ import com.bulletphysics.dynamics.RigidBody;
 
 import newEntities.PhysicsEntity;
 import newNetworking.ChunkData;
+import newPhysics.PhysicsManager;
+import newPhysics.PhysicsProcessor;
 import newRendering.Loader;
 import newWorld.Chunk;
 
@@ -27,6 +29,10 @@ public class Globals {
 	private static String ip;
 	private static int port;
 	private static ArrayList<RigidBody> bodies;
+	private static PhysicsManager physics;
+	private static ArrayList<PhysicsEntity> newEntities = new ArrayList<PhysicsEntity>();
+	private static ArrayList<PhysicsEntity> entities = new ArrayList<PhysicsEntity>();
+	
 	
 
 	// //////////////////////////////////////////////////////////////////////////////////////
@@ -126,6 +132,34 @@ public class Globals {
 
 	public static void setBodies(ArrayList<RigidBody> bodies) {
 		Globals.bodies = bodies;		
+	}
+
+	public static PhysicsManager getPhysics() {
+		return physics;
+	}
+
+	public static void setPhysics(PhysicsManager physics) {
+		Globals.physics = physics;
+	}
+
+	public static ArrayList<PhysicsEntity> getNewEntities() {	//This must clear the list otherwise we will add the same thing a lot!		
+		ArrayList<PhysicsEntity> ne = new ArrayList<PhysicsEntity>(); //TODO: maybe put a lock on newEntities here?
+		ne.addAll(newEntities);
+		newEntities.clear();
+		return ne;
+	}
+
+	public static void addEntity(PhysicsEntity newEntity, boolean fromNetwork) {
+		if(!fromNetwork) Globals.newEntities.add(newEntity); //So we send it to the server
+		entities.add(newEntity);
+	}
+
+	public static ArrayList<PhysicsEntity> getEntities() {
+		return entities;
+	}
+
+	public static void setEntities(ArrayList<PhysicsEntity> entities) { //For network download
+		Globals.entities = entities;
 	}
 
 	

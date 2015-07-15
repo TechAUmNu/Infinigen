@@ -15,9 +15,13 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 import javax.swing.Timer;
+import javax.vecmath.Quat4f;
+import javax.vecmath.Vector3f;
 
 import com.bulletphysics.dynamics.RigidBody;
+import com.bulletphysics.linearmath.Transform;
 
+import newEntities.PhysicsEntity;
 import newMain.Globals;
 import newWorld.Chunk;
 
@@ -66,9 +70,9 @@ public class ConnectionFromClient implements Runnable, ActionListener{
 			// 4. The two parts communicate via the input and output streams
 			do {
 				try {
-					System.out.println("Waiting for message from client");
+					//System.out.println("Waiting for message from client");
 					inMessage = (NetworkMessage) in.readObject();
-					System.out.println("Message recieved from client");
+					//System.out.println("Message recieved from client");
 					if (inMessage.disconnect){ //Check if the client is disconnecting
 						
 					}else{
@@ -121,6 +125,31 @@ public class ConnectionFromClient implements Runnable, ActionListener{
 			chunkUpdate();	
 		}
 		
+		if(inMessage.newEntity){
+			newObject();
+		}
+		
+		
+	}
+
+
+	private void newObject() {
+		// Here we will add the new rigid body to the physics simulation and forward the message onto the other clients
+		
+		//We want to get the message to the other clients ASAP so we queue it first
+		queueMessage(inMessage);
+		
+		//Now we deal with the entities
+		
+		for(PhysicsEntity e : inMessage.entityData){
+			Globals.getPhysics().getProcessor().addPhysicsEntity(e); //Thats easy :D
+			Globals.addEntity(e, true); //This is for new client joining after game start so we can send them everything.
+		}
+		
+		
+		
+		//It can't be that simple ?? Well ok then! (SIMPLE BUT STUPIDLY SLOW :D)
+		
 		
 	}
 
@@ -168,16 +197,18 @@ public class ConnectionFromClient implements Runnable, ActionListener{
 		
 		ArrayList<PhysicsNetworkBody> networkBodies = new ArrayList<PhysicsNetworkBody>();
 		ArrayList<RigidBody> bodies =  Globals.getBodies();
+
 		
 		System.out.println("Physics Bodies: " + bodies.size());
 		
 		for(RigidBody rb : bodies){
 			PhysicsNetworkBody pnb = new PhysicsNetworkBody();
-			pnb.hash = rb.hashCode(); //We use the hash to make sure we update the correct object
-			rb.getAngularVelocity(pnb.angularVelocity);
-			rb.getLinearVelocity(pnb.linearVelocity);
-			rb.getOrientation(pnb.orientation);
-			rb.getWorldTransform(pnb.worldTransform);			
+			pnb.hash = rb.hashCode(); //We use the hash to make sure we update the correct object on the client
+			
+			pnb.angularVelocity = rb.getAngularVelocity(new Vector3f());
+			pnb.linearVelocity = rb.getLinearVelocity(new Vector3f());
+			pnb.orientation = rb.getOrientation(new Quat4f());
+			pnb.worldTransform = rb.getWorldTransform(new Transform());			
 			networkBodies.add(pnb);
 		}	
 			

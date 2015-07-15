@@ -3,6 +3,8 @@ package newNetworking;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import newEntities.PhysicsEntity;
+
 public class NetworkMessage implements Serializable{
 	
 	/**
@@ -17,4 +19,6 @@ public class NetworkMessage implements Serializable{
 	public boolean chunkUpdateComplete;
 	public boolean physicsUpdate;
 	public ArrayList<PhysicsNetworkBody> physicsData;
+	public boolean newEntity;
+	public ArrayList<PhysicsEntity> entityData;
 }

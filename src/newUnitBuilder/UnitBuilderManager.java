@@ -2,21 +2,17 @@ package newUnitBuilder;
 
 import java.util.ArrayList;
 
-import javax.vecmath.Quat4f;
 import javax.vecmath.Vector3f;
 
 import org.lwjgl.input.Mouse;
 
 import com.bulletphysics.collision.dispatch.CollisionWorld;
 import com.bulletphysics.dynamics.RigidBody;
-import com.bulletphysics.linearmath.Transform;
-
 import newEntities.PhysicsEntity;
 import newMain.Globals;
 import newMain.IModule;
 import newModels.PhysicsModel;
 import newModels.TexturedPhysicsModel;
-import newPhysics.PhysicsProcessor;
 import newTextures.ModelTexture;
 import newUtility.Maths;
 import newobjConverter.OBJFileLoader;
@@ -24,10 +20,10 @@ import newobjConverter.OBJFileLoader;
 public class UnitBuilderManager implements IModule {
 
 	ConstructionArea area;
-	PhysicsProcessor processor;
+	
 	
 	TexturedPhysicsModel boxModel;
-	ArrayList<PhysicsEntity> temp;
+	
 	
 	
 	int timeLeft = 0;
@@ -36,13 +32,11 @@ public class UnitBuilderManager implements IModule {
 	@Override
 	public void setUp() {
 		
-		temp = new ArrayList<PhysicsEntity>();
-		processor = new PhysicsProcessor();
-		processor.setUpPhysics(true, true);
+		
 		
 		
 		Unit unit = new Unit();
-		unit.setup(processor);
+		unit.setup(Globals.getPhysics().getProcessor());
 		area = new ConstructionArea(unit);
 		
 		
@@ -53,7 +47,7 @@ public class UnitBuilderManager implements IModule {
 
 	@Override
 	public void update() {
-		processor.simulate();
+		//processor.simulate();
 
 	}
 
@@ -82,9 +76,9 @@ public class UnitBuilderManager implements IModule {
 	
 		Vector3f camPos = new Vector3f(Maths.convertVector(Globals.getCameraPosition()));
 		
-		PhysicsEntity model = new PhysicsEntity(boxModel, Maths.convertVectorBtoL(camPos), 0, 0, 0, 1, 10, processor);
-		temp.add(model);
-		System.out.println(temp.size());
+		PhysicsEntity model = new PhysicsEntity(boxModel, Maths.convertVectorBtoL(camPos), 0, 0, 0, 1, 10, Globals.getPhysics().getProcessor());
+		Globals.addEntity(model, false);
+		
 
 		RigidBody body = model.getBody();
 
@@ -104,7 +98,7 @@ public class UnitBuilderManager implements IModule {
 		}
 		timeLeft--;
 		CollisionWorld.ClosestRayResultCallback rayCallback = new CollisionWorld.ClosestRayResultCallback(rayFrom, rayTo);
-		processor.getDynamicsWorld().rayTest(rayFrom, rayTo, rayCallback);
+		Globals.getPhysics().getProcessor().getDynamicsWorld().rayTest(rayFrom, rayTo, rayCallback);
 		
 		
 		
@@ -138,12 +132,9 @@ public class UnitBuilderManager implements IModule {
 	public ArrayList<PhysicsEntity> prepare() {
 		Unit unit = area.getUnit();
 		
-		ArrayList<PhysicsEntity> todraw = new ArrayList<PhysicsEntity>();
-		todraw.addAll(temp);
-		 todraw.addAll(unit.getEntities());
 		
 		
-		return (ArrayList<PhysicsEntity>) todraw;
+		return (ArrayList<PhysicsEntity>) unit.getEntities();
 	}
 
 }

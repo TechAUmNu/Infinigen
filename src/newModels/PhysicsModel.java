@@ -1,11 +1,13 @@
 package newModels;
 
+import java.io.Serializable;
+
 import javax.vecmath.Vector3f;
 
 import com.bulletphysics.collision.shapes.CollisionShape;
 import com.bulletphysics.collision.shapes.ConvexHullShape;
 
-public class PhysicsModel extends RawModel {
+public class PhysicsModel extends RawModel implements Serializable {
 
 	private CollisionShape collisionShape;
 

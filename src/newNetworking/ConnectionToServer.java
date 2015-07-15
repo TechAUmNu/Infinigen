@@ -11,10 +11,19 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+import javax.swing.Timer;
+
+import com.bulletphysics.dynamics.RigidBody;
+import com.bulletphysics.linearmath.MotionState;
+
+import newEntities.PhysicsEntity;
 import newMain.Globals;
+
+//For new objects and events we need to tell the server, once the object has been created and added on the server the client receives updates on its position to make sure everything is in sync across clients
 
 public class ConnectionToServer implements Runnable, ActionListener {
 
@@ -23,9 +32,11 @@ public class ConnectionToServer implements Runnable, ActionListener {
 	ObjectInputStream in;
 	GZIPOutputStream gzipOut;
 	Client client;
-	NetworkMessage inMessage, outMessage;
+	NetworkMessage inMessage;
 	int chunkCount = 0, currentChunk = 0;;
 	ArrayList<ChunkData> chunkUpdate;
+	Timer timer;
+	CopyOnWriteArrayList<NetworkMessage> sendQueue = new CopyOnWriteArrayList<NetworkMessage>();
 
 	ConnectionToServer(Client c) {
 		client = c;
@@ -54,9 +65,9 @@ public class ConnectionToServer implements Runnable, ActionListener {
 			// 3: Communicating with the server
 			System.out.println("Connected to server, sending client info");
 			// Send our client info to the server.
-			outMessage = new NetworkMessage();
+			NetworkMessage outMessage = new NetworkMessage();
 			outMessage.client = client;
-			sendMessage();
+			queueMessage(outMessage);
 
 			// Now we want to know what the current terrain is, so we get a
 			// chunk update which will get all currently loaded chunks on the
@@ -65,7 +76,10 @@ public class ConnectionToServer implements Runnable, ActionListener {
 
 			outMessage = new NetworkMessage();
 			outMessage.chunkUpdate = true;
-			sendMessage();
+			queueMessage(outMessage);
+
+			timer = new Timer(100, this);
+			timer.start(); // Timer for regular updates to client (100ms)
 
 			do {
 				try {
@@ -104,6 +118,49 @@ public class ConnectionToServer implements Runnable, ActionListener {
 		if (inMessage.chunkUpdate) {
 			chunkUpdate();
 		}
+		if (inMessage.physicsUpdate) {
+			physicsUpdate();
+		}
+		if(inMessage.newEntity){
+			newEntity();
+		}
+	}
+
+	private void newEntity() {
+		for(PhysicsEntity e : inMessage.entityData){
+			Globals.getPhysics().getProcessor().addPhysicsEntity(e); //Thats easy :D
+			// now we just at the entities to the list we already have			
+			Globals.addEntity(e, true);
+		}		
+	}
+
+	private void physicsUpdate() {
+		// We are now updating the physics objects locations
+
+		// We will receive a list of PhysicsNetworkBody which has the info about
+		// where stuff is and how its moving
+
+		// So we need to look through our list of rigid bodies and update the
+		// matching ones
+
+		ArrayList<PhysicsNetworkBody> networkBodies = inMessage.physicsData;
+		ArrayList<RigidBody> bodies = Globals.getPhysics().getProcessor().getBodies();
+
+		System.out.println("Physics update: " + networkBodies.size());
+
+		for (PhysicsNetworkBody body : networkBodies) {
+			for (RigidBody rb : bodies) {
+				if (body.hash == rb.hashCode()) {
+					System.out.println("MATCH");
+					rb.setAngularVelocity(body.angularVelocity);
+					rb.setLinearVelocity(body.linearVelocity);
+					rb.setWorldTransform(body.worldTransform);
+					break;
+				}
+
+			}
+		}
+
 	}
 
 	private void chunkUpdate() {
@@ -135,17 +192,40 @@ public class ConnectionToServer implements Runnable, ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
+		// So the main thing for the client is when new objects are created, we
+		// need to make sure the server knows about them,
+		// The server actually only needs to know about the rigid body, but the other clients need to know what it is we are drawing so we must send the whole entity
+		
+		
+		//We get the list of new entities from globals.
+		
+		ArrayList<PhysicsEntity> newEntities = Globals.getNewEntities();		
+		//System.out.println("SENDING NEW ENTITES: " + newEntities.size());
+		NetworkMessage outMessage = new NetworkMessage();
+		outMessage.newEntity = true; // We set this so the client knows it is part of the chunk update			
+		outMessage.entityData = newEntities; //TODO: Clearly this is a stupid idea so need to change this to use named models.	
+		queueMessage(outMessage); //This will probably be huge *Oh dear :S*
+		
+		
+		
 
+		// Once we have done all this we can process the waiting messages to be
+		// sent.
+		for (NetworkMessage msg : sendQueue) {
+			sendMessage(msg);
+		}
 	}
 
-	void sendMessage() {
+	void queueMessage(NetworkMessage msg) {
+		sendQueue.add(msg);
+	}
+
+	void sendMessage(NetworkMessage msg) {
 		try {
-			out.writeObject(outMessage);
+			out.writeObject(msg);
 			out.flush();
 			out.reset();
-			outMessage = null; // This makes sure we don't ever send the same
-								// message twice.
+			sendQueue.remove(msg);
 		} catch (IOException ioException) {
 			ioException.printStackTrace();
 		}

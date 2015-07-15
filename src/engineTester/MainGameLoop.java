@@ -57,7 +57,7 @@ public class MainGameLoop {
 	private Player player;
 	private MasterRenderer renderer;
 	private boolean mouse1 = false;
-	private ArrayList<PhysicsEntity> entities;
+
 	private List<Light> lights;
 	private UnitBuilderManager unitBuilder;
 	private NetworkingManager networking;
@@ -141,7 +141,7 @@ public class MainGameLoop {
 
 			renderer = new MasterRenderer(loader);
 			physics = new PhysicsManager();
-			entities = new ArrayList<PhysicsEntity>();
+			
 			lights = new ArrayList<Light>();
 
 			world = new ChunkManager();
@@ -149,6 +149,7 @@ public class MainGameLoop {
 			unitBuilder = new UnitBuilderManager();
 
 			physics.setUp();
+			Globals.setPhysics(physics);
 
 			PhysicsModel pmodel = OBJFileLoader.loadOBJtoVAOWithGeneratedPhysics("box", loader);
 			TexturedPhysicsModel testPhysics = new TexturedPhysicsModel(pmodel, new ModelTexture(loader.loadTexture("white")));
@@ -192,9 +193,10 @@ public class MainGameLoop {
 
 			// loader = new Loader();
 			physics = new PhysicsManager();
-			entities = new ArrayList<PhysicsEntity>();
+			
 			world = new ChunkManager();
 			physics.setUp();
+			Globals.setPhysics(physics);
 			// Networking
 			Globals.setBodies(new ArrayList<RigidBody>());
 			networking = new NetworkingManager();
@@ -314,20 +316,25 @@ public class MainGameLoop {
 	 * Called every frame Put anything that needs added to the render here
 	 */
 	private void prepareRender() {
-		entities.clear();
+		ArrayList<PhysicsEntity> entitiesToRender = new ArrayList<PhysicsEntity>();
 
 		renderer.processEntity(player);
 
 		for (IModule module : loadedModules) {
 			ArrayList<PhysicsEntity> toAdd = module.prepare();
 			if (toAdd != null) {
-				entities.addAll(toAdd);
+				entitiesToRender.addAll(toAdd);
 			}
 		}
 
-		for (PhysicsEntity entity : entities) {
+		entitiesToRender.addAll(Globals.getEntities());
+		
+		for (PhysicsEntity entity : entitiesToRender) {
 			renderer.processEntity(entity);
 		}
+		
+		
+	
 		
 		
 		

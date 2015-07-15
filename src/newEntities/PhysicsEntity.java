@@ -1,5 +1,7 @@
 package newEntities;
 
+import java.io.Serializable;
+
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Quat4f;
 import javax.vecmath.Vector3f;
@@ -14,13 +16,19 @@ import com.bulletphysics.dynamics.RigidBodyConstructionInfo;
 import com.bulletphysics.linearmath.DefaultMotionState;
 import com.bulletphysics.linearmath.Transform;
 
-public class PhysicsEntity extends Entity {
+public class PhysicsEntity extends Entity implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6265237686808713962L;
 	protected TexturedPhysicsModel model;
 	protected RigidBody body;
 	protected boolean physicsBody = false;
 	protected boolean highlight = false;
 
+	
+	
 	public PhysicsEntity(TexturedPhysicsModel model, org.lwjgl.util.vector.Vector3f position, float rotX, float rotY, float rotZ, float scale, float mass,
 			PhysicsProcessor processor) {
 		super(model, position, rotX, rotY, rotZ, scale);

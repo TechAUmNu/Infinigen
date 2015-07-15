@@ -1,5 +1,7 @@
 package newModels;
 
+import java.io.Serializable;
+
 import javax.vecmath.Vector3f;
 
 import com.bulletphysics.collision.shapes.CollisionShape;
@@ -10,8 +12,12 @@ import com.bulletphysics.linearmath.Transform;
 
 import newTextures.ModelTexture;
 
-public class TexturedPhysicsModel extends TexturedModel {
+public class TexturedPhysicsModel extends TexturedModel implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6825399073509573649L;
 	private CollisionShape collisionShape;
 
 	public TexturedPhysicsModel(PhysicsModel model, ModelTexture texture) {

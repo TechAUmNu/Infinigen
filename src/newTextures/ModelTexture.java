@@ -1,8 +1,10 @@
 package newTextures;
 
+import java.io.Serializable;
+
 import javax.vecmath.Vector3f;
 
-public class ModelTexture {
+public class ModelTexture implements Serializable{
 
 	private Vector3f textureID;
 

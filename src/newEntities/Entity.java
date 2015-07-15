@@ -1,12 +1,14 @@
 package newEntities;
 
+import java.io.Serializable;
+
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
 import newModels.TexturedModel;
 import newUtility.Maths;
 
-public class Entity {
+public class Entity implements Serializable{
 	protected TexturedModel model;
 	protected Vector3f position;
 	protected float rotX, rotY, rotZ;
@@ -15,8 +17,11 @@ public class Entity {
 
 	private int textureIndex = 0;
 
+	public Entity(){
+		
+	}
+	
 	public Entity(TexturedModel model, Vector3f position, float rotX, float rotY, float rotZ, float scale) {
-		super();
 		this.model = model;
 		this.position = position;
 		this.rotX = rotX;
@@ -25,8 +30,7 @@ public class Entity {
 		this.scale = scale;
 	}
 
-	public Entity(TexturedModel model, int index, Vector3f position, float rotX, float rotY, float rotZ, float scale) {
-		super();
+	public Entity(TexturedModel model, int index, Vector3f position, float rotX, float rotY, float rotZ, float scale) {		
 		this.textureIndex = index;
 		this.model = model;
 		this.position = position;

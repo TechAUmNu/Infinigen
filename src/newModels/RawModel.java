@@ -1,6 +1,8 @@
 package newModels;
 
-public class RawModel {
+import java.io.Serializable;
+
+public class RawModel implements Serializable {
 	private int vaoID;
 	private int vertexCount;
 

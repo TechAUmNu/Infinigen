@@ -1,9 +1,15 @@
 package newModels;
 
+import java.io.Serializable;
+
 import newTextures.ModelTexture;
 
-public class TexturedModel {
+public class TexturedModel implements Serializable{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7077715080759594243L;
 	private RawModel rawModel;
 	private ModelTexture texture;
 
