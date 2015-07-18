@@ -7,6 +7,12 @@ import java.util.List;
 
 
 
+
+
+
+
+
+
 import main.java.com.ionsystems.infinigen.newCameras.RTSCamera;
 import main.java.com.ionsystems.infinigen.newCameras.ThirdPersonCamera;
 import main.java.com.ionsystems.infinigen.newEntities.ICamera;
@@ -36,6 +42,11 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.util.vector.Vector3f;
 
 import com.bulletphysics.dynamics.RigidBody;
+import com.sudoplay.joise.module.ModuleAutoCorrect;
+import com.sudoplay.joise.module.ModuleBasisFunction.BasisType;
+import com.sudoplay.joise.module.ModuleBasisFunction.InterpolationType;
+import com.sudoplay.joise.module.ModuleFractal;
+import com.sudoplay.joise.module.ModuleFractal.FractalType;
 
 public class Main {
 
@@ -190,6 +201,12 @@ public class Main {
 				module.setUp();
 			}
 		} else {
+			
+		
+		    
+		    
+		   
+			
 			loadedModules = new ArrayList<IModule>();
 
 			// loader = new Loader();
@@ -222,7 +239,7 @@ public class Main {
 	 * Put anything to do with loading models etc here
 	 */
 	private void loadAssets() {
-		lights.add(new Light(new Vector3f(0, 10000, -7000), new Vector3f(1, 1, 1))); // Sun
+		lights.add(new Light(new Vector3f(0, 10000, -9000), new Vector3f(1, 1, 1))); // Sun
 
 	}
 
@@ -233,7 +250,7 @@ public class Main {
 	 * Anything to do with setting up the gui
 	 */
 	private void generateGui() {
-		gui.generateElement(0, 0, "uvgrid01");
+		//gui.generateElement(0, 0, "uvgrid01");
 	}
 
 	/**

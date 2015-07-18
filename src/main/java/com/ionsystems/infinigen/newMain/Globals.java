@@ -32,6 +32,8 @@ public class Globals {
 	private static PhysicsManager physics;
 	private static ArrayList<PhysicsEntity> newEntities = new ArrayList<PhysicsEntity>();
 	private static ArrayList<PhysicsEntity> entities = new ArrayList<PhysicsEntity>();
+	private static int rigidBodyID = 35;
+	private static int clientID = 0;
 	
 	
 
@@ -150,7 +152,9 @@ public class Globals {
 	}
 
 	public static void addEntity(PhysicsEntity newEntity, boolean fromNetwork) {
-		if(!fromNetwork) Globals.newEntities.add(newEntity); //So we send it to the server
+		if(!fromNetwork){
+			Globals.newEntities.add(newEntity);
+		}		
 		entities.add(newEntity);
 	}
 
@@ -162,5 +166,15 @@ public class Globals {
 		Globals.entities = entities;
 	}
 
+	public static int getRigidBodyID() {
+		return rigidBodyID++;
+	}
+
+	public static int getClientID() {
+		return clientID;
+	}
+	
+
+	
 	
 }

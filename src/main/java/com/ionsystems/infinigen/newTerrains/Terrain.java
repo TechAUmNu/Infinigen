@@ -80,28 +80,28 @@ public class Terrain {
 
 	}
 
-//	private RawModel generateTerrain(Loader loader, String heightMap) {
-//
-//		BufferedImage image = null;
-//		try {
-//			image = ImageIO.read(new File("res/heightMaps/heightmap.png"));
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-//		int VERTEX_COUNT = image.getHeight();
-//		heights = new float[VERTEX_COUNT][VERTEX_COUNT];
-//
-//		for (int i = 0; i < VERTEX_COUNT; i++) {
-//			for (int j = 0; j < VERTEX_COUNT; j++) {
-//
-//				float height = getHeight(j, i, image);
-//				heights[j][i] = height;
-//
-//			}
-//		}
-//
-//		//return loader.loadToVAO(vertices, textureCoords, normals, indices);
-//	}
+	private void generateTerrain(Loader loader, String heightMap) {
+
+		BufferedImage image = null;
+		try {
+			image = ImageIO.read(new File("res/heightMaps/heightmap.png"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		int VERTEX_COUNT = image.getHeight();
+		heights = new float[VERTEX_COUNT][VERTEX_COUNT];
+
+		for (int i = 0; i < VERTEX_COUNT; i++) {
+			for (int j = 0; j < VERTEX_COUNT; j++) {
+
+				float height = getHeight(j, i, image);
+				heights[j][i] = height;
+
+			}
+		}
+
+		//return loader.loadToVAO(vertices, textureCoords, normals, indices);
+	}
 
 	private float getHeight(int x, int y, BufferedImage image) {
 		if (x < 0 || x >= image.getHeight() || y < 0 || y >= image.getHeight()) {

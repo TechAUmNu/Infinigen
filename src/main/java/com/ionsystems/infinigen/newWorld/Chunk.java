@@ -5,6 +5,10 @@ import java.util.ArrayList;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
+import com.sudoplay.joise.module.Module;
+import com.sudoplay.joise.module.ModuleAutoCorrect;
+import com.sudoplay.joise.module.SourcedModule;
+
 import main.java.com.ionsystems.infinigen.newMain.Globals;
 import main.java.com.ionsystems.infinigen.newModels.RawModel;
 import main.java.com.ionsystems.infinigen.newNetworking.ChunkData;
@@ -23,18 +27,23 @@ public class Chunk {
 	float blockSize;
 	boolean visible;
 	boolean changed = false;
+	Module terrainNoise;
 
 	RawModel bottomModel, topModel, frontModel, backModel, leftModel, rightModel;
 
-	public Chunk(int x, int y, int z, int size, float blockSize) {
+	public Chunk(int x, int y, int z, int size, float blockSize, Module terrainNoise) {
 
 		this.x = x;
 		this.y = y;
 		this.z = z;
 		this.size = size;
 		this.blockSize = blockSize;
+		this.terrainNoise = terrainNoise;
+		if (Globals.isServer()) {
+			
 		setUp();
-
+		}
+		//System.out.println("TEST");
 		if (!Globals.isServer()) {
 			rebuild();
 		}
@@ -47,31 +56,41 @@ public class Chunk {
 		this.z = cd.z;
 		this.size = cd.size;
 		this.blockSize = cd.blockSize;
+		this.blocks = cd.blocks;
 		
-		setUp();
-
+		//System.out.println("TEST");
 		if (!Globals.isServer()) {
-			rebuild();
+			rebuild(); 
 		}
 	}
 
 	private void setUp() {
 		blocks = new Block[size][size][size];
-		generateGeneric(BlockType.BlockType_Stone);
+		generateGeneric(BlockType.BlockType_Air);
 		generateType(BlockType.BlockType_Grass);
 	}
 
-	private void generateType(BlockType type) {
+	private void generateType(BlockType type) {	
+		
 		for (int x = 0; x < size; x++) {
-			for (int y = 0; y < size; y++) {
-				for (int z = 0; z < size; z++) {
+			for (int z = 0; z < size; z++) {
+				
+				
+				float xWorld = x + (size * this.x);
+				float zWorld = z + (size * this.z);
+				//System.out.println(xWorld / 300);
+				
+				double height = terrainNoise.get(xWorld / 300f, zWorld / 300f);	
+				
+				//System.out.println(height);
+				for(int y = 0; y < height; y++){
 					blocks[x][y][z] = new Block(type);
 				}
-			}
+			}			
 		}
 
-		blocks[15][15][15] = new Block(BlockType.BlockType_Air);
-
+		
+		
 	}
 
 	/**

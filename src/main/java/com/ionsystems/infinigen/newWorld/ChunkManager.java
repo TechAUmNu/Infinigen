@@ -3,6 +3,26 @@ package main.java.com.ionsystems.infinigen.newWorld;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
+
+import javax.vecmath.Vector3f;
+
+import com.sudoplay.joise.module.Module;
+import com.sudoplay.joise.module.ModuleAutoCorrect;
+import com.sudoplay.joise.module.ModuleBias;
+import com.sudoplay.joise.module.ModuleCache;
+import com.sudoplay.joise.module.ModuleCombiner;
+import com.sudoplay.joise.module.ModuleCombiner.CombinerType;
+import com.sudoplay.joise.module.ModuleFractal;
+import com.sudoplay.joise.module.ModuleBasisFunction.BasisType;
+import com.sudoplay.joise.module.ModuleBasisFunction.InterpolationType;
+import com.sudoplay.joise.module.ModuleFractal.FractalType;
+import com.sudoplay.joise.module.ModuleGradient;
+import com.sudoplay.joise.module.ModuleScaleDomain;
+import com.sudoplay.joise.module.ModuleScaleOffset;
+import com.sudoplay.joise.module.ModuleSelect;
+import com.sudoplay.joise.module.ModuleTranslateDomain;
+import com.sudoplay.joise.module.SourcedModule;
 
 import main.java.com.ionsystems.infinigen.newEntities.PhysicsEntity;
 import main.java.com.ionsystems.infinigen.newMain.Globals;
@@ -11,10 +31,11 @@ import main.java.com.ionsystems.infinigen.newNetworking.ChunkData;
 
 public class ChunkManager implements IModule {
 
-	int chunkSize, blockSize;
+	int chunkSize = 32;
+	float blockSize = 0.5f;
 	ArrayList<Chunk> loadedChunks;
 	HashMap<ChunkID, Chunk> chunks;
-
+	Module terrainNoise;
 	WorldRenderer renderer;
 
 	@Override
@@ -24,7 +45,7 @@ public class ChunkManager implements IModule {
 
 	@Override
 	public void setUp() {
-
+		initNoiseGenerator();
 		loadedChunks = new ArrayList<Chunk>();
 		chunks = new HashMap<ChunkID, Chunk>();
 
@@ -32,10 +53,15 @@ public class ChunkManager implements IModule {
 									// since the client downloads them when they
 									// connect.
 
-			for (int x = -10; x < 10; x++) {
-				for (int y = -1; y < 0; y++) {
-					for (int z = -10; z < 10; z++) {
-						Chunk testChunk = new Chunk(x, y, z, 16, (float) 2);
+			int xNum = 10;
+			int yNum = 1;
+			int zNum = 10;
+			int count = xNum * 2 * yNum * zNum * 2;
+			System.out.println("Number of chunks to generate: " + count );
+			for (int x = -xNum; x < xNum; x++) {
+				for (int y = -yNum; y < 0; y++) {
+					for (int z = -zNum; z < zNum; z++) {
+						Chunk testChunk = new Chunk(x, y, z, chunkSize, (float) blockSize,terrainNoise);
 						chunks.put(new ChunkID(x, y, z), testChunk);
 						loadedChunks.add(testChunk);
 					}
@@ -48,7 +74,49 @@ public class ChunkManager implements IModule {
 		}
 
 	}
+	
+	private Vector3f findContainingChunk(int worldX, int worldY, int worldZ){
+		//To find the chunk we just divide the coord by the chunk size * block size
+		float multiplyer = chunkSize * blockSize;		
+		Vector3f chunkLocation = new Vector3f();		
+		chunkLocation.x =  (float) Math.floor(worldX / multiplyer);
+		chunkLocation.y =  (float) Math.floor(worldY / multiplyer);
+		chunkLocation.z =  (float) Math.floor(worldZ / multiplyer);		
+		return chunkLocation;		
+	}
+	
 
+	private void initNoiseGenerator(){
+		Random random = new Random();
+	    long seed = random.nextLong();
+
+	    ModuleFractal gen = new ModuleFractal();
+	    gen.setAllSourceBasisTypes(BasisType.SIMPLEX);
+	    gen.setAllSourceInterpolationTypes(InterpolationType.CUBIC);
+	    gen.setNumOctaves(2);
+	    gen.setFrequency(1);
+	    gen.setType(FractalType.RIDGEMULTI);
+	    gen.setSeed(898456);
+	    
+
+	    /*
+	     * ... route it through an autocorrection module...
+	     * 
+	     * This module will sample it's source multiple times and attempt to
+	     * auto-correct the output to the range specified.
+	     */
+	    ModuleAutoCorrect ac = new ModuleAutoCorrect();
+	    ac.setSource(gen); // set source (can usually be either another Module or a
+	                       // double value; see specific module for details)
+	    ac.setRange(0.0f, 32.0f); // set the range to auto-correct to
+	    ac.setSamples(10000); // set how many samples to take
+	    ac.calculate(); // perform the caclulations
+	    
+	    
+	    terrainNoise = ac;
+	}
+	
+	
 	@Override
 	public void cleanUp() {
 		// TODO Auto-generated method stub

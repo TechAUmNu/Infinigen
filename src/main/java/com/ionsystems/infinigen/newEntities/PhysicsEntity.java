@@ -1,11 +1,13 @@
 package main.java.com.ionsystems.infinigen.newEntities;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Quat4f;
 import javax.vecmath.Vector3f;
 
+import main.java.com.ionsystems.infinigen.newMain.Globals;
 import main.java.com.ionsystems.infinigen.newModels.TexturedPhysicsModel;
 import main.java.com.ionsystems.infinigen.newPhysics.PhysicsProcessor;
 import main.java.com.ionsystems.infinigen.newUtility.Maths;
@@ -53,11 +55,15 @@ public class PhysicsEntity extends Entity implements Serializable {
 		RigidBodyConstructionInfo constructionInfo = new RigidBodyConstructionInfo(mass, motionState, shape, inertia);
 		constructionInfo.restitution = 0f;
 		RigidBody rigidBody = new RigidBody(constructionInfo);
-
+		rigidBody.bodyIdHash = UUID.randomUUID();
+		rigidBody.clientID = Globals.getClientID();
+		
+		System.out.println("Body ID HASH " + rigidBody.bodyIdHash);
 		body = rigidBody;
 		physicsBody = true;
-
+		UUID test;
 	}
+	
 
 	public boolean isPhysicsBody() {
 		return physicsBody;

@@ -35,6 +35,7 @@ public class PhysicsProcessor {
 	}
 
 	public void addPhysicsEntity(PhysicsEntity entity) {
+		
 		dynamicsWorld.addRigidBody(entity.getBody());
 		//System.out.println(entity);
 		//System.out.println(entity.getBody());

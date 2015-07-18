@@ -119,6 +119,11 @@
 			<systemPath>${project.basedir}/lib/slick-util.jar</systemPath>
 		</dependency>
 
+		<dependency>
+			<groupId>com.sudoplay.joise</groupId>
+			<artifactId>joise</artifactId>
+			<version>1.0.1</version>
+		</dependency>
 	</dependencies>
 
 	<url>http://ionsystems.uk</url>
