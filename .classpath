@@ -8,6 +8,10 @@
 	</classpathentry>
 	<classpathentry kind="lib" path="lib/xml/stax2-api-3.1.1.jar"/>
 	<classpathentry kind="lib" path="lib/xml/woodstox-core-lgpl-4.2.0.jar"/>
+	<classpathentry kind="lib" path="lib/marytts/marytts-lang-en-5.1.2.jar"/>
+	<classpathentry kind="lib" path="lib/marytts/marytts-runtime-5.1.2-jar-with-dependencies.jar"/>
+	<classpathentry kind="lib" path="lib/marytts/icu4j-54.1.1.jar"/>
+	<classpathentry kind="lib" path="lib/marytts/voice-cmu-slt-hsmm-5.1.2.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7">
 		<attributes>
 			<attribute name="maven.pomderived" value="true"/>

@@ -13,28 +13,51 @@ import java.util.List;
 
 
 
-import main.java.com.ionsystems.infinigen.newCameras.RTSCamera;
-import main.java.com.ionsystems.infinigen.newCameras.ThirdPersonCamera;
-import main.java.com.ionsystems.infinigen.newEntities.ICamera;
-import main.java.com.ionsystems.infinigen.newEntities.Light;
-import main.java.com.ionsystems.infinigen.newEntities.PhysicsEntity;
-import main.java.com.ionsystems.infinigen.newEntities.Player;
-import main.java.com.ionsystems.infinigen.newGui.GuiManager;
-import main.java.com.ionsystems.infinigen.newMain.Globals;
-import main.java.com.ionsystems.infinigen.newMain.IModule;
-import main.java.com.ionsystems.infinigen.newModels.PhysicsModel;
-import main.java.com.ionsystems.infinigen.newModels.TexturedPhysicsModel;
-import main.java.com.ionsystems.infinigen.newNetworking.NetworkingManager;
-import main.java.com.ionsystems.infinigen.newPhysics.PhysicsManager;
-import main.java.com.ionsystems.infinigen.newRendering.DisplayManager;
-import main.java.com.ionsystems.infinigen.newRendering.Loader;
-import main.java.com.ionsystems.infinigen.newRendering.MasterRenderer;
-import main.java.com.ionsystems.infinigen.newTextures.ModelTexture;
-import main.java.com.ionsystems.infinigen.newUnitBuilder.UnitBuilderManager;
-import main.java.com.ionsystems.infinigen.newUtility.MousePicker;
-import main.java.com.ionsystems.infinigen.newUtility.OSValidator;
-import main.java.com.ionsystems.infinigen.newWorld.ChunkManager;
-import main.java.com.ionsystems.infinigen.newobjConverter.OBJFileLoader;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import java.util.Set;
+
+import javax.sound.sampled.AudioInputStream;
+
+import main.java.com.ionsystems.infinigen.cameras.RTSCamera;
+import main.java.com.ionsystems.infinigen.cameras.ThirdPersonCamera;
+import main.java.com.ionsystems.infinigen.entities.ICamera;
+import main.java.com.ionsystems.infinigen.entities.Light;
+import main.java.com.ionsystems.infinigen.entities.PhysicsEntity;
+import main.java.com.ionsystems.infinigen.global.Globals;
+import main.java.com.ionsystems.infinigen.global.IModule;
+import main.java.com.ionsystems.infinigen.gui.GuiManager;
+import main.java.com.ionsystems.infinigen.models.PhysicsModel;
+import main.java.com.ionsystems.infinigen.models.TexturedPhysicsModel;
+import main.java.com.ionsystems.infinigen.networking.NetworkingManager;
+import main.java.com.ionsystems.infinigen.objConverter.OBJFileLoader;
+import main.java.com.ionsystems.infinigen.physics.PhysicsManager;
+import main.java.com.ionsystems.infinigen.rendering.DisplayManager;
+import main.java.com.ionsystems.infinigen.rendering.Loader;
+import main.java.com.ionsystems.infinigen.rendering.MasterRenderer;
+import main.java.com.ionsystems.infinigen.textures.ModelTexture;
+import main.java.com.ionsystems.infinigen.unitBuilder.UnitBuilderManager;
+import main.java.com.ionsystems.infinigen.utility.MousePicker;
+import main.java.com.ionsystems.infinigen.utility.OSValidator;
+import main.java.com.ionsystems.infinigen.world.ChunkManager;
+import marytts.LocalMaryInterface;
+import marytts.MaryInterface;
+import marytts.exceptions.MaryConfigurationException;
+import marytts.exceptions.SynthesisException;
+import marytts.util.data.audio.AudioPlayer;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -42,11 +65,6 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.util.vector.Vector3f;
 
 import com.bulletphysics.dynamics.RigidBody;
-import com.sudoplay.joise.module.ModuleAutoCorrect;
-import com.sudoplay.joise.module.ModuleBasisFunction.BasisType;
-import com.sudoplay.joise.module.ModuleBasisFunction.InterpolationType;
-import com.sudoplay.joise.module.ModuleFractal;
-import com.sudoplay.joise.module.ModuleFractal.FractalType;
 
 public class Main {
 
@@ -65,8 +83,7 @@ public class Main {
 	private ICamera activeCamera;
 	private int activeCameraID;
 	private ThirdPersonCamera thirdPersonCamera;
-	private RTSCamera rtsCamera;
-	private Player player;
+	private RTSCamera rtsCamera;	
 	private MasterRenderer renderer;
 	private boolean mouse1 = false;
 
@@ -163,15 +180,15 @@ public class Main {
 			physics.setUp();
 			Globals.setPhysics(physics);
 
-			PhysicsModel pmodel = OBJFileLoader.loadOBJtoVAOWithGeneratedPhysics("box", loader);
-			TexturedPhysicsModel testPhysics = new TexturedPhysicsModel(pmodel, new ModelTexture(loader.loadTexture("white")));
-			player = new Player(testPhysics, new Vector3f(0, (float) -1, 0), 0, 0, 0, 1, physics.getProcessor());
+			
+			
+			
 
-			thirdPersonCamera = new ThirdPersonCamera(player);
+			thirdPersonCamera = new ThirdPersonCamera();
 			rtsCamera = new RTSCamera();
 			activeCamera = rtsCamera;
-			picker = new MousePicker(activeCamera, renderer.getProjectionMatrix());
-
+			picker = new MousePicker(renderer.getProjectionMatrix());
+			picker.setCamera(rtsCamera);
 			// Networking
 			networking = new NetworkingManager();
 
@@ -181,7 +198,7 @@ public class Main {
 			loadedModules.add(renderer);
 			loadedModules.add(physics);
 
-			loadedModules.add(player);
+			
 
 			// Cameras
 			// loadedModules.add(thirdPersonCamera);
@@ -195,7 +212,7 @@ public class Main {
 
 			// Add anything to the globals that might be needed elsewhere.
 			Globals.setLoader(loader);
-			
+			loadAudio();
 
 			for (IModule module : loadedModules) {
 				module.setUp();
@@ -233,6 +250,35 @@ public class Main {
 			}
 		}
 
+	}
+
+	private void loadAudio() {
+		//AudioManager.loadWAVAudioFile("stalker.wav");
+		
+		//AudioManager.playSoundEffect("stalker.wav", 1.0f, 1.0f, false, 100f, 100f,10f);
+		
+		
+		MaryInterface marytts;
+		try {
+			marytts = new LocalMaryInterface();
+			Set<String> voices = marytts.getAvailableVoices();
+			
+			marytts.setVoice(voices.iterator().next());
+			AudioInputStream audio = marytts.generateAudio("Hello world.");
+			AudioPlayer player = new AudioPlayer(audio);
+			player.start();
+			player.join();
+		} catch (MaryConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SynthesisException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 
 	/**
@@ -310,6 +356,7 @@ public class Main {
 			loadedModules.add(rtsCamera);
 			activeCamera = rtsCamera;
 			activeCameraID = 2;
+			
 			keyTimer = keyDelayTime;
 		} else if (activeCameraID == 2) {
 			loadedModules.remove(rtsCamera);
@@ -318,6 +365,7 @@ public class Main {
 			activeCameraID = 1;
 			keyTimer = keyDelayTime;
 		}
+		picker.setCamera(activeCamera);
 	}
 
 	/**
@@ -325,8 +373,7 @@ public class Main {
 	 */
 	private void prepareRender() {
 		ArrayList<PhysicsEntity> entitiesToRender = new ArrayList<PhysicsEntity>();
-
-		renderer.processEntity(player);
+		
 
 		for (IModule module : loadedModules) {
 			ArrayList<PhysicsEntity> toAdd = module.prepare();
@@ -365,6 +412,7 @@ public class Main {
 		gui.cleanUp();
 		renderer.cleanUp();
 		loader.cleanUp();
+		
 
 		for (IModule module : loadedModules) {
 			module.cleanUp();
