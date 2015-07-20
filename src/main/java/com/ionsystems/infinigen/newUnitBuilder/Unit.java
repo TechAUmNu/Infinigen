@@ -6,12 +6,15 @@ import java.util.List;
 import org.lwjgl.util.vector.Vector3f;
 
 import com.bulletphysics.dynamics.constraintsolver.TypedConstraint;
+import com.bulletphysics.dynamics.constraintsolver.Generic6DofConstraint;
 
 
 
 
 
 
+import com.bulletphysics.dynamics.constraintsolver.TypedConstraintType;
+import com.bulletphysics.linearmath.Transform;
 
 import main.java.com.ionsystems.infinigen.newEntities.PhysicsEntity;
 import main.java.com.ionsystems.infinigen.newMain.Globals;
@@ -34,12 +37,29 @@ public class Unit {
 	}
 
 	private void createBaseCube(PhysicsProcessor processor) {
-		
+			
 		PhysicsModel pmodel = OBJFileLoader.loadOBJtoVAOWithGeneratedPhysics("box", Globals.getLoader());
 		TexturedPhysicsModel boxModel = new TexturedPhysicsModel(pmodel, new ModelTexture(Globals.getLoader().loadTexture("box")));
 		
-		PhysicsEntity base = new PhysicsEntity(boxModel, new Vector3f(0, 0, 0), 0, 0, 0, 1000, 10, processor);
+		PhysicsEntity base = new PhysicsEntity(boxModel, new Vector3f(10, 5, 10), 0, 0, 0, 1000, 1, processor);
+		PhysicsEntity jointTest = new PhysicsEntity(boxModel, new Vector3f(20, 5, 10), 0, 0, 0, 1000, 1, processor);
+		Transform frameInA, frameInB;
+		frameInA = new Transform();
+		frameInB = new Transform();
+		frameInA.setIdentity();
+		frameInB.setIdentity();
+		frameInA.origin.set(0f,10f,10f);
+		frameInB.origin.set(0f,10f,10f);
+		Generic6DofConstraint x = new Generic6DofConstraint(base.getBody(),jointTest.getBody(),frameInA,frameInB,true);
+		javax.vecmath.Vector3f z = new javax.vecmath.Vector3f(0f,0f,0f);
+		x.setAngularLowerLimit(z);
+		x.setAngularUpperLimit(z);
+		x.setLinearLowerLimit(z);
+		x.setLinearUpperLimit(z);
+		processor.addConstraint((TypedConstraint)x);
 		entities.add(base);
+		entities.add(jointTest);
+		joints.add(x);
 		System.out.println("Body Hash: "+  base.getBody().hashCode());
 	}
 

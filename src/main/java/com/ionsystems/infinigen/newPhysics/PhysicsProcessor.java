@@ -21,6 +21,7 @@ import com.bulletphysics.dynamics.RigidBody;
 import com.bulletphysics.dynamics.RigidBodyConstructionInfo;
 import com.bulletphysics.dynamics.constraintsolver.ConstraintSolver;
 import com.bulletphysics.dynamics.constraintsolver.SequentialImpulseConstraintSolver;
+import com.bulletphysics.dynamics.constraintsolver.TypedConstraint;
 import com.bulletphysics.linearmath.DefaultMotionState;
 import com.bulletphysics.linearmath.MotionState;
 import com.bulletphysics.linearmath.Transform;
@@ -29,6 +30,7 @@ public class PhysicsProcessor {
 
 	private DiscreteDynamicsWorld dynamicsWorld;
 	private ArrayList<RigidBody> bodies;
+	private ArrayList<TypedConstraint> cons;
 
 	public ArrayList<RigidBody> getBodies() {
 		return bodies;
@@ -49,6 +51,16 @@ public class PhysicsProcessor {
 		
 	}
 
+	public void addConstraint(TypedConstraint con){
+		dynamicsWorld.addConstraint(con);
+		//cons.add(con);
+	}
+	
+	public void removeConstraint(TypedConstraint con){
+		dynamicsWorld.removeConstraint(con);
+		//cons.remove(con);
+	}
+	
 	public void simulate() {
 		dynamicsWorld.stepSimulation(DisplayManager.getFrameTimeSeconds());
 	}

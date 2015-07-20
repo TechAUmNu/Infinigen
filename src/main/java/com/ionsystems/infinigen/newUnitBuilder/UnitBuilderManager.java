@@ -76,6 +76,7 @@ public class UnitBuilderManager implements IModule {
 	
 		Vector3f camPos = new Vector3f(Maths.convertVector(Globals.getCameraPosition()));
 		
+		//not shure what this is for exactly
 		PhysicsEntity model = new PhysicsEntity(boxModel, Maths.convertVectorBtoL(camPos), 0, 0, 0, 1, 10, Globals.getPhysics().getProcessor());
 		Globals.addEntity(model, false);
 		
@@ -92,6 +93,8 @@ public class UnitBuilderManager implements IModule {
 
 		body.setCcdMotionThreshold(1f);
 		body.setCcdSweptSphereRadius(0.2f);
+		//to here
+		
 		
 		timeLeft = 1;
 		
@@ -106,9 +109,11 @@ public class UnitBuilderManager implements IModule {
 		//System.out.println("RayTo : " + rayTo);
 		if (rayCallback.hasHit()) {
 			RigidBody body = RigidBody.upcast(rayCallback.collisionObject);
-			
 			area.getUnit().highlight(body.hashCode());
+			Vector3f hitWorld = rayCallback.hitPointWorld;
+			System.out.println(hitWorld + body.toString());
 			
+	
 			
 		}
 	}
