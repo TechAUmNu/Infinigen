@@ -32,6 +32,7 @@ import java.util.Set;
 
 import javax.sound.sampled.AudioInputStream;
 
+import main.java.com.ionsystems.infinigen.audio.AudioManager;
 import main.java.com.ionsystems.infinigen.cameras.RTSCamera;
 import main.java.com.ionsystems.infinigen.cameras.ThirdPersonCamera;
 import main.java.com.ionsystems.infinigen.entities.ICamera;
@@ -253,9 +254,7 @@ public class Main {
 	}
 
 	private void loadAudio() {
-		//AudioManager.loadWAVAudioFile("stalker.wav");
 		
-		//AudioManager.playSoundEffect("stalker.wav", 1.0f, 1.0f, false, 100f, 100f,10f);
 		
 		
 		MaryInterface marytts;
@@ -278,6 +277,11 @@ public class Main {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		
+		AudioManager.loadWAVAudioFile("stalker.wav");
+		
+		AudioManager.playMusic("stalker.wav", 1.0f, 1.0f, false);
 		
 	}
 
