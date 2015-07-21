@@ -31,7 +31,7 @@ public class DisplayManager {
 		try {
 			Display.setFullscreen(true);
 			Display.setDisplayMode(new DisplayMode(WIDTH, HEIGHT));
-			Display.create(new PixelFormat(8, 24, 0, 8), attribs);
+			Display.create(new PixelFormat(8, 24, 8, 8), attribs);
 			Display.setTitle("New Features testing");
 		} catch (LWJGLException e) {
 			e.printStackTrace();

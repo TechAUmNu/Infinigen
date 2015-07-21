@@ -22,9 +22,16 @@ public class GuiElement {
 	private Vector2f detectionSize;
 	private float guiRatioX, guiRatioY;
 
+	public GuiElement(Vector2f position, Vector3f texture, Loader loader){
+		super();
+		this.texture = texture;
+		scale();
+		generateModel(position, loader);
+		this.position = position;
+	}
+	
 	public GuiElement(Vector2f position, String texture, Loader loader) {
 		super();
-
 		loadTexture(texture, loader);
 		scale();
 		generateModel(position, loader);

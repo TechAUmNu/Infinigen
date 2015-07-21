@@ -41,15 +41,11 @@ import main.java.com.ionsystems.infinigen.entities.PhysicsEntity;
 import main.java.com.ionsystems.infinigen.global.Globals;
 import main.java.com.ionsystems.infinigen.global.IModule;
 import main.java.com.ionsystems.infinigen.gui.GuiManager;
-import main.java.com.ionsystems.infinigen.models.PhysicsModel;
-import main.java.com.ionsystems.infinigen.models.TexturedPhysicsModel;
 import main.java.com.ionsystems.infinigen.networking.NetworkingManager;
-import main.java.com.ionsystems.infinigen.objConverter.OBJFileLoader;
 import main.java.com.ionsystems.infinigen.physics.PhysicsManager;
 import main.java.com.ionsystems.infinigen.rendering.DisplayManager;
 import main.java.com.ionsystems.infinigen.rendering.Loader;
 import main.java.com.ionsystems.infinigen.rendering.MasterRenderer;
-import main.java.com.ionsystems.infinigen.textures.ModelTexture;
 import main.java.com.ionsystems.infinigen.unitBuilder.UnitBuilderManager;
 import main.java.com.ionsystems.infinigen.utility.MousePicker;
 import main.java.com.ionsystems.infinigen.utility.OSValidator;
@@ -137,6 +133,13 @@ public class Main {
 		Globals.setLoading(false);
 
 		if (!Globals.isServer()) {
+			
+			//Water renderer setup
+			//WaterShader waterShader = new WaterShader();
+			//WaterRenderer waterRenderer = new WaterRenderer(loader, waterShader, renderer.getProjectionMatrix());
+			//
+			//WaterFrameBuffers fbos = new WaterFrameBuffers();
+			
 			while (!Display.isCloseRequested()) {
 
 				update();
@@ -213,7 +216,7 @@ public class Main {
 
 			// Add anything to the globals that might be needed elsewhere.
 			Globals.setLoader(loader);
-			loadAudio();
+			//loadAudio();
 
 			for (IModule module : loadedModules) {
 				module.setUp();
@@ -404,7 +407,12 @@ public class Main {
 	 */
 	private void render() {
 
+		//fbos.bindReflectionFrameBuffer();
+		//renderer.renderScene(entities, terrains, lights, camera);
+		//fbos.unbindCurrentFrameBuffer();
+		
 		renderer.render(lights, activeCamera);
+		//waterRenderer.render(waters, camera);
 		gui.render();
 
 		// for (IModule module : loadedModules) {
@@ -416,7 +424,7 @@ public class Main {
 		gui.cleanUp();
 		renderer.cleanUp();
 		loader.cleanUp();
-		
+		//fbos.cleanUp();
 
 		for (IModule module : loadedModules) {
 			module.cleanUp();

@@ -72,14 +72,7 @@ public class AudioManager{
 		audioFiles.get(audioFile).playAsSoundEffect(pitch, gain, loop, x, y, z);
 	}
 
-	public static void cleanup() {
-		for(Audio a : loadedAudio){
-			a.getBufferID()
-		}
-		loadedAudio
-		AudioLoader.
-		
-	}
+	
 	
 	
 

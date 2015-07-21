@@ -2,12 +2,16 @@ package main.java.com.ionsystems.infinigen.gui;
 
 import java.util.ArrayList;
 
+import javax.vecmath.Vector3f;
+
+import org.lwjgl.util.vector.Vector2f;
+
 import main.java.com.ionsystems.infinigen.entities.PhysicsEntity;
 import main.java.com.ionsystems.infinigen.global.IModule;
 import main.java.com.ionsystems.infinigen.rendering.Loader;
 import main.java.com.ionsystems.infinigen.utility.Maths;
 
-import org.lwjgl.util.vector.Vector2f;
+
 
 public class GuiManager implements IModule {
 
@@ -16,6 +20,10 @@ public class GuiManager implements IModule {
 
 	public void generateElement(float x, float y, String texture) {
 		renderer.addElement(new GuiElement(Maths.convertCoordinate(new Vector2f(x, y)), texture, loader));
+	}
+	
+	public void addElement(float x, float y, Vector3f texture){
+		renderer.addElement(new GuiElement(Maths.convertCoordinate(new Vector2f(x,y)), texture, loader));
 	}
 
 	public GuiManager(Loader loader) {
