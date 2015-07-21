@@ -34,8 +34,8 @@ public class Unit {
 		PhysicsModel pmodel = OBJFileLoader.loadOBJtoVAOWithGeneratedPhysics("box", Globals.getLoader());
 		TexturedPhysicsModel boxModel = new TexturedPhysicsModel(pmodel, new ModelTexture(Globals.getLoader().loadTexture("box")));
 		
-		PhysicsEntity base = new PhysicsEntity(boxModel, new Vector3f(10, 5, 10), 0, 0, 0, 1000, 1, processor);
-		PhysicsEntity jointTest = new PhysicsEntity(boxModel, new Vector3f(20, 5, 10), 0, 0, 0, 1000, 1, processor);
+		PhysicsEntity base = new PhysicsEntity(boxModel, new Vector3f(10, 5, 10), 0, 0, 0, 1, 0, processor);
+		PhysicsEntity jointTest = new PhysicsEntity(boxModel, new Vector3f(20, 5, 10), 0, 0, 0, 1, 1, processor);
 		Transform frameInA, frameInB;
 		frameInA = new Transform();
 		frameInB = new Transform();
