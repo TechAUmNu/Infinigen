@@ -49,6 +49,10 @@ import main.java.com.ionsystems.infinigen.rendering.MasterRenderer;
 import main.java.com.ionsystems.infinigen.unitBuilder.UnitBuilderManager;
 import main.java.com.ionsystems.infinigen.utility.MousePicker;
 import main.java.com.ionsystems.infinigen.utility.OSValidator;
+import main.java.com.ionsystems.infinigen.water.WaterFrameBuffers;
+import main.java.com.ionsystems.infinigen.water.WaterRenderer;
+import main.java.com.ionsystems.infinigen.water.WaterShader;
+import main.java.com.ionsystems.infinigen.water.WaterTile;
 import main.java.com.ionsystems.infinigen.world.ChunkManager;
 import marytts.LocalMaryInterface;
 import marytts.MaryInterface;
@@ -59,7 +63,10 @@ import marytts.util.data.audio.AudioPlayer;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Vector3f;
+import org.lwjgl.util.vector.Vector4f;
 
 import com.bulletphysics.dynamics.RigidBody;
 
@@ -90,6 +97,10 @@ public class Main {
 
 	private List<IModule> loadedModules;
 	private ChunkManager world;
+	private WaterFrameBuffers fbos;
+	private WaterShader waterShader;
+	private WaterRenderer waterRenderer;
+	private List<WaterTile> waters;
 	
 	
 
@@ -128,17 +139,20 @@ public class Main {
 			loadAssets();
 
 			// setUpTerrain();
-			generateGui();
+			
 		}
 		Globals.setLoading(false);
 
 		if (!Globals.isServer()) {
 			
-			//Water renderer setup
-			//WaterShader waterShader = new WaterShader();
-			//WaterRenderer waterRenderer = new WaterRenderer(loader, waterShader, renderer.getProjectionMatrix());
-			//
-			//WaterFrameBuffers fbos = new WaterFrameBuffers();
+		
+			waterShader = new WaterShader();
+			waterRenderer = new WaterRenderer(loader, waterShader, renderer.getProjectionMatrix());			
+			fbos = new WaterFrameBuffers();
+			waters = new ArrayList<WaterTile>();
+			waters.add(new WaterTile(75, -75, 0));
+			
+			generateGui();
 			
 			while (!Display.isCloseRequested()) {
 
@@ -304,6 +318,7 @@ public class Main {
 	 */
 	private void generateGui() {
 		//gui.generateElement(0, 0, "uvgrid01");
+		gui.addElement(0f, 0f, fbos.getGuiReflectionTexture());
 	}
 
 	/**
@@ -407,12 +422,14 @@ public class Main {
 	 */
 	private void render() {
 
-		//fbos.bindReflectionFrameBuffer();
-		//renderer.renderScene(entities, terrains, lights, camera);
-		//fbos.unbindCurrentFrameBuffer();
 		
-		renderer.render(lights, activeCamera);
-		//waterRenderer.render(waters, camera);
+		GL11.glEnable(GL30.GL_CLIP_DISTANCE0);
+		fbos.bindReflectionFrameBuffer();
+		renderer.render(lights, activeCamera, false, new Vector4f(0, -1, 0, 1000));
+		fbos.unbindCurrentFrameBuffer();
+		
+		renderer.render(lights, activeCamera, true, new Vector4f(0, -1, 0, 1000));
+		waterRenderer.render(waters, activeCamera);
 		gui.render();
 
 		// for (IModule module : loadedModules) {
@@ -424,7 +441,7 @@ public class Main {
 		gui.cleanUp();
 		renderer.cleanUp();
 		loader.cleanUp();
-		//fbos.cleanUp();
+		fbos.cleanUp();
 
 		for (IModule module : loadedModules) {
 			module.cleanUp();

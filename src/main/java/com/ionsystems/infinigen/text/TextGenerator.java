@@ -6,7 +6,7 @@ public class TextGenerator {
 		//
 		
 		
-		TODO Auto-generated constructor stub
+		//TODO Auto-generated constructor stub
 	}
 
 }

@@ -2,11 +2,14 @@ package main.java.com.ionsystems.infinigen.water;
 
 import java.nio.ByteBuffer;
 
+import javax.vecmath.Vector3f;
+
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.opengl.GL32;
+
  
 public class WaterFrameBuffers {
  
@@ -53,6 +56,10 @@ public class WaterFrameBuffers {
  
     public int getReflectionTexture() {//get the resulting texture
         return reflectionTexture;
+    }
+    
+    public Vector3f getGuiReflectionTexture(){
+    	return new Vector3f(1280,720, reflectionTexture);
     }
      
     public int getRefractionTexture() {//get the resulting texture

@@ -11,6 +11,7 @@ import java.util.Map;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Matrix4f;
+import org.lwjgl.util.vector.Vector4f;
 
 import main.java.com.ionsystems.infinigen.entities.ICamera;
 import main.java.com.ionsystems.infinigen.entities.Light;
@@ -61,9 +62,10 @@ public class MasterRenderer implements IModule {
 		GL11.glDisable(GL11.GL_CULL_FACE);
 	}
 
-	public void render(List<Light> lights, ICamera camera) {
+	public void render(List<Light> lights, ICamera camera, boolean clearEntities, Vector4f clipPlane) {
 		prepareRender();
 		shader.start();
+		shader.loadClipPlane(clipPlane);
 		shader.loadSkyColour(RED, GREEN, BLUE);
 		shader.loadLights(lights);
 		shader.loadViewMatrix(camera);
@@ -74,8 +76,10 @@ public class MasterRenderer implements IModule {
 		terrainShader.loadViewMatrix(camera);
 		terrainRenderer.renderChunks();
 		terrainShader.stop();
-		skyboxRenderer.render(camera, RED, GREEN, BLUE);		
-		entities.clear();
+		skyboxRenderer.render(camera, RED, GREEN, BLUE);	
+		if(clearEntities){
+			entities.clear();
+		}
 	}
 
 	
