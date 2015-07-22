@@ -13,6 +13,7 @@ import main.java.com.ionsystems.infinigen.textures.ModelTexture;
 
 import org.lwjgl.util.vector.Vector3f;
 
+import com.bulletphysics.dynamics.RigidBody;
 import com.bulletphysics.dynamics.constraintsolver.Generic6DofConstraint;
 import com.bulletphysics.dynamics.constraintsolver.TypedConstraint;
 import com.bulletphysics.linearmath.Transform;
@@ -21,18 +22,19 @@ public class Unit {
 
 	List<PhysicsEntity> entities;
 	List<TypedConstraint> joints;
+	private PhysicsProcessor processor;
 	
 	public void setup(PhysicsProcessor processor) {
 		entities = new ArrayList<PhysicsEntity>();
 		joints = new ArrayList<TypedConstraint>();
-		
+		this.processor = processor;
 		createBaseCube(processor);
 	}
 
 	private void createBaseCube(PhysicsProcessor processor) {
-		PhysicsEntity base = makeBox(processor,10,10,10,0);
-		PhysicsEntity jointTest = makeBox(processor,10,10,20,1);
-		Generic6DofConstraint binding = BindEntities(processor,base,jointTest,0.0f,2.3f,0.0f);
+		PhysicsEntity base = makeBox(10,10,10,0);
+		PhysicsEntity jointTest = makeBox(10,10,20,1);
+		Generic6DofConstraint binding = BindEntities(base,jointTest,0.0f,2.3f,0.0f);
 		entities.add(base);
 		entities.add(jointTest);
 		joints.add(binding);
@@ -50,13 +52,13 @@ public class Unit {
 		return joints;
 	}
 	
-	public PhysicsEntity makeBox(PhysicsProcessor processor, int x, int y , int z, int mass){
+	public PhysicsEntity makeBox(int x, int y , int z, int mass){
 		PhysicsModel pmodel = OBJFileLoader.loadOBJtoVAOWithGeneratedPhysics("box", Globals.getLoader());
 		TexturedPhysicsModel boxModel = new TexturedPhysicsModel(pmodel, new ModelTexture(Globals.getLoader().loadTexture("box")));
 		return new PhysicsEntity(boxModel, new Vector3f(x, y, z), 0, 0, 0, 1, mass, processor);
 	}
 	
-	public Generic6DofConstraint BindEntities(PhysicsProcessor processor, PhysicsEntity entity1, PhysicsEntity entity2, float x, float y , float z){
+	public Generic6DofConstraint BindEntities(PhysicsEntity entity1, PhysicsEntity entity2, float x, float y , float z){
 		Transform frameInA, frameInB;
 		frameInA = new Transform();
 		frameInB = new Transform();
@@ -83,10 +85,15 @@ public class Unit {
 				entity.highlight(false);
 			}
 		}
-		
 	}
 	
-	
+	public boolean IsBodyInUnit(RigidBody searchFor){
+		
+		for(PhysicsEntity i: entities){
+			if(i.getBody().equals(searchFor))return true;
+		}
+		return false;
+	}
 	
 	
 }

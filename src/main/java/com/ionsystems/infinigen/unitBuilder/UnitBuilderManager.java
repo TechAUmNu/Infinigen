@@ -25,10 +25,13 @@ public class UnitBuilderManager implements IModule {
 	
 	TexturedPhysicsModel boxModel;
 	
-	
+	RigidBody bodyStore;
 	
 	int timeLeft = 0;
-	
+	Unit unit;
+	int xOffset;
+	int yOffset;
+	int zOffset;
 	
 	@Override
 	public void setUp() {
@@ -36,7 +39,7 @@ public class UnitBuilderManager implements IModule {
 		
 		
 		
-		Unit unit = new Unit();
+		unit = new Unit();
 		unit.setup(Globals.getPhysics().getProcessor());
 		area = new ConstructionArea(unit);
 		
@@ -109,8 +112,49 @@ public class UnitBuilderManager implements IModule {
 			RigidBody body = RigidBody.upcast(rayCallback.collisionObject);
 			
 			area.getUnit().highlight(body.hashCode());
-			
-			
+			if(unit.IsBodyInUnit(body)){
+				
+				if(!body.equals(bodyStore)){
+					javax.vecmath.Vector3f positionBody = new javax.vecmath.Vector3f(0f,0f,0f);
+					body.getCenterOfMassPosition(positionBody);
+					javax.vecmath.Vector3f positionCursor = rayCallback.hitPointWorld;
+					System.out.println(body);
+					System.out.println(positionBody);
+					System.out.println(positionCursor);
+					float xDif = positionCursor.x - positionBody.x;
+					float yDif = positionCursor.y - positionBody.y;
+					float zDif = positionCursor.z - positionBody.z;
+					
+					float xDifP = Math.abs(xDif);
+					float yDifP = Math.abs(yDif);
+					float zDifP = Math.abs(zDif);
+					
+					xOffset = 0;
+					yOffset = 0;
+					zOffset = 0;
+					
+					if(xDifP > yDifP && xDifP > zDifP){
+						if(xDif > 0) xOffset = 1;
+						else xOffset = -1;
+					}
+					
+					if(yDifP > xDifP && yDifP > zDifP){
+						if(yDif > 0) yOffset = 1;
+						else yOffset = -1;
+					}
+					
+					if(zDifP > yDifP && zDifP > xDifP){
+						if(zDif > 0) zOffset = 1;
+						else zOffset = -1;
+					}
+					javax.vecmath.Vector3f offsets = new javax.vecmath.Vector3f(xOffset,yOffset,zOffset);
+					System.out.println(offsets);
+					
+					PhysicsEntity newBox = unit.makeBox((int)(positionBody.x + xOffset * 10), (int)(positionBody.y + yOffset * 10), (int)(positionBody.z + zOffset * 10), 1);
+					unit.entities.add(newBox);
+					bodyStore = body;
+				}
+			}
 		}
 	}
 
