@@ -2,7 +2,7 @@ package main.java.com.ionsystems.infinigen.utility;
 
 import java.util.ArrayList;
 
-import main.java.com.ionsystems.infinigen.entities.ICamera;
+import main.java.com.ionsystems.infinigen.cameras.ICamera;
 import main.java.com.ionsystems.infinigen.entities.PhysicsEntity;
 import main.java.com.ionsystems.infinigen.global.Globals;
 import main.java.com.ionsystems.infinigen.global.IModule;

@@ -13,7 +13,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector4f;
 
-import main.java.com.ionsystems.infinigen.entities.ICamera;
+import main.java.com.ionsystems.infinigen.cameras.ICamera;
 import main.java.com.ionsystems.infinigen.entities.Light;
 import main.java.com.ionsystems.infinigen.entities.PhysicsEntity;
 import main.java.com.ionsystems.infinigen.global.IModule;
@@ -71,7 +71,8 @@ public class MasterRenderer implements IModule {
 		shader.loadViewMatrix(camera);
 		renderer.render(entities);
 		shader.stop();
-		terrainShader.start();		
+		terrainShader.start();	
+		terrainShader.loadClipPlane(clipPlane);
 		terrainShader.loadLights(lights);
 		terrainShader.loadViewMatrix(camera);
 		terrainRenderer.renderChunks();

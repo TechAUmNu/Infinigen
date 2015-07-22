@@ -6,7 +6,6 @@ import static java.lang.Math.toRadians;
 
 import java.util.ArrayList;
 
-import main.java.com.ionsystems.infinigen.entities.ICamera;
 import main.java.com.ionsystems.infinigen.entities.PhysicsEntity;
 import main.java.com.ionsystems.infinigen.global.Globals;
 import main.java.com.ionsystems.infinigen.global.IModule;
@@ -18,7 +17,7 @@ import org.lwjgl.util.vector.Vector3f;
 
 public class RTSCamera implements IModule, ICamera {
 
-	private float scrollSpeed = 10;
+	private float scrollSpeed = 50;
 	
 
 	
@@ -158,6 +157,12 @@ public class RTSCamera implements IModule, ICamera {
 	public ArrayList<PhysicsEntity> prepare() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void invertPitch() {
+		this.pitch = -pitch;
+		
 	}
 
 }

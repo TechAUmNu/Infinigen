@@ -1,4 +1,4 @@
-package main.java.com.ionsystems.infinigen.entities;
+package main.java.com.ionsystems.infinigen.cameras;
 
 import org.lwjgl.util.vector.Vector3f;
 
@@ -30,5 +30,7 @@ public interface ICamera {
 	public abstract float getPitch();
 
 	public abstract float getYaw();
+
+	public abstract void invertPitch();
 
 }

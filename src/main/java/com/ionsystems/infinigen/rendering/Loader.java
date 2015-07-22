@@ -7,6 +7,7 @@ import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.vecmath.Vector3f;
@@ -40,6 +41,7 @@ public class Loader implements IModule {
 	private List<Integer> vaos = new ArrayList<Integer>();
 	private List<Integer> vbos = new ArrayList<Integer>();
 	private List<Integer> textures = new ArrayList<Integer>();
+	private HashMap<String, Vector3f> loadedTextures = new HashMap<String, Vector3f>();
 
 	public RawModel loadToVAO(float[] positions, float[] textureCoords, float[] normals, int[] indices) {
 		int vaoID = createVAO();
@@ -99,6 +101,11 @@ public class Loader implements IModule {
 	}
 
 	public Vector3f loadTexture(String fileName) {
+		if(loadedTextures.containsKey(fileName)){
+			return loadedTextures.get(fileName);
+		}
+		
+		
 		Texture texture = null;
 		Vector3f WidthHeightID = new Vector3f(0, 0, 0);
 		try {
@@ -115,6 +122,8 @@ public class Loader implements IModule {
 		}
 		int textureID = texture.getTextureID();
 		WidthHeightID.z = textureID;
+		
+		loadedTextures.put(fileName, WidthHeightID);
 		textures.add(textureID);
 		return WidthHeightID;
 	}

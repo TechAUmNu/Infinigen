@@ -2,7 +2,7 @@ package main.java.com.ionsystems.infinigen.shaders;
 
 import java.util.List;
 
-import main.java.com.ionsystems.infinigen.entities.ICamera;
+import main.java.com.ionsystems.infinigen.cameras.ICamera;
 import main.java.com.ionsystems.infinigen.entities.Light;
 import main.java.com.ionsystems.infinigen.utility.Maths;
 

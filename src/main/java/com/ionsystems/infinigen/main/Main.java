@@ -33,9 +33,9 @@ import java.util.Set;
 import javax.sound.sampled.AudioInputStream;
 
 import main.java.com.ionsystems.infinigen.audio.AudioManager;
+import main.java.com.ionsystems.infinigen.cameras.ICamera;
 import main.java.com.ionsystems.infinigen.cameras.RTSCamera;
 import main.java.com.ionsystems.infinigen.cameras.ThirdPersonCamera;
-import main.java.com.ionsystems.infinigen.entities.ICamera;
 import main.java.com.ionsystems.infinigen.entities.Light;
 import main.java.com.ionsystems.infinigen.entities.PhysicsEntity;
 import main.java.com.ionsystems.infinigen.global.Globals;
@@ -145,10 +145,10 @@ public class Main {
 
 		if (!Globals.isServer()) {
 			
-		
-			waterShader = new WaterShader();
-			waterRenderer = new WaterRenderer(loader, waterShader, renderer.getProjectionMatrix());			
 			fbos = new WaterFrameBuffers();
+			waterShader = new WaterShader();
+			waterRenderer = new WaterRenderer(loader, waterShader, renderer.getProjectionMatrix(), fbos);			
+			
 			waters = new ArrayList<WaterTile>();
 			waters.add(new WaterTile(75, -75, 0));
 			
@@ -317,8 +317,8 @@ public class Main {
 	 * Anything to do with setting up the gui
 	 */
 	private void generateGui() {
-		//gui.generateElement(0, 0, "uvgrid01");
-		gui.addElement(0f, 0f, fbos.getGuiReflectionTexture());
+		
+		
 	}
 
 	/**
@@ -425,10 +425,19 @@ public class Main {
 		
 		GL11.glEnable(GL30.GL_CLIP_DISTANCE0);
 		fbos.bindReflectionFrameBuffer();
-		renderer.render(lights, activeCamera, false, new Vector4f(0, -1, 0, 1000));
-		fbos.unbindCurrentFrameBuffer();
+		float distance = 2 * (activeCamera.getPosition().y - 0);
+		activeCamera.getPosition().y -= distance;
+		activeCamera.invertPitch();
+		renderer.render(lights, activeCamera, false, new Vector4f(0, 1, 0, 0));
+		activeCamera.getPosition().y += distance;
+		activeCamera.invertPitch();
 		
-		renderer.render(lights, activeCamera, true, new Vector4f(0, -1, 0, 1000));
+		fbos.bindRefractionFrameBuffer();
+		renderer.render(lights, activeCamera, false, new Vector4f(0, -1, 0, 0));
+		
+		GL11.glDisable(GL30.GL_CLIP_DISTANCE0);
+		fbos.unbindCurrentFrameBuffer();		
+		renderer.render(lights, activeCamera, true, new Vector4f(0, 1, 0, 0));
 		waterRenderer.render(waters, activeCamera);
 		gui.render();
 

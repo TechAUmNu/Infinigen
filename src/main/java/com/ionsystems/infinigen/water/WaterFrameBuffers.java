@@ -65,6 +65,10 @@ public class WaterFrameBuffers {
     public int getRefractionTexture() {//get the resulting texture
         return refractionTexture;
     }
+    
+    public Vector3f getGuiRefractionTexture(){
+    	return new Vector3f(1280,720, refractionTexture);
+    }
      
     public int getRefractionDepthTexture(){//get the resulting depth texture
         return refractionDepthTexture;

@@ -2,12 +2,13 @@ package main.java.com.ionsystems.infinigen.shaders;
 
 import java.util.List;
 
-import main.java.com.ionsystems.infinigen.entities.ICamera;
+import main.java.com.ionsystems.infinigen.cameras.ICamera;
 import main.java.com.ionsystems.infinigen.entities.Light;
 import main.java.com.ionsystems.infinigen.utility.Maths;
 
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
+import org.lwjgl.util.vector.Vector4f;
 
 public class ChunkShader extends ShaderProgram {
 
@@ -25,6 +26,7 @@ public class ChunkShader extends ShaderProgram {
 	private int location_shineDamper;
 	private int location_reflectivity;
 	private int location_skyColour;
+	private int location_plane;
 
 
 
@@ -47,6 +49,7 @@ public class ChunkShader extends ShaderProgram {
 		location_shineDamper = super.getUniformLocation("shineDamper");
 		location_reflectivity = super.getUniformLocation("reflectivity");
 		location_skyColour = super.getUniformLocation("skyColour");
+		location_plane = super.getUniformLocation("plane"); 
 	
 		
 
@@ -61,7 +64,10 @@ public class ChunkShader extends ShaderProgram {
 	}
 
 	
-
+	public void loadClipPlane(Vector4f clipPlane){
+		super.loadVector(location_plane, clipPlane);
+	}
+	
 	public void loadSkyColour(float r, float g, float b) {
 		super.loadVector(location_skyColour, new Vector3f(r, g, b));
 	}

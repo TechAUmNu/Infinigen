@@ -6,7 +6,7 @@ import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Matrix4f;
 
-import main.java.com.ionsystems.infinigen.entities.ICamera;
+import main.java.com.ionsystems.infinigen.cameras.ICamera;
 import main.java.com.ionsystems.infinigen.models.RawModel;
 import main.java.com.ionsystems.infinigen.rendering.DisplayManager;
 import main.java.com.ionsystems.infinigen.rendering.Loader;

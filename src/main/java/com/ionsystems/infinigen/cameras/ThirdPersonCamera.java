@@ -7,7 +7,6 @@ import java.util.ArrayList;
 
 import javax.vecmath.Quat4f;
 
-import main.java.com.ionsystems.infinigen.entities.ICamera;
 import main.java.com.ionsystems.infinigen.entities.PhysicsEntity;
 import main.java.com.ionsystems.infinigen.global.Globals;
 import main.java.com.ionsystems.infinigen.global.IModule;
@@ -172,6 +171,12 @@ public class ThirdPersonCamera implements IModule, ICamera {
 	public ArrayList<PhysicsEntity> prepare() {
 		// TODO Auto-generated method stub
 		return new ArrayList<PhysicsEntity>();
+	}
+	
+	@Override
+	public void invertPitch() {
+		this.pitch = -pitch;
+		
 	}
 
 }

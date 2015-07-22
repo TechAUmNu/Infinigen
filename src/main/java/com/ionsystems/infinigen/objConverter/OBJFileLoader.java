@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.lwjgl.util.vector.Vector2f;
@@ -18,6 +19,7 @@ import main.java.com.ionsystems.infinigen.rendering.Loader;
 public class OBJFileLoader {
 
 	private static final String RES_LOC = "res/models/";
+	private static HashMap<String, PhysicsModel> loadedPhysicsModels = new HashMap<String, PhysicsModel>();
 
 	public static ModelData loadOBJ(String objFileName) {
 		FileReader isr = null;
@@ -38,8 +40,8 @@ public class OBJFileLoader {
 				line = reader.readLine();
 				if (line.startsWith("v ")) {
 					String[] currentLine = line.split(" ");
-					Vector3f vertex = new Vector3f((float) Float.valueOf(currentLine[1]) , (float) Float.valueOf(currentLine[2]) ,
-							(float) Float.valueOf(currentLine[3]) );
+					Vector3f vertex = new Vector3f((float) Float.valueOf(currentLine[1]), (float) Float.valueOf(currentLine[2]),
+							(float) Float.valueOf(currentLine[3]));
 					Vertex newVertex = new Vertex(vertices.size(), vertex);
 					vertices.add(newVertex);
 
@@ -86,9 +88,18 @@ public class OBJFileLoader {
 	}
 
 	public static PhysicsModel loadOBJtoVAOWithGeneratedPhysics(String objFile, Loader loader) {
+
+		if (loadedPhysicsModels.containsKey(objFile)) {
+			return loadedPhysicsModels.get(objFile);
+		}
+		System.out.println("Loading model: " + objFile);
 		ModelData model = loadOBJ(objFile);
-		return loader.loadToVAOWithGeneratedPhysics(model.getVertices(), model.getVerticesList(), model.getTextureCoords(), model.getNormals(),
+		PhysicsModel m = loader.loadToVAOWithGeneratedPhysics(model.getVertices(), model.getVerticesList(), model.getTextureCoords(), model.getNormals(),
 				model.getIndices());
+		loadedPhysicsModels.put(objFile, m);
+
+		return m;
+
 	}
 
 	private static void processVertex(String[] vertex, List<Vertex> vertices, List<Integer> indices) {

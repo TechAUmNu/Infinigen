@@ -1,6 +1,6 @@
 package main.java.com.ionsystems.infinigen.skybox;
 
-import main.java.com.ionsystems.infinigen.entities.ICamera;
+import main.java.com.ionsystems.infinigen.cameras.ICamera;
 import main.java.com.ionsystems.infinigen.rendering.DisplayManager;
 import main.java.com.ionsystems.infinigen.shaders.ShaderProgram;
 import main.java.com.ionsystems.infinigen.utility.Maths;

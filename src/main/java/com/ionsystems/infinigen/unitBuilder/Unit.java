@@ -38,7 +38,7 @@ public class Unit {
 		entities.add(base);
 		entities.add(jointTest);
 		joints.add(binding);
-		System.out.println("Body Hash: "+  base.getBody().hashCode());
+		//System.out.println("Body Hash: "+  base.getBody().hashCode());
 		
 		//Now we can set the camera to look at it.
 		Globals.setCameraEntity(base);
@@ -76,9 +76,9 @@ public class Unit {
 		return binding;
 	}
 
-	public void highlight(int hashCode) {
+	public void highlight(RigidBody body) {
 		for(PhysicsEntity entity : entities){
-			if(entity.getBody().hashCode() == hashCode){
+			if(entity.getBody().equals(body)){
 				entity.highlight(true);				
 			}
 			else{
@@ -87,13 +87,15 @@ public class Unit {
 		}
 	}
 	
-	public boolean IsBodyInUnit(RigidBody searchFor){
+	public PhysicsEntity IsBodyInUnit(RigidBody searchFor){
 		
 		for(PhysicsEntity i: entities){
-			if(i.getBody().equals(searchFor))return true;
+			if(i.getBody().equals(searchFor))return i;
 		}
-		return false;
+		return null;
 	}
+	
+	
 	
 	
 }

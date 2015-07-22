@@ -2,7 +2,7 @@ package main.java.com.ionsystems.infinigen.utility;
 
 import javax.vecmath.Quat4f;
 
-import main.java.com.ionsystems.infinigen.entities.ICamera;
+import main.java.com.ionsystems.infinigen.cameras.ICamera;
 
 import org.lwjgl.opengl.Display;
 import org.lwjgl.util.vector.Matrix4f;
