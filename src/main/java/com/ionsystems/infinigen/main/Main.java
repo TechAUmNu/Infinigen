@@ -46,6 +46,8 @@ import main.java.com.ionsystems.infinigen.physics.PhysicsManager;
 import main.java.com.ionsystems.infinigen.rendering.DisplayManager;
 import main.java.com.ionsystems.infinigen.rendering.Loader;
 import main.java.com.ionsystems.infinigen.rendering.MasterRenderer;
+import main.java.com.ionsystems.infinigen.shadows.ShadowFrameBuffers;
+import main.java.com.ionsystems.infinigen.shadows.ShadowShader;
 import main.java.com.ionsystems.infinigen.unitBuilder.UnitBuilderManager;
 import main.java.com.ionsystems.infinigen.utility.MousePicker;
 import main.java.com.ionsystems.infinigen.utility.OSValidator;
@@ -92,6 +94,7 @@ public class Main {
 	private boolean mouse1 = false;
 
 	private List<Light> lights;
+	private Light sun;
 	private UnitBuilderManager unitBuilder;
 	private NetworkingManager networking;
 
@@ -101,6 +104,13 @@ public class Main {
 	private WaterShader waterShader;
 	private WaterRenderer waterRenderer;
 	private List<WaterTile> waters;
+	
+	private ShadowFrameBuffers sfbos;
+	
+	
+	
+	
+	
 	
 	
 
@@ -152,6 +162,9 @@ public class Main {
 			waters = new ArrayList<WaterTile>();
 			waters.add(new WaterTile(75, -75, 0));
 			
+			
+			
+			
 			generateGui();
 			
 			while (!Display.isCloseRequested()) {
@@ -185,8 +198,9 @@ public class Main {
 
 			loader = new Loader();
 			gui = new GuiManager(loader);
-
-			renderer = new MasterRenderer(loader);
+			
+			sfbos = new ShadowFrameBuffers();
+			renderer = new MasterRenderer(loader, sfbos);
 			physics = new PhysicsManager();
 			
 			lights = new ArrayList<Light>();
@@ -306,8 +320,10 @@ public class Main {
 	 * Put anything to do with loading models etc here
 	 */
 	private void loadAssets() {
-		lights.add(new Light(new Vector3f(0, 10000, -9000), new Vector3f(1, 1, 1))); // Sun
-
+		
+		sun = new Light(new Vector3f(0, 10000, -9000), new Vector3f(1, 1, 1));
+		lights.add(sun); // Sun
+		
 	}
 
 
@@ -316,8 +332,8 @@ public class Main {
 	/**
 	 * Anything to do with setting up the gui
 	 */
-	private void generateGui() {
-		
+	private void generateGui() {	
+		gui.addElement(0, 0, sfbos.getDepthTexture());
 		
 	}
 
@@ -423,22 +439,31 @@ public class Main {
 	private void render() {
 
 		
+		
+		//// Water Setup
 		GL11.glEnable(GL30.GL_CLIP_DISTANCE0);
 		fbos.bindReflectionFrameBuffer();
 		float distance = 2 * (activeCamera.getPosition().y - 0);
 		activeCamera.getPosition().y -= distance;
 		activeCamera.invertPitch();
-		renderer.render(lights, activeCamera, false, new Vector4f(0, 1, 0, 0));
+		renderer.render(lights, activeCamera, false, new Vector4f(0, 1, 0, 0), sun, false);
 		activeCamera.getPosition().y += distance;
-		activeCamera.invertPitch();
-		
+		activeCamera.invertPitch();		
 		fbos.bindRefractionFrameBuffer();
-		renderer.render(lights, activeCamera, false, new Vector4f(0, -1, 0, 0));
-		
+		renderer.render(lights, activeCamera, false, new Vector4f(0, -1, 0, 0), sun, false);		
 		GL11.glDisable(GL30.GL_CLIP_DISTANCE0);
 		fbos.unbindCurrentFrameBuffer();		
-		renderer.render(lights, activeCamera, true, new Vector4f(0, 1, 0, 0));
+		////
+		
+		
+		
+		/// Main rendering
+		renderer.render(lights, activeCamera, true, new Vector4f(0, 1, 0, 0), sun, true);
+		
+		//WaterRendering
 		waterRenderer.render(waters, activeCamera);
+		
+		//
 		gui.render();
 
 		// for (IModule module : loadedModules) {

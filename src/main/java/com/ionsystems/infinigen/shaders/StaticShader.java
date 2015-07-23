@@ -32,6 +32,8 @@ public class StaticShader extends ShaderProgram {
 	private int location_offset;
 	private int location_highlight;
 	private int location_plane;
+	private int location_shadowMap;
+	private int location_depthBiasMatrix;
 
 	public StaticShader() {
 		super(VERTEX_FILE, FRAGMENT_FILE);
@@ -57,6 +59,8 @@ public class StaticShader extends ShaderProgram {
 		location_offset = super.getUniformLocation("offset");
 		location_highlight = super.getUniformLocation("highlight");
 		location_plane = super.getUniformLocation("plane");
+		location_shadowMap = super.getUniformLocation("shadowMap");
+		location_depthBiasMatrix = super.getUniformLocation("depthBiasMatrix");
 
 		location_lightPosition = new int[MAX_LIGHTS];
 		location_lightColour = new int[MAX_LIGHTS];

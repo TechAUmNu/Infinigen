@@ -20,6 +20,9 @@ import main.java.com.ionsystems.infinigen.global.IModule;
 import main.java.com.ionsystems.infinigen.models.TexturedPhysicsModel;
 import main.java.com.ionsystems.infinigen.shaders.ChunkShader;
 import main.java.com.ionsystems.infinigen.shaders.StaticShader;
+import main.java.com.ionsystems.infinigen.shadows.ShadowFrameBuffers;
+import main.java.com.ionsystems.infinigen.shadows.ShadowRenderer;
+import main.java.com.ionsystems.infinigen.shadows.ShadowShader;
 import main.java.com.ionsystems.infinigen.skybox.SkyboxRenderer;
 import main.java.com.ionsystems.infinigen.world.WorldRenderer;
 
@@ -40,17 +43,21 @@ public class MasterRenderer implements IModule {
 
 	private WorldRenderer terrainRenderer;
 	private ChunkShader terrainShader = new ChunkShader();
+	
+	private ShadowShader shadowShader = new ShadowShader();
+	private ShadowRenderer shadowRenderer;
 
 	private Map<TexturedPhysicsModel, List<PhysicsEntity>> entities = new HashMap<TexturedPhysicsModel, List<PhysicsEntity>>();
 	
 	private SkyboxRenderer skyboxRenderer;
 
-	public MasterRenderer(Loader loader) {
+	public MasterRenderer(Loader loader, ShadowFrameBuffers sfbos) {
 		//enableCulling();
 		createProjectionMatrix();
 		renderer = new EntityRenderer(shader, projectionMatrix);
 		terrainRenderer = new WorldRenderer(terrainShader, projectionMatrix);
 		skyboxRenderer = new SkyboxRenderer(loader, projectionMatrix);
+		shadowRenderer = new ShadowRenderer(shadowShader, sfbos);
 	}
 
 	public static void enableCulling() {
@@ -62,7 +69,11 @@ public class MasterRenderer implements IModule {
 		GL11.glDisable(GL11.GL_CULL_FACE);
 	}
 
-	public void render(List<Light> lights, ICamera camera, boolean clearEntities, Vector4f clipPlane) {
+	public void render(List<Light> lights, ICamera camera, boolean clearEntities, Vector4f clipPlane, Light sun, boolean shadows) {
+		if(shadows){
+			shadowRenderer.render(sun, camera, entities);
+		}
+		
 		prepareRender();
 		shader.start();
 		shader.loadClipPlane(clipPlane);

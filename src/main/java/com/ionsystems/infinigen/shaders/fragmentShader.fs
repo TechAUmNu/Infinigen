@@ -5,10 +5,14 @@ in vec3 surfaceNormal;
 in vec3 toLightVector[4];
 in vec3 toCameraVector;
 in float visibility;
+in vec4 shadowCoord;
+in vec4 worldPosition;
+
 
 out vec4 out_Color;
 
 uniform sampler2D textureSampler;
+uniform sampler2DShadow shadowMap;
 uniform vec3 lightColour[4];
 uniform vec3 attenuation[4];
 uniform float shineDamper;
@@ -46,8 +50,9 @@ void main(void){
 	if(textureColour.a<0.5){
 		discard;
 	}
+	//float shadow = textureProj(shadowMap, shadowCoord) / 2.0;
+	out_Color = vec4(totalDiffuse, 1.0) * texture(textureSampler, pass_textureCoords) + vec4(totalSpecular, 1.0) ;
 	
-	out_Color = vec4(totalDiffuse, 1.0) * texture(textureSampler, pass_textureCoords) + vec4(totalSpecular, 1.0);
 	
 	if(highlight > 0.5){
 		out_Color = mix(vec4(0.5, 0.5, 0.5, 1.0), out_Color, 0.5);
