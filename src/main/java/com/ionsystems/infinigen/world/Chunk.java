@@ -1,14 +1,6 @@
 package main.java.com.ionsystems.infinigen.world;
 
-import java.util.ArrayList;
-
-import org.lwjgl.util.vector.Vector2f;
-import org.lwjgl.util.vector.Vector3f;
-
 import com.sudoplay.joise.module.Module;
-import com.sudoplay.joise.module.ModuleAutoCorrect;
-import com.sudoplay.joise.module.SourcedModule;
-
 import main.java.com.ionsystems.infinigen.global.Globals;
 import main.java.com.ionsystems.infinigen.models.RawModel;
 import main.java.com.ionsystems.infinigen.networking.ChunkData;
@@ -22,11 +14,14 @@ import main.java.com.ionsystems.infinigen.world.BlockType;
  */
 public class Chunk {
 
-	Block[][][] blocks;
-	int x, y, z, size;
-	float blockSize;
-	boolean visible;
-	boolean changed = false;
+	public Block[][][] blocks;
+	public int x;
+	public int y;
+	public int z;
+	public int size;
+	public float blockSize;
+	public boolean visible;
+	public boolean changed = false;
 	Module terrainNoise;
 
 	RawModel bottomModel, topModel, frontModel, backModel, leftModel, rightModel;

@@ -21,6 +21,7 @@ import main.java.com.ionsystems.infinigen.models.TexturedPhysicsModel;
 import main.java.com.ionsystems.infinigen.shaders.ChunkShader;
 import main.java.com.ionsystems.infinigen.shaders.StaticShader;
 import main.java.com.ionsystems.infinigen.shadows.ShadowFrameBuffers;
+import main.java.com.ionsystems.infinigen.shadows.ShadowMap;
 import main.java.com.ionsystems.infinigen.shadows.ShadowRenderer;
 import main.java.com.ionsystems.infinigen.shadows.ShadowShader;
 import main.java.com.ionsystems.infinigen.skybox.SkyboxRenderer;
@@ -54,6 +55,7 @@ public class MasterRenderer implements IModule {
 	public MasterRenderer(Loader loader, ShadowFrameBuffers sfbos) {
 		//enableCulling();
 		createProjectionMatrix();
+		
 		renderer = new EntityRenderer(shader, projectionMatrix);
 		terrainRenderer = new WorldRenderer(terrainShader, projectionMatrix);
 		skyboxRenderer = new SkyboxRenderer(loader, projectionMatrix);
@@ -74,18 +76,22 @@ public class MasterRenderer implements IModule {
 			shadowRenderer.render(sun, camera, entities);
 		}
 		
+		ShadowMap shadowMap = shadowRenderer.getShadowMap();
+		
 		prepareRender();
 		shader.start();
 		shader.loadClipPlane(clipPlane);
 		shader.loadSkyColour(RED, GREEN, BLUE);
 		shader.loadLights(lights);
 		shader.loadViewMatrix(camera);
+		shader.loadShadowMap(shadowMap);
 		renderer.render(entities);
 		shader.stop();
 		terrainShader.start();	
 		terrainShader.loadClipPlane(clipPlane);
 		terrainShader.loadLights(lights);
 		terrainShader.loadViewMatrix(camera);
+		terrainShader.loadShadowMap(shadowMap);
 		terrainRenderer.renderChunks();
 		terrainShader.stop();
 		skyboxRenderer.render(camera, RED, GREEN, BLUE);	

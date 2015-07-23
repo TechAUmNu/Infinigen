@@ -1,9 +1,15 @@
 package main.java.com.ionsystems.infinigen.shaders;
 
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
+import static org.lwjgl.opengl.GL11.glBindTexture;
+import static org.lwjgl.opengl.GL13.GL_TEXTURE1;
+import static org.lwjgl.opengl.GL13.glActiveTexture;
+
 import java.util.List;
 
 import main.java.com.ionsystems.infinigen.cameras.ICamera;
 import main.java.com.ionsystems.infinigen.entities.Light;
+import main.java.com.ionsystems.infinigen.shadows.ShadowMap;
 import main.java.com.ionsystems.infinigen.utility.Maths;
 
 import org.lwjgl.util.vector.Matrix4f;
@@ -27,6 +33,8 @@ public class ChunkShader extends ShaderProgram {
 	private int location_reflectivity;
 	private int location_skyColour;
 	private int location_plane;
+	private int location_shadowMap;
+	private int location_depthBiasMatrix;
 
 
 
@@ -50,6 +58,8 @@ public class ChunkShader extends ShaderProgram {
 		location_reflectivity = super.getUniformLocation("reflectivity");
 		location_skyColour = super.getUniformLocation("skyColour");
 		location_plane = super.getUniformLocation("plane"); 
+		location_shadowMap = super.getUniformLocation("shadowMap");
+		location_depthBiasMatrix = super.getUniformLocation("depthBiasMatrix");
 	
 		
 
@@ -63,6 +73,13 @@ public class ChunkShader extends ShaderProgram {
 		}
 	}
 
+	
+	public void loadShadowMap(ShadowMap shadowMap){
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, shadowMap.getShadowMapTexture());
+		super.loadInt(location_shadowMap, shadowMap.getShadowMapTexture());
+		super.loadMatrix(location_depthBiasMatrix, shadowMap.getDepthBiasMatrix());
+	}
 	
 	public void loadClipPlane(Vector4f clipPlane){
 		super.loadVector(location_plane, clipPlane);

@@ -150,7 +150,7 @@ public class ConnectionToServer implements Runnable, ActionListener {
 		ArrayList<PhysicsNetworkBody> networkBodies = inMessage.physicsData;
 		ArrayList<RigidBody> bodies = Globals.getPhysics().getProcessor().getBodies();
 
-		System.out.println("Physics update: " + networkBodies.size());
+		//System.out.println("Physics update: " + networkBodies.size());
 
 		for (PhysicsNetworkBody body : networkBodies) {			
 			for (RigidBody rb : bodies) {				
@@ -211,7 +211,7 @@ public class ConnectionToServer implements Runnable, ActionListener {
 		
 		for(PhysicsEntity en : newEntities){
 			
-			System.out.println(en.getBody().getWorldTransform(new Transform()).origin);
+			//System.out.println(en.getBody().getWorldTransform(new Transform()).origin);
 		}
 		queueMessage(outMessage); //This will probably be huge *Oh dear :S*
 		

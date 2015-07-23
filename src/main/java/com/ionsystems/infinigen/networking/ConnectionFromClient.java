@@ -169,11 +169,11 @@ public class ConnectionFromClient implements Runnable, ActionListener{
 			NetworkMessage outMessage = new NetworkMessage();
 			outMessage.chunkUpdate = true; // We set this so the client knows it is part of the chunk update			
 			outMessage.chunkCount = Globals.getLoadedChunks().size();
-			System.out.println("Sending chunk count: " + outMessage.chunkCount);
+			//System.out.println("Sending chunk count: " + outMessage.chunkCount);
 			queueMessage(outMessage);
 			
 			//Next we need to send all the chunks one by one so the client can easily update the progress of the download.
-			System.out.println("Sending chunk data");
+			//System.out.println("Sending chunk data");
 			for(Chunk c : Globals.getLoadedChunks()){
 				outMessage = new NetworkMessage();
 				outMessage.chunkUpdate = true;
@@ -182,7 +182,7 @@ public class ConnectionFromClient implements Runnable, ActionListener{
 			}
 			
 			//Now the client has all the chunk data we can send a message to say the chunk update has finished.
-			System.out.println("Sending complete message");
+			//System.out.println("Sending complete message");
 			outMessage = new NetworkMessage();
 			outMessage.chunkUpdate = true;
 			outMessage.chunkUpdateComplete = true;
@@ -199,13 +199,13 @@ public class ConnectionFromClient implements Runnable, ActionListener{
 		
 		//First we need to make some data structure to store the information. We will need to get the list of all entities first.
 		
-		System.out.println("Physics Update: " + physicsUpdateCount++ );
+		//System.out.println("Physics Update: " + physicsUpdateCount++ );
 		
 		ArrayList<PhysicsNetworkBody> networkBodies = new ArrayList<PhysicsNetworkBody>();
 		ArrayList<RigidBody> bodies =  Globals.getBodies();
 
 		
-		System.out.println("Physics Bodies: " + bodies.size());
+		//System.out.println("Physics Bodies: " + bodies.size());
 		
 		for(RigidBody rb : bodies){
 			PhysicsNetworkBody pnb = new PhysicsNetworkBody();
@@ -243,6 +243,7 @@ public class ConnectionFromClient implements Runnable, ActionListener{
 			sendQueue.remove(msg);			
 		} catch (IOException ioException) {
 			ioException.printStackTrace();
+			System.exit(0);
 		}
 	}
 	

@@ -10,6 +10,11 @@ out vec3 toLightVector[4];
 out vec3 toCameraVector;
 out float visibility;
 
+//// Shadows ////
+out vec4 shadowCoord;
+uniform mat4 depthBiasMatrix;
+/////////////////
+
 uniform mat4 tranformationMatrix;
 uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;
@@ -21,6 +26,8 @@ const float gradient = 1.1;
 
 
 void main(void){
+	shadowCoord = depthBiasMatrix * tranformationMatrix * vec4(position, 1);
+
 	vec4 worldPosition = tranformationMatrix * vec4(position,1.0);
 	
 	gl_ClipDistance[0] = dot(worldPosition, plane);

@@ -9,14 +9,17 @@ out vec3 surfaceNormal;
 out vec3 toLightVector[4];
 out vec3 toCameraVector;
 out float visibility;
-out vec4 shadowCoord;
+
 out vec4 worldPosition;
 
 uniform mat4 tranformationMatrix;
 uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;
-uniform mat4 depthBiasMatrix;
 
+//// Shadows ////
+out vec4 shadowCoord;
+uniform mat4 depthBiasMatrix;
+/////////////////
 
 uniform vec3 lightPosition[4];
 
@@ -34,7 +37,7 @@ const float gradient = 1.5;
 
 
 void main(void){
-	//shadowCoord = depthBiasMatrix * tranformationMatrix * vec4(position, 1);
+	shadowCoord = depthBiasMatrix * tranformationMatrix * vec4(position, 1);
 	worldPosition = tranformationMatrix * vec4(position,1.0);
 
 	vec4 worldPosition2 = tranformationMatrix * vec4(position,1.0);

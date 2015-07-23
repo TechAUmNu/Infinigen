@@ -333,7 +333,7 @@ public class Main {
 	 * Anything to do with setting up the gui
 	 */
 	private void generateGui() {	
-		gui.addElement(0, 0, sfbos.getDepthTexture());
+		//gui.addElement(0, 0, sfbos.getDepthTexture());
 		
 	}
 

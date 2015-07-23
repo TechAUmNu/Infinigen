@@ -1,9 +1,15 @@
 package main.java.com.ionsystems.infinigen.shaders;
 
+import static org.lwjgl.opengl.GL11.*;
+
+import static org.lwjgl.opengl.GL13.*;
+
+
 import java.util.List;
 
 import main.java.com.ionsystems.infinigen.cameras.ICamera;
 import main.java.com.ionsystems.infinigen.entities.Light;
+import main.java.com.ionsystems.infinigen.shadows.ShadowMap;
 import main.java.com.ionsystems.infinigen.utility.Maths;
 
 import org.lwjgl.util.vector.Matrix4f;
@@ -70,6 +76,13 @@ public class StaticShader extends ShaderProgram {
 			location_lightColour[i] = super.getUniformLocation("lightColour[" + i + "]");
 			location_attenuation[i] = super.getUniformLocation("attenuation[" + i + "]");
 		}
+	}
+	
+	public void loadShadowMap(ShadowMap shadowMap){
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, shadowMap.getShadowMapTexture());
+		super.loadInt(location_shadowMap, shadowMap.getShadowMapTexture());
+		super.loadMatrix(location_depthBiasMatrix, shadowMap.getDepthBiasMatrix());
 	}
 
 	public void loadClipPlane(Vector4f plane){

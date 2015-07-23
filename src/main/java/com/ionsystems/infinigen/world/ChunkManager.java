@@ -32,7 +32,7 @@ import main.java.com.ionsystems.infinigen.networking.ChunkData;
 public class ChunkManager implements IModule {
 
 	int chunkSize = 32;
-	float blockSize = 0.5f;
+	float blockSize = 2f;
 	ArrayList<Chunk> loadedChunks;
 	HashMap<ChunkID, Chunk> chunks;
 	Module terrainNoise;
