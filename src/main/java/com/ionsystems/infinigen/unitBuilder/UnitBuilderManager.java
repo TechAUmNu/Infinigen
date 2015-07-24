@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import javax.vecmath.Vector3f;
 
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
 import com.bulletphysics.collision.dispatch.CollisionWorld;
@@ -158,7 +159,7 @@ public class UnitBuilderManager implements IModule {
 					
 					if(unit.spaceOcupied(newPositionx, newPositiony, newPositionz)) System.out.println("space ocupied");
 					else{
-						PhysicsEntity newBox = unit.makeBox( newPositionx, newPositiony, newPositionz, 1);
+						PhysicsEntity newBox = unit.makeBox( newPositionx, newPositiony, newPositionz, 0);
 						unit.entities.add(newBox);
 						
 						if(unit.spaceOcupied(newPositionx, newPositiony, newPositionz + placementOffset)){
@@ -202,6 +203,10 @@ public class UnitBuilderManager implements IModule {
 
 				}
 
+			}
+			if(Keyboard.isKeyDown(Keyboard.KEY_Q)){
+				System.out.print("woops");
+				unit.makeMass();
 			}
 
 		}

@@ -104,8 +104,9 @@ public class Unit {
 	}
 	
 	public void printJoints(){ 
+		System.out.println("new check");
 		for(TypedConstraint i: joints){
-			System.out.print("joint " + i);
+			System.out.println("joint " + i);
 		}
 
 	}
@@ -118,7 +119,21 @@ public class Unit {
 		return null;
 	}
 	
-	
-	
+
+	public void makeMass(){
+		
+		for(PhysicsEntity i: entities){
+			System.out.println(i.getBody().getInvMass());
+			
+			processor.removePhysicsEntity(i);
+			
+			javax.vecmath.Vector3f inertia = new javax.vecmath.Vector3f(0f,0f,0f);;
+			i.getBody().getCollisionShape().calculateLocalInertia(1, inertia);
+			i.getBody().setMassProps(1, inertia);
+			System.out.println(i.getBody().getInvMass());
+			
+			processor.addPhysicsEntity(i);
+		}
+	}
 	
 }
