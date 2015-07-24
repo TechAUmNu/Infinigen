@@ -33,6 +33,10 @@ public class UnitBuilderManager implements IModule {
 	int yOffset;
 	int zOffset;
 
+	//bind boxes to surrounding boxes
+	//make a method that makes a copy of boxes
+	//make a method that works out the size of the unit
+	
 	@Override
 	public void setUp() {
 
@@ -108,9 +112,9 @@ public class UnitBuilderManager implements IModule {
 					javax.vecmath.Vector3f positionBody = new javax.vecmath.Vector3f(0f, 0f, 0f);
 					body.getCenterOfMassPosition(positionBody);
 					javax.vecmath.Vector3f positionCursor = rayCallback.hitPointWorld;
-					System.out.println(body);
-					System.out.println(positionBody);
-					System.out.println(positionCursor);
+					//System.out.println(body);
+					//System.out.println(positionBody);
+					//System.out.println(positionCursor);
 					float xDif = positionCursor.x - positionBody.x;
 					float yDif = positionCursor.y - positionBody.y;
 					float zDif = positionCursor.z - positionBody.z;
@@ -144,11 +148,46 @@ public class UnitBuilderManager implements IModule {
 							zOffset = -1;
 					}
 					javax.vecmath.Vector3f offsets = new javax.vecmath.Vector3f(xOffset, yOffset, zOffset);
-					System.out.println(offsets);
-
-					PhysicsEntity newBox = unit.makeBox((int) (positionBody.x + xOffset * 10), (int) (positionBody.y + yOffset * 10),
-							(int) (positionBody.z + zOffset * 10), 1);
-					unit.entities.add(newBox);
+					//System.out.println(offsets);
+					float placementOffset = (float) 2.3;
+					float newPositionx =  (positionBody.x + xOffset * placementOffset);
+					float newPositiony =  (positionBody.y + yOffset * placementOffset);
+					float newPositionz =  (positionBody.z + zOffset * placementOffset);
+					
+					//System.out.println("make at" + newPositionx + " " + newPositiony + " " + newPositionz);
+					
+					if(unit.spaceOcupied(newPositionx, newPositiony, newPositionz)) System.out.println("space ocupied");
+					else{
+						PhysicsEntity newBox = unit.makeBox( newPositionx, newPositiony, newPositionz, 1);
+						unit.entities.add(newBox);
+						
+						if(unit.spaceOcupied(newPositionx, newPositiony, newPositionz + placementOffset)){
+							PhysicsEntity entityNextoNew = unit.getBoxAt(newPositionx, newPositiony, newPositionz + placementOffset);
+							unit.joints.add(unit.BindEntities(newBox, entityNextoNew, 0, 0, placementOffset));
+						}
+						if(unit.spaceOcupied(newPositionx, newPositiony, newPositionz - placementOffset)){
+							PhysicsEntity entityNextoNew = unit.getBoxAt(newPositionx, newPositiony, newPositionz - placementOffset);
+							unit.joints.add(unit.BindEntities(newBox, entityNextoNew, 0, 0, -placementOffset));
+						}
+						if(unit.spaceOcupied(newPositionx, newPositiony + placementOffset, newPositionz)){
+							PhysicsEntity entityNextoNew = unit.getBoxAt(newPositionx, newPositiony + placementOffset, newPositionz);
+							unit.joints.add(unit.BindEntities(newBox, entityNextoNew, 0, placementOffset, 0));
+						}
+						if(unit.spaceOcupied(newPositionx, newPositiony - placementOffset, newPositionz)){
+							PhysicsEntity entityNextoNew = unit.getBoxAt(newPositionx, newPositiony - placementOffset, newPositionz);
+							unit.joints.add(unit.BindEntities(newBox, entityNextoNew, 0, -placementOffset, 0));
+						}
+						if(unit.spaceOcupied(newPositionx + placementOffset, newPositiony, newPositionz)){
+							PhysicsEntity entityNextoNew = unit.getBoxAt(newPositionx + placementOffset, newPositiony, newPositionz);
+							unit.joints.add(unit.BindEntities(newBox, entityNextoNew, placementOffset, 0, 0));
+						}
+						if(unit.spaceOcupied(newPositionx - placementOffset, newPositiony, newPositionz)){
+							PhysicsEntity entityNextoNew = unit.getBoxAt(newPositionx - placementOffset, newPositiony, newPositionz);
+							unit.joints.add(unit.BindEntities(newBox, entityNextoNew, -placementOffset, 0, 0));
+						}
+						unit.printJoints();
+					}
+					
 
 				}
 			}
@@ -171,6 +210,7 @@ public class UnitBuilderManager implements IModule {
 		cameraSwitchTimer--;
 	}
 
+	
 	@Override
 	public void render() {
 		// TODO Auto-generated method stub

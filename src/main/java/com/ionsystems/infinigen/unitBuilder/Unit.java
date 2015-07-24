@@ -33,11 +33,11 @@ public class Unit {
 
 	private void createBaseCube(PhysicsProcessor processor) {
 		PhysicsEntity base = makeBox(10,10,10,0);
-		PhysicsEntity jointTest = makeBox(10,10,20,1);
-		Generic6DofConstraint binding = BindEntities(base,jointTest,0.0f,2.3f,0.0f);
+		//PhysicsEntity jointTest = makeBox(10,10,20,1);
+		//Generic6DofConstraint binding = BindEntities(base,jointTest,0.0f,2.3f,0.0f);
 		entities.add(base);
-		entities.add(jointTest);
-		joints.add(binding);
+		//entities.add(jointTest);
+		//joints.add(binding);
 		//System.out.println("Body Hash: "+  base.getBody().hashCode());
 		
 		//Now we can set the camera to look at it.
@@ -52,7 +52,7 @@ public class Unit {
 		return joints;
 	}
 	
-	public PhysicsEntity makeBox(int x, int y , int z, int mass){
+	public PhysicsEntity makeBox(float x, float y , float z, int mass){
 		PhysicsModel pmodel = OBJFileLoader.loadOBJtoVAOWithGeneratedPhysics("box", Globals.getLoader());
 		TexturedPhysicsModel boxModel = new TexturedPhysicsModel(pmodel, new ModelTexture(Globals.getLoader().loadTexture("box")));
 		return new PhysicsEntity(boxModel, new Vector3f(x, y, z), 0, 0, 0, 1, mass, processor);
@@ -85,6 +85,29 @@ public class Unit {
 				entity.highlight(false);
 			}
 		}
+	}
+	
+	public boolean spaceOcupied(float x,float y,float z){ //check if a space is ocupied
+		javax.vecmath.Vector3f lock = new javax.vecmath.Vector3f((float)x,(float)y,(float)z);
+		for(PhysicsEntity i: entities){
+			if(i.getPosition().x == lock.x && i.getPosition().y == lock.y && i.getPosition().z == lock.z)return true;
+		}
+		return false;
+	}
+	
+	public PhysicsEntity getBoxAt(float x,float y,float z){ //check if a space is ocupied
+		javax.vecmath.Vector3f lock = new javax.vecmath.Vector3f((float)x,(float)y,(float)z);
+		for(PhysicsEntity i: entities){
+			if(i.getPosition().x == lock.x && i.getPosition().y == lock.y && i.getPosition().z == lock.z)return i;
+		}
+		return null;
+	}
+	
+	public void printJoints(){ 
+		for(TypedConstraint i: joints){
+			System.out.print("joint " + i);
+		}
+
 	}
 	
 	public PhysicsEntity IsBodyInUnit(RigidBody searchFor){
