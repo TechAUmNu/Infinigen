@@ -150,7 +150,7 @@ public class UnitBuilderManager implements IModule {
 					}
 					javax.vecmath.Vector3f offsets = new javax.vecmath.Vector3f(xOffset, yOffset, zOffset);
 					//System.out.println(offsets);
-					float placementOffset = (float) 2.3;
+					float placementOffset = (float) 2.5;
 					float newPositionx =  (positionBody.x + xOffset * placementOffset);
 					float newPositiony =  (positionBody.y + yOffset * placementOffset);
 					float newPositionz =  (positionBody.z + zOffset * placementOffset);
@@ -204,15 +204,16 @@ public class UnitBuilderManager implements IModule {
 				}
 
 			}
-			if(Keyboard.isKeyDown(Keyboard.KEY_Q)){
-				System.out.print("woops");
-				unit.makeMass();
-			}
+			
 
 		}
 
 		timeLeft--;
 		cameraSwitchTimer--;
+		if(Keyboard.isKeyDown(Keyboard.KEY_Q)){
+			System.out.print("woops");
+			unit.makeMass();
+		}
 	}
 
 	

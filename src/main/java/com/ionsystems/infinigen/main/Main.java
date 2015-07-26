@@ -321,7 +321,7 @@ public class Main {
 	 */
 	private void loadAssets() {
 		
-		sun = new Light(new Vector3f(0, 10000, -9000), new Vector3f(1, 1, 1));
+		sun = new Light(new Vector3f(10000, 3000, 10000), new Vector3f(1, 1, 1));
 		lights.add(sun); // Sun
 		
 	}

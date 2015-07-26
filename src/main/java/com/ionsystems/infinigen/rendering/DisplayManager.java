@@ -12,8 +12,8 @@ import org.lwjgl.opengl.PixelFormat;
 
 public class DisplayManager {
 
-	private static final int WIDTH = 1280;
-	private static final int HEIGHT = 800;
+	private static final int WIDTH = 1920;
+	private static final int HEIGHT = 1080;
 	private static final int FPS_CAP = 1000;
 	private static float GUI_SCALE = 1f;
 	private static float GUI_SCALE_FACTOR = 0.5f;
@@ -30,7 +30,7 @@ public class DisplayManager {
 
 		try {
 			Display.setFullscreen(true);
-			Display.setDisplayMode(new DisplayMode(WIDTH, HEIGHT));
+			//Display.setDisplayMode(new DisplayMode(WIDTH, HEIGHT));
 			Display.create(new PixelFormat(8, 24, 8, 8), attribs);
 			Display.setTitle("New Features testing");
 		} catch (LWJGLException e) {

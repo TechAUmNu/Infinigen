@@ -49,7 +49,7 @@ public class ChunkManager implements IModule {
 		loadedChunks = new ArrayList<Chunk>();
 		chunks = new HashMap<ChunkID, Chunk>();
 
-		if (Globals.isServer()) { // We only initialise the chunks on the server
+		//if (Globals.isServer()) { // We only initialise the chunks on the server
 									// since the client downloads them when they
 									// connect.
 
@@ -71,7 +71,7 @@ public class ChunkManager implements IModule {
 
 			Globals.setLoadedChunks(loadedChunks);
 
-		}
+		//}
 
 	}
 	

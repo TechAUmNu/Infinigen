@@ -16,8 +16,8 @@ import org.lwjgl.opengl.GL30;
 
 public class ShadowFrameBuffers {
 
-	private static final int DEPTH_WIDTH = 1024;
-	private static final int DEPTH_HEIGHT = 1024;
+	private static final int DEPTH_WIDTH = 4024;
+	private static final int DEPTH_HEIGHT = 4024;
 	private int shadowFrameBuffer;
 	private int shadowDepthTexture;
 
@@ -51,6 +51,7 @@ public class ShadowFrameBuffers {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
 		glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, texture, 0);

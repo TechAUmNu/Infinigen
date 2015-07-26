@@ -45,7 +45,7 @@ public class WorldRenderer implements IModule {
 			loadModelMatrix(chunk);
 			renderFace(chunk.getBottomModel());
 			renderFace(chunk.getTopModel());
-		renderFace(chunk.getBackModel());
+			renderFace(chunk.getBackModel());
 			renderFace(chunk.getFrontModel());
 			renderFace(chunk.getLeftModel());
 			renderFace(chunk.getRightModel());

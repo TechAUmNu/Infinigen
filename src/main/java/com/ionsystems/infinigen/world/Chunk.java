@@ -34,10 +34,10 @@ public class Chunk {
 		this.size = size;
 		this.blockSize = blockSize;
 		this.terrainNoise = terrainNoise;
-		if (Globals.isServer()) {
+		//if (Globals.isServer()) {
 			
 		setUp();
-		}
+		//}
 		//System.out.println("TEST");
 		if (!Globals.isServer()) {
 			rebuild();
