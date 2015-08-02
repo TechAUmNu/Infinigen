@@ -11,13 +11,5 @@ public class GuiTextElement extends GuiElement {
 		// TODO Auto-generated constructor stub
 	}
 
-	public GuiTextElement(Vector2f position, Vector2f detectionSize, String texture, Loader loader) {
-		super(position, detectionSize, texture, loader);
-		// TODO Auto-generated constructor stub
-	}
-
-	public GuiTextElement(Vector2f position, Vector2f size, Vector2f detectionSize, String texture, Loader loader) {
-		super(position, size, detectionSize, texture, loader);
-		// TODO Auto-generated constructor stub
-	}
+	
 }

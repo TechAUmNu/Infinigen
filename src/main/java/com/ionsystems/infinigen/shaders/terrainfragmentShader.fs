@@ -10,6 +10,7 @@ out vec4 out_Color;
 
 //Shadows///
 in vec4 shadowCoord;
+in vec4 worldPosition;
 uniform sampler2DShadow shadowMap;
 ////////////////////////////
 
@@ -77,29 +78,12 @@ void main(void){
 	
 	totalDiffuse = max(totalDiffuse, 0.0);
 	
+	float shadow = 1.0;
 	
-///Shadows////
-	float shadow=1.0;
-	float bias = 0.00005;
-	
-	for (int i=0;i<4;i++){
-		// use either :
-		//  - Always the same samples.
-		//    Gives a fixed pattern in the shadow, but no noise
-		int index = i;
-		//  - A random sample, based on the pixel's screen location. 
-		//    No banding, but the shadow moves with the camera, which looks weird.
-		// int index = int(16.0*random(gl_FragCoord.xyy, i))%16;
-		//  - A random sample, based on the pixel's position in world space.
-		//    The position is rounded to the millimeter to avoid too much aliasing
-		//int index = int(16.0*random(floor(worldPosition.xyz*100.0), i))%16;
-		
-		// being fully in the shadow will eat up 4*0.2 = 0.8
-		// 0.2 potentially remain, which is quite dark.
-		shadow -= 0.2*(1.0-texture( shadowMap, vec3(shadowCoord.xy + poissonDisk[index]/700.0,  (shadowCoord.z-bias)/shadowCoord.w) ));
+	if(textureProj(shadowMap, shadowCoord) < 0.5){
+		shadow = 0.5;
 	}
 	
-	//shadow -= (1.0-textureProj(shadowMap, shadowCoord));
 	
 	
 	
@@ -107,10 +91,6 @@ void main(void){
 	
 	
 	
-	
-	
-	
-	//float shadow = textureProj(shadowMap, shadowCoord) / 2.0;
 	
 
 	out_Color = shadow * vec4(totalDiffuse, 1.0) * texture(textureSampler, pass_textureCoords); //+ shadow * vec4(totalSpecular, 1.0) ;

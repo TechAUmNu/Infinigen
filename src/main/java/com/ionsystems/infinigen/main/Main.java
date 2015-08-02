@@ -48,6 +48,7 @@ import main.java.com.ionsystems.infinigen.rendering.Loader;
 import main.java.com.ionsystems.infinigen.rendering.MasterRenderer;
 import main.java.com.ionsystems.infinigen.shadows.ShadowFrameBuffers;
 import main.java.com.ionsystems.infinigen.shadows.ShadowShader;
+import main.java.com.ionsystems.infinigen.text.TextManager;
 import main.java.com.ionsystems.infinigen.unitBuilder.UnitBuilderManager;
 import main.java.com.ionsystems.infinigen.utility.MousePicker;
 import main.java.com.ionsystems.infinigen.utility.OSValidator;
@@ -86,6 +87,7 @@ public class Main {
 	private Loader loader;
 	private PhysicsManager physics;
 	private MousePicker picker;
+	private TextManager text;
 	private ICamera activeCamera;
 	private int activeCameraID;
 	private ThirdPersonCamera thirdPersonCamera;
@@ -208,7 +210,7 @@ public class Main {
 			world = new ChunkManager();
 
 			unitBuilder = new UnitBuilderManager();
-
+			text = new TextManager();
 			physics.setUp();
 			Globals.setPhysics(physics);
 
@@ -236,11 +238,12 @@ public class Main {
 			// loadedModules.add(thirdPersonCamera);
 			loadedModules.add(rtsCamera);
 			activeCameraID = 2;
-
+			Globals.setActiveCameraID(2);
 			loadedModules.add(picker);
 			loadedModules.add(unitBuilder);
 			loadedModules.add(world);
 			loadedModules.add(networking);
+			loadedModules.add(text);
 
 			// Add anything to the globals that might be needed elsewhere.
 			Globals.setLoader(loader);
@@ -321,7 +324,7 @@ public class Main {
 	 */
 	private void loadAssets() {
 		
-		sun = new Light(new Vector3f(10000, 3000, 10000), new Vector3f(1, 1, 1));
+		sun = new Light(new Vector3f(activeCamera.getPosition().x + 5000, 3000,activeCamera.getPosition().z), new Vector3f(1, 1, 1));
 		lights.add(sun); // Sun
 		
 	}
@@ -333,7 +336,7 @@ public class Main {
 	 * Anything to do with setting up the gui
 	 */
 	private void generateGui() {	
-		//gui.addElement(0, 0, sfbos.getDepthTexture());
+		gui.addElement(0, 0, sfbos.getDepthTexture());
 		
 	}
 
@@ -348,6 +351,8 @@ public class Main {
 		for (IModule module : loadedModules) {
 			module.update();
 		}
+		
+		//sun.setPosition(new Vector3f(activeCamera.getPosition().x + 500, 500,activeCamera.getPosition().z +  500));
 		
 
 	}
@@ -385,6 +390,15 @@ public class Main {
 		for (IModule module : loadedModules) {
 			module.process();
 		}
+		
+		while(Keyboard.next()){
+			if(Keyboard.getEventKey() == Keyboard.KEY_P){
+				ChunkManager.loadDistance++;				
+			}
+			if(Keyboard.getEventKey() == Keyboard.KEY_L){
+				ChunkManager.loadDistance--;
+			}
+		}
 
 	}
 
@@ -404,6 +418,7 @@ public class Main {
 			keyTimer = keyDelayTime;
 		}
 		picker.setCamera(activeCamera);
+		Globals.setActiveCameraID(activeCameraID);
 	}
 
 	/**
@@ -461,10 +476,13 @@ public class Main {
 		renderer.render(lights, activeCamera, true, new Vector4f(0, 1, 0, 0), sun, true);
 		
 		//WaterRendering
-		waterRenderer.render(waters, activeCamera);
+		//waterRenderer.render(waters, activeCamera);
 		
 		//
 		gui.render();
+		
+		//Test Font rendering
+		text.renderString("Times New Roman", 50, 50, "Hello World");
 
 		// for (IModule module : loadedModules) {
 		// / module.render();

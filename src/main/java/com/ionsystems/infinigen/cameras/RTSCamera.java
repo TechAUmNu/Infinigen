@@ -6,6 +6,8 @@ import static java.lang.Math.toRadians;
 
 import java.util.ArrayList;
 
+import javax.vecmath.Vector3d;
+
 import main.java.com.ionsystems.infinigen.entities.PhysicsEntity;
 import main.java.com.ionsystems.infinigen.global.Globals;
 import main.java.com.ionsystems.infinigen.global.IModule;
@@ -26,7 +28,14 @@ public class RTSCamera implements IModule, ICamera {
 	private float pitch = -10;
 	private float yaw = 0;	
 
-	
+	private Vector3d calculateDirectionVector(){
+		Vector3d direction = new Vector3d();
+		direction.x = cos(Math.toRadians(yaw))*cos(Math.toRadians(pitch));
+		direction.y = sin(Math.toRadians(yaw))*cos(Math.toRadians(pitch));
+		direction.z = sin(Math.toRadians(pitch));
+				
+		return direction;	
+	}
 
 	public RTSCamera() {
 	}
@@ -37,6 +46,7 @@ public class RTSCamera implements IModule, ICamera {
 		calculateYaw();
 		
 		calculatePosition();
+		Globals.setCameraDirection(calculateDirectionVector());
 		
 		
 		float terrainHeight = (float) 0;

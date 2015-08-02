@@ -17,6 +17,7 @@ import main.java.com.ionsystems.infinigen.global.IModule;
 import main.java.com.ionsystems.infinigen.models.PhysicsModel;
 import main.java.com.ionsystems.infinigen.models.RawModel;
 import main.java.com.ionsystems.infinigen.objConverter.Vertex;
+import main.java.com.ionsystems.infinigen.physics.PhysicsUtils;
 import main.java.com.ionsystems.infinigen.textures.TextureData;
 
 import org.lwjgl.BufferUtils;
@@ -29,7 +30,10 @@ import org.lwjgl.opengl.GL30;
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
 
+import com.bulletphysics.collision.shapes.BvhTriangleMeshShape;
 import com.bulletphysics.collision.shapes.ConvexHullShape;
+import com.bulletphysics.collision.shapes.TriangleIndexVertexArray;
+import com.bulletphysics.collision.shapes.TriangleMeshShape;
 import com.bulletphysics.util.ObjectArrayList;
 
 import de.matthiasmann.twl.utils.PNGDecoder;
@@ -45,30 +49,55 @@ public class Loader implements IModule {
 
 	public RawModel loadToVAO(float[] positions, float[] textureCoords, float[] normals, int[] indices) {
 		int vaoID = createVAO();
-		bindIndicesBuffer(indices);
-		storeDataInAttributeList(0, 3, positions);
-		storeDataInAttributeList(1, 2, textureCoords);
-		storeDataInAttributeList(2, 3, normals);
+		ArrayList<Integer> vboIDs = new ArrayList<Integer>();
+		vboIDs.add(bindIndicesBuffer(indices));
+		vboIDs.add(storeDataInAttributeList(0, 3, positions));
+		vboIDs.add(storeDataInAttributeList(1, 2, textureCoords));
+		vboIDs.add(storeDataInAttributeList(2, 3, normals));
 		unbindVAO();
-		return new RawModel(vaoID, indices.length);
+		return new RawModel(vaoID, vboIDs, indices.length);
 	}
+
+	// public RawModel loadToVAO(float[] positions, float[] textureCoords,
+	// float[] normals, int vertexCount) {
+	// int vaoID = createVAO();
+	// /
+	// storeDataInAttributeList(0, 3, positions);
+	// storeDataInAttributeList(1, 2, textureCoords);
+	// storeDataInAttributeList(2, 3, normals);
+	// unbindVAO();
+	// return new RawModel(vaoID, vertexCount);
+	// }
+
+	public PhysicsModel loadChunkToVAOWithGeneratedPhysics(float[] positions, ObjectArrayList<Vector3f> vertices, float[] textureCoords, float[] normals,
+			int[] indices) {
+		int vaoID = createVAO();
+		ArrayList<Integer> vboIDs = new ArrayList<Integer>();
+		vboIDs.add(bindIndicesBuffer(indices));
+		vboIDs.add(storeDataInAttributeList(0, 3, positions));
+		vboIDs.add(storeDataInAttributeList(1, 2, textureCoords));
+		vboIDs.add(storeDataInAttributeList(2, 3, normals));
+		unbindVAO();
+		// Generate a new physics object to represent the model;
+		ObjectArrayList<Vector3f> verticesPhysics = new ObjectArrayList<Vector3f>();
+
 	
-	//public RawModel loadToVAO(float[] positions, float[] textureCoords, float[] normals, int vertexCount) {
-	//	int vaoID = createVAO();
-	///	
-	//	storeDataInAttributeList(0, 3, positions);
-	//	storeDataInAttributeList(1, 2, textureCoords);
-	//	storeDataInAttributeList(2, 3, normals);
-	//	unbindVAO();
-	//	return new RawModel(vaoID, vertexCount);
-	//}
+		TriangleIndexVertexArray indexVertexArrays = new TriangleIndexVertexArray();
+		
+	
+		
+		//BvhTriangleMeshShape collisionShape = new BvhTriangleMeshShape(indexVertexArrays, true);
+		
+		return new PhysicsModel(vaoID, vboIDs, indices.length);
+	}
 
 	public PhysicsModel loadToVAOWithGeneratedPhysics(float[] positions, List<Vertex> vertices, float[] textureCoords, float[] normals, int[] indices) {
 		int vaoID = createVAO();
-		bindIndicesBuffer(indices);
-		storeDataInAttributeList(0, 3, positions);
-		storeDataInAttributeList(1, 2, textureCoords);
-		storeDataInAttributeList(2, 3, normals);
+		ArrayList<Integer> vboIDs = new ArrayList<Integer>();
+		vboIDs.add(bindIndicesBuffer(indices));
+		vboIDs.add(storeDataInAttributeList(0, 3, positions));
+		vboIDs.add(storeDataInAttributeList(1, 2, textureCoords));
+		vboIDs.add(storeDataInAttributeList(2, 3, normals));
 		unbindVAO();
 		// Generate a new physics object to represent the model;
 		ObjectArrayList<Vector3f> verticesPhysics = new ObjectArrayList<Vector3f>();
@@ -81,31 +110,33 @@ public class Loader implements IModule {
 			verticesPhysics.add(mathVector);
 		}
 		ConvexHullShape collisionShape = new ConvexHullShape(verticesPhysics);
-
-		return new PhysicsModel(vaoID, indices.length, collisionShape);
+		// Now simplify the shape to speed up physics
+		ConvexHullShape simplifiedShape = PhysicsUtils.simplifyConvexShape(collisionShape);
+		return new PhysicsModel(vaoID, vboIDs, indices.length, simplifiedShape);
 	}
 
 	public RawModel loadToVAO(float[] positions, int dimensions) {
 		int vaoID = createVAO();
-		storeDataInAttributeList(0, dimensions, positions);
+		ArrayList<Integer> vboIDs = new ArrayList<Integer>();
+		vboIDs.add(storeDataInAttributeList(0, dimensions, positions));
 		unbindVAO();
-		return new RawModel(vaoID, positions.length / dimensions);
+		return new RawModel(vaoID, vboIDs, positions.length / dimensions);
 	}
 
 	public RawModel loadToVAO(float[] positions, float[] textureCoords, int dimensions) {
 		int vaoID = createVAO();
-		storeDataInAttributeList(0, dimensions, positions);
-		storeDataInAttributeList(1, 2, textureCoords);
+		ArrayList<Integer> vboIDs = new ArrayList<Integer>();
+		vboIDs.add(storeDataInAttributeList(0, dimensions, positions));
+		vboIDs.add(storeDataInAttributeList(1, 2, textureCoords));
 		unbindVAO();
-		return new RawModel(vaoID, positions.length / dimensions);
+		return new RawModel(vaoID, vboIDs, positions.length / dimensions);
 	}
 
 	public Vector3f loadTexture(String fileName) {
-		if(loadedTextures.containsKey(fileName)){
+		if (loadedTextures.containsKey(fileName)) {
 			return loadedTextures.get(fileName);
 		}
-		
-		
+
 		Texture texture = null;
 		Vector3f WidthHeightID = new Vector3f(0, 0, 0);
 		try {
@@ -122,7 +153,7 @@ public class Loader implements IModule {
 		}
 		int textureID = texture.getTextureID();
 		WidthHeightID.z = textureID;
-		
+
 		loadedTextures.put(fileName, WidthHeightID);
 		textures.add(textureID);
 		return WidthHeightID;
@@ -185,7 +216,7 @@ public class Loader implements IModule {
 		return vaoID;
 	}
 
-	private void storeDataInAttributeList(int attributeNumber, int coordinateSize, float[] data) {
+	private int storeDataInAttributeList(int attributeNumber, int coordinateSize, float[] data) {
 		int vboID = GL15.glGenBuffers();
 		vbos.add(vboID);
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vboID);
@@ -193,18 +224,20 @@ public class Loader implements IModule {
 		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, buffer, GL15.GL_STATIC_DRAW);
 		GL20.glVertexAttribPointer(attributeNumber, coordinateSize, GL11.GL_FLOAT, false, 0, 0);
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
+		return vboID;
 	}
 
 	private void unbindVAO() {
 		GL30.glBindVertexArray(0);
 	}
 
-	private void bindIndicesBuffer(int[] indices) {
+	private int bindIndicesBuffer(int[] indices) {
 		int vboID = GL15.glGenBuffers();
 		vbos.add(vboID);
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, vboID);
 		IntBuffer buffer = storeDataInIntBuffer(indices);
 		GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, buffer, GL15.GL_STATIC_DRAW);
+		return vboID;
 	}
 
 	private IntBuffer storeDataInIntBuffer(int[] data) {
@@ -250,4 +283,5 @@ public class Loader implements IModule {
 		// TODO Auto-generated method stub
 		return new ArrayList<PhysicsEntity>();
 	}
+
 }

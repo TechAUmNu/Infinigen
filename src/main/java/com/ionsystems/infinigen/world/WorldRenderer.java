@@ -3,6 +3,8 @@ package main.java.com.ionsystems.infinigen.world;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.vecmath.Vector3d;
+
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
@@ -41,14 +43,48 @@ public class WorldRenderer implements IModule {
 	public void renderChunks() {
 		bindTextures();
 		for (Chunk chunk : Globals.getLoadedChunks()) {		
+			//We need to check which faces should actually be visible/
+			//We will use a dot product on the normal for the face and the camera 
+			
+			Vector3d cameraDirection = Globals.getCameraDirection();
+			
+			
+		
+			
 			
 			loadModelMatrix(chunk);
-			renderFace(chunk.getBottomModel());
-			renderFace(chunk.getTopModel());
-			renderFace(chunk.getBackModel());
-			renderFace(chunk.getFrontModel());
-			renderFace(chunk.getLeftModel());
-			renderFace(chunk.getRightModel());
+			//if(cameraDirection.dot(new Vector3d(0,0,-1)) > -.7){
+				renderFace(chunk.getBottomModel());
+			//}
+			
+			//if(cameraDirection.dot(new Vector3d(0,0,1)) > -.7){
+				renderFace(chunk.getTopModel());
+			//}
+			
+			//if(cameraDirection.dot(new Vector3d(-1,0,0)) > -.7){
+				renderFace(chunk.getBackModel());
+			//}
+			
+			//if(cameraDirection.dot(new Vector3d(1,0,0)) > -.7){
+				renderFace(chunk.getFrontModel());
+			//}
+			
+			//if(cameraDirection.dot(new Vector3d(0,1,0)) > -.7){
+				renderFace(chunk.getLeftModel());
+			//}
+			
+			//if(cameraDirection.dot(new Vector3d(0,-1,0)) > -.7){
+				renderFace(chunk.getRightModel());				
+			//}
+			
+			
+			
+			
+			
+			
+			
+			
+			
 		}
 	}
 

@@ -126,4 +126,14 @@ public class PhysicsProcessor {
 
 	}
 
+	public void removeRigidBody(RigidBody body) {
+		dynamicsWorld.removeRigidBody(body);
+				
+	}
+	
+	public void addRigidBody(RigidBody body){
+		dynamicsWorld.addRigidBody(body);
+
+	}
+
 }

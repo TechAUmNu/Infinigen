@@ -1,9 +1,12 @@
 package main.java.com.ionsystems.infinigen.world;
 
 import com.sudoplay.joise.module.Module;
+
 import main.java.com.ionsystems.infinigen.global.Globals;
+import main.java.com.ionsystems.infinigen.models.PhysicsModel;
 import main.java.com.ionsystems.infinigen.models.RawModel;
 import main.java.com.ionsystems.infinigen.networking.ChunkData;
+import main.java.com.ionsystems.infinigen.physics.PhysicsProcessor;
 import main.java.com.ionsystems.infinigen.world.BlockType;
 
 /**
@@ -24,7 +27,7 @@ public class Chunk {
 	public boolean changed = false;
 	Module terrainNoise;
 
-	RawModel bottomModel, topModel, frontModel, backModel, leftModel, rightModel;
+	PhysicsModel bottomModel, topModel, frontModel, backModel, leftModel, rightModel;
 
 	public Chunk(int x, int y, int z, int size, float blockSize, Module terrainNoise) {
 
@@ -161,13 +164,33 @@ public class Chunk {
 				}
 			}
 		}
+		
+//		PhysicsProcessor processor = Globals.getPhysics().getProcessor();
+//		
+//		if(frontModel != null){
+//			processor.removeRigidBody(frontModel.getBody());
+//			processor.removeRigidBody(backModel.getBody());
+//			processor.removeRigidBody(topModel.getBody());
+//			processor.removeRigidBody(bottomModel.getBody());
+//			processor.removeRigidBody(leftModel.getBody());
+//			processor.removeRigidBody(rightModel.getBody());
+//		}
 
+						
 		frontModel = front.getModel();
 		backModel = back.getModel();
 		topModel = top.getModel();
 		bottomModel = bottom.getModel();
 		leftModel = left.getModel();
 		rightModel = right.getModel();
+		
+//		processor.addRigidBody(frontModel.getBody());
+//		processor.addRigidBody(backModel.getBody());
+//		processor.addRigidBody(topModel.getBody());
+//		processor.addRigidBody(bottomModel.getBody());
+//		processor.addRigidBody(leftModel.getBody());
+//		processor.addRigidBody(rightModel.getBody());
+		
 
 	}
 
@@ -310,6 +333,16 @@ public class Chunk {
 		cd.blockSize = blockSize;
 		cd.size = size;
 		return cd;
+	}
+
+	public void cleanUp() {
+		bottomModel.cleanUp();
+		topModel.cleanUp();
+		frontModel.cleanUp();
+		backModel.cleanUp();
+		leftModel.cleanUp();
+		rightModel.cleanUp();	
+		blocks = null;
 	}
 
 }

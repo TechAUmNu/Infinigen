@@ -3,14 +3,18 @@ package main.java.com.ionsystems.infinigen.world;
 import java.util.ArrayList;
 
 import main.java.com.ionsystems.infinigen.global.Globals;
+import main.java.com.ionsystems.infinigen.models.PhysicsModel;
 import main.java.com.ionsystems.infinigen.models.RawModel;
 
 import org.lwjgl.util.vector.Vector2f;
-import org.lwjgl.util.vector.Vector3f;
+
+import javax.vecmath.Vector3f;
+
+import com.bulletphysics.util.ObjectArrayList;
 
 public class RenderingFace {
 	
-	ArrayList<Vector3f> vertices;
+	ObjectArrayList<Vector3f> vertices;
 	ArrayList<Vector3f> normals;
 	ArrayList<Vector2f> textures;
 	ArrayList<Integer> indicies;
@@ -20,7 +24,7 @@ public class RenderingFace {
 	public RenderingFace() {
 		super();
 		count = -1;
-		vertices = new ArrayList<Vector3f>();
+		vertices = new ObjectArrayList<Vector3f>();
 		normals = new ArrayList<Vector3f>();
 		textures = new ArrayList<Vector2f>();
 		indicies = new ArrayList<Integer>();
@@ -145,7 +149,7 @@ public class RenderingFace {
 	}
 	
 	
-	public RawModel getModel() {
+	public PhysicsModel getModel() {
 		ArrayList<Float> positions = new ArrayList<Float>();
 		ArrayList<Float> textureCoords = new ArrayList<Float>();
 		ArrayList<Float> normalsL = new ArrayList<Float>();
@@ -192,7 +196,8 @@ public class RenderingFace {
 		
 		
 		
-		RawModel model = Globals.getLoader().loadToVAO(positionsArray, texturesArray, normalsArray, indiciesArray);
+		PhysicsModel model = Globals.getLoader().loadChunkToVAOWithGeneratedPhysics(positionsArray, vertices,  texturesArray, normalsArray, indiciesArray);
+		//model.generateWorldRigidBody();
 		return model;
 	}
 	

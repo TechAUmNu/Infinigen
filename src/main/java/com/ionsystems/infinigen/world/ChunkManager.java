@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
-import javax.vecmath.Vector3f;
+import org.lwjgl.util.vector.Vector3f;
 
 import com.sudoplay.joise.module.Module;
 import com.sudoplay.joise.module.ModuleAutoCorrect;
@@ -29,6 +29,8 @@ import main.java.com.ionsystems.infinigen.global.Globals;
 import main.java.com.ionsystems.infinigen.global.IModule;
 import main.java.com.ionsystems.infinigen.networking.ChunkData;
 
+//This handles all loading and unloading of chunks. The chunks within the set range of each camera must be kept loaded so switching camera is fast.
+
 public class ChunkManager implements IModule {
 
 	int chunkSize = 32;
@@ -38,85 +40,136 @@ public class ChunkManager implements IModule {
 	Module terrainNoise;
 	WorldRenderer renderer;
 
+	public static int loadDistance = 5;
+	long seed = 828382;
+
 	@Override
 	public void process() {
+
+		// Here we will decide which chunks to load/unload
+
+		// First we will do loading
+
+		// loadDistance is how far away in a circle to load chunks
+		// So first we shall just loop through every chunk in the area and load
+		// the chunk if it isnt already.
+
+		Vector3f cameraChunkLocation = findContainingChunk(Globals.getCameraPosition()); // Where
+																							// the
+																							// camera
+																							// is
+																							// in
+																							// chunk
+																							// space
+		//System.out.println(cameraChunkLocation);
+		int cameraX = (int) cameraChunkLocation.x;
+		int cameraZ = (int) cameraChunkLocation.z;
+
+		for (int x = -loadDistance + cameraX; x < loadDistance + cameraX + 1; x++) {
+			for (int z = -loadDistance + cameraZ; z < loadDistance + cameraZ + 1; z++) {
+				if (inCircle(cameraX, cameraZ, loadDistance, x, z)) {
+					loadChunk(x, -1, z);
+				}
+			}
+		}
+		ArrayList<ChunkID> toUnload  = new ArrayList<ChunkID>();
+		for(ChunkID c : chunks.keySet()){
+			if (!inCircle(cameraX, cameraZ, loadDistance, c.x, c.z)) {
+				toUnload.add(new ChunkID(c.x,c.y,c.z));
+			}
+		}
+		for(ChunkID c : toUnload){
+			chunks.get(c).cleanUp();			
+			loadedChunks.remove(chunks.get(c));
+			Globals.getLoadedChunks().remove(chunks.get(c));
+			chunks.remove(c);
+			
+		}
+		
+		
 		Globals.setLoadedChunks(loadedChunks);
+
+	}
+
+	
+
+	boolean inCircle(double centerX, double centerY, double radius, double x, double y) {
+		double square_dist = Math.pow((centerX - x), 2) + Math.pow((centerY - y), 2);
+		return square_dist <= Math.pow(radius, 2);
+
 	}
 
 	@Override
 	public void setUp() {
+
 		initNoiseGenerator();
 		loadedChunks = new ArrayList<Chunk>();
 		chunks = new HashMap<ChunkID, Chunk>();
 
-		//if (Globals.isServer()) { // We only initialise the chunks on the server
-									// since the client downloads them when they
-									// connect.
+		// if (Globals.isServer()) { // We only initialise the chunks on the
+		// server
+		// since the client downloads them when they
+		// connect.
 
-			int xNum = 10;
-			int yNum = 1;
-			int zNum = 10;
-			int count = xNum * 2 * yNum * zNum * 2;
-			System.out.println("Number of chunks to generate: " + count );
-			for (int x = -xNum; x < xNum; x++) {
-				for (int y = -yNum; y < 0; y++) {
-					for (int z = -zNum; z < zNum; z++) {
-						Chunk testChunk = new Chunk(x, y, z, chunkSize, (float) blockSize,terrainNoise);
-						chunks.put(new ChunkID(x, y, z), testChunk);
-						loadedChunks.add(testChunk);
-					}
+		int xNum = 10;
+		int yNum = 1;
+		int zNum = 10;
+		int count = xNum * 2 * yNum * zNum * 2;
+		System.out.println("Number of chunks to generate: " + count);
+		for (int x = -xNum; x < xNum; x++) {
+			for (int y = -yNum; y < 0; y++) {
+				for (int z = -zNum; z < zNum; z++) {
+					//Chunk testChunk = new Chunk(x, y, z, chunkSize, (float) blockSize, terrainNoise);
+					//chunks.put(new ChunkID(x, y, z), testChunk);
+					//loadedChunks.add(testChunk);
 				}
-
 			}
 
-			Globals.setLoadedChunks(loadedChunks);
+		}
 
-		//}
+		Globals.setLoadedChunks(loadedChunks);
+
+		// }
 
 	}
-	
-	private Vector3f findContainingChunk(int worldX, int worldY, int worldZ){
-		//To find the chunk we just divide the coord by the chunk size * block size
-		float multiplyer = chunkSize * blockSize;		
-		Vector3f chunkLocation = new Vector3f();		
-		chunkLocation.x =  (float) Math.floor(worldX / multiplyer);
-		chunkLocation.y =  (float) Math.floor(worldY / multiplyer);
-		chunkLocation.z =  (float) Math.floor(worldZ / multiplyer);		
-		return chunkLocation;		
+
+	private Vector3f findContainingChunk(Vector3f location) {
+		// To find the chunk we just divide the coord by the chunk size * block
+		// size
+		float multiplyer = chunkSize * blockSize;
+		Vector3f chunkLocation = new Vector3f();
+		chunkLocation.x = (float) Math.floor(location.x / multiplyer);
+		chunkLocation.y = (float) Math.floor(location.y / multiplyer);
+		chunkLocation.z = (float) Math.floor(location.z / multiplyer);
+		return chunkLocation;
 	}
-	
 
-	private void initNoiseGenerator(){
-		Random random = new Random();
-	    long seed = random.nextLong();
+	private void initNoiseGenerator() {	
+		ModuleFractal gen = new ModuleFractal();
+		gen.setAllSourceBasisTypes(BasisType.SIMPLEX);
+		gen.setAllSourceInterpolationTypes(InterpolationType.CUBIC);
+		gen.setNumOctaves(2);
+		gen.setFrequency(1);
+		gen.setType(FractalType.RIDGEMULTI);
+		gen.setSeed(seed);
 
-	    ModuleFractal gen = new ModuleFractal();
-	    gen.setAllSourceBasisTypes(BasisType.SIMPLEX);
-	    gen.setAllSourceInterpolationTypes(InterpolationType.CUBIC);
-	    gen.setNumOctaves(2);
-	    gen.setFrequency(1);
-	    gen.setType(FractalType.RIDGEMULTI);
-	    gen.setSeed(898456);
-	    
+		/*
+		 * ... route it through an autocorrection module...
+		 * 
+		 * This module will sample it's source multiple times and attempt to
+		 * auto-correct the output to the range specified.
+		 */
+		ModuleAutoCorrect ac = new ModuleAutoCorrect();
+		ac.setSource(gen); // set source (can usually be either another Module
+							// or a
+							// double value; see specific module for details)
+		ac.setRange(0.0f, 32.0f); // set the range to auto-correct to
+		ac.setSamples(10000); // set how many samples to take
+		ac.calculate(); // perform the caclulations
 
-	    /*
-	     * ... route it through an autocorrection module...
-	     * 
-	     * This module will sample it's source multiple times and attempt to
-	     * auto-correct the output to the range specified.
-	     */
-	    ModuleAutoCorrect ac = new ModuleAutoCorrect();
-	    ac.setSource(gen); // set source (can usually be either another Module or a
-	                       // double value; see specific module for details)
-	    ac.setRange(0.0f, 32.0f); // set the range to auto-correct to
-	    ac.setSamples(10000); // set how many samples to take
-	    ac.calculate(); // perform the caclulations
-	    
-	    
-	    terrainNoise = ac;
+		terrainNoise = ac;
 	}
-	
-	
+
 	@Override
 	public void cleanUp() {
 		// TODO Auto-generated method stub
@@ -143,8 +196,16 @@ public class ChunkManager implements IModule {
 	}
 
 	public void loadChunk(int x, int y, int z) {
-		// Chunk c = new Chunk(x, y, z, chunkSize, blockSize);
+		//Checks if the chunk is already loaded, if not then queues a chunk load on one of the loading threads.
+		//TODO: Make loading threads.
+		if (!chunks.containsKey(new ChunkID(x, y, z))) {
+			Chunk testChunk = new Chunk(x, y, z, chunkSize, (float) blockSize, terrainNoise);
+			chunks.put(new ChunkID(x, y, z), testChunk);
+			loadedChunks.add(testChunk);
+		}
 	}
+	
+	
 
 	@Override
 	public ArrayList<PhysicsEntity> prepare() {

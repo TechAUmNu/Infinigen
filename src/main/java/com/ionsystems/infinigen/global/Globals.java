@@ -3,6 +3,8 @@ package main.java.com.ionsystems.infinigen.global;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.vecmath.Vector3d;
+
 import org.lwjgl.util.vector.Vector3f;
 
 import com.bulletphysics.dynamics.RigidBody;
@@ -37,12 +39,18 @@ public class Globals {
 	private static int clientID = 0;
 	
 	private static PhysicsEntity cameraEntity;
+	private static Vector3d cameraDirection;
+	private static int activeCameraID;
 	
 	
 	
 	
 
 	// //////////////////////////////////////////////////////////////////////////////////////
+
+	public static Vector3d getCameraDirection() {
+		return cameraDirection;
+	}
 
 	public static void setClientID(int clientID) {
 		Globals.clientID = clientID;
@@ -192,6 +200,18 @@ public class Globals {
 
 	public static void setCameraEntity(PhysicsEntity cameraEntity) {
 		Globals.cameraEntity = cameraEntity;
+	}
+
+	public static void setCameraDirection(Vector3d direction) {
+		Globals.cameraDirection = direction;		
+	}
+
+	public static void setActiveCameraID(int i) {
+		Globals.activeCameraID = i;		
+	}
+
+	public static int getActiveCameraID() {
+		return activeCameraID;
 	}
 	
 

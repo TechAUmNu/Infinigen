@@ -136,12 +136,22 @@ public class ShadowRenderer {
 		MatrixHandler depthProjectionMatrix = new MatrixHandler();
 		MatrixHandler depthViewMatrix = new MatrixHandler();
 
-		Vector3f normLightPosition = new Vector3f();
-		light.getPosition().normalise(normLightPosition);
-
-		depthProjectionMatrix.initOrthographicMatrix(-2000, 2000, -2000, 2000, -1000, 1000);
-		depthViewMatrix.lookAt(normLightPosition, new Vector3f(0, 0, 0), new Vector3f(0, 1, 0));
-
+	
+		
+		//Hooray it works!
+		Vector3f cameraPosition = Globals.getCameraPosition();
+		int camera = Globals.getActiveCameraID();
+		System.out.println(camera);
+		if(camera == 1){
+			depthProjectionMatrix.initOrthographicMatrix(-200 - cameraPosition.z, 200 - cameraPosition.z, -200, 200, -200 - cameraPosition.x, 200 - cameraPosition.x);
+		}else{
+		depthProjectionMatrix.initOrthographicMatrix(-500 - cameraPosition.z, 500 - cameraPosition.z, -500, 500, -500 - cameraPosition.x, 500 - cameraPosition.x);
+		}
+		
+	
+		
+		depthViewMatrix.lookAt(light.getPosition().normalise(new Vector3f()), new Vector3f(0,0,0), new Vector3f(0, 1, 0));
+		//depthViewMatrix.setPosition(Globals.getCameraPosition().normalise(new Vector3f()));
 		Matrix4f.mul(depthProjectionMatrix, depthViewMatrix, depthMatrix);
 
 		shader.loadDepthMatrix(depthMatrix);

@@ -112,11 +112,11 @@
 			<systemPath>${project.basedir}/lib/jbullet.jar</systemPath>
 		</dependency>
 		<dependency>
-			<groupId>slick-util</groupId>
-			<artifactId>slick-util</artifactId>
+			<groupId>slick</groupId>
+			<artifactId>slick</artifactId>
 			<scope>system</scope>
 			<version>1.0</version>
-			<systemPath>${project.basedir}/lib/slick-util.jar</systemPath>
+			<systemPath>${project.basedir}/lib/slick.jar</systemPath>
 		</dependency>
 
 		<dependency>

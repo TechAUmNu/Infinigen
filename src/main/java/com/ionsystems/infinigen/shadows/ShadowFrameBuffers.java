@@ -16,8 +16,8 @@ import org.lwjgl.opengl.GL30;
 
 public class ShadowFrameBuffers {
 
-	private static final int DEPTH_WIDTH = 4024;
-	private static final int DEPTH_HEIGHT = 4024;
+	private static final int DEPTH_WIDTH = 16384;
+	private static final int DEPTH_HEIGHT = 16384;
 	private int shadowFrameBuffer;
 	private int shadowDepthTexture;
 

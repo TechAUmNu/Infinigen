@@ -38,20 +38,21 @@ public class GuiElement {
 		this.position = position;
 	}
 
-	public GuiElement(Vector2f position, Vector2f detectionSize, String texture, Loader loader) {
+	public GuiElement(Vector2f position, Vector2f detectionSize,Vector3f texture, Loader loader) {
 		super();
 		this.detectionSize = detectionSize;
-		loadTexture(texture, loader);
-		scale();
+		this.texture = texture;
 		generateModel(position, loader);
 		this.position = position;
 	}
 
-	public GuiElement(Vector2f position, Vector2f size, Vector2f detectionSize, String texture, Loader loader) {
+	public GuiElement(Vector2f position, Vector2f size, Vector2f detectionSize, Vector3f texture, Loader loader) {
 		super();
 		this.detectionSize = detectionSize;
 		this.position = position;
-		loadTexture(texture, loader, size);
+		this.texture = texture;
+		this.texture.x = size.x;
+		this.texture.y = size.y;
 		scale();
 		generateModel(position, loader);
 
