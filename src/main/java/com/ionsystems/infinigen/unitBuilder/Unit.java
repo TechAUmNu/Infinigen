@@ -136,4 +136,15 @@ public class Unit {
 		}
 	}
 	
+	
+	public void makeCenterpoint(){
+		/*this takes in the center and a size in the form XxYxZ
+		 we take the x and if it is evan  make (x -1) / 2
+		 	if odd a just the x of the center by half a cube down and make x/2 above and x/2 - 1 below
+		 	
+		 for y and z tak the existing list and do the above to each point in the list
+		 */
+		
+	}
+	
 }
