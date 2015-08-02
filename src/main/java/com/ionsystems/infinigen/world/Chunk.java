@@ -165,16 +165,16 @@ public class Chunk {
 			}
 		}
 		
-//		PhysicsProcessor processor = Globals.getPhysics().getProcessor();
-//		
-//		if(frontModel != null){
-//			processor.removeRigidBody(frontModel.getBody());
-//			processor.removeRigidBody(backModel.getBody());
-//			processor.removeRigidBody(topModel.getBody());
-//			processor.removeRigidBody(bottomModel.getBody());
-//			processor.removeRigidBody(leftModel.getBody());
-//			processor.removeRigidBody(rightModel.getBody());
-//		}
+		PhysicsProcessor processor = Globals.getPhysics().getProcessor();
+		
+		if(frontModel != null){
+			processor.removeRigidBody(frontModel.getBody());
+			processor.removeRigidBody(backModel.getBody());
+			processor.removeRigidBody(topModel.getBody());
+			processor.removeRigidBody(bottomModel.getBody());
+			processor.removeRigidBody(leftModel.getBody());
+			processor.removeRigidBody(rightModel.getBody());
+		}
 
 						
 		frontModel = front.getModel();
@@ -183,13 +183,13 @@ public class Chunk {
 		bottomModel = bottom.getModel();
 		leftModel = left.getModel();
 		rightModel = right.getModel();
-		
-//		processor.addRigidBody(frontModel.getBody());
-//		processor.addRigidBody(backModel.getBody());
-//		processor.addRigidBody(topModel.getBody());
-//		processor.addRigidBody(bottomModel.getBody());
-//		processor.addRigidBody(leftModel.getBody());
-//		processor.addRigidBody(rightModel.getBody());
+	
+		processor.addRigidBody(frontModel.getBody());
+		processor.addRigidBody(backModel.getBody());
+		processor.addRigidBody(topModel.getBody());
+		processor.addRigidBody(bottomModel.getBody());
+		processor.addRigidBody(leftModel.getBody());
+		processor.addRigidBody(rightModel.getBody());
 		
 
 	}

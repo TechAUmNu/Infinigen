@@ -132,8 +132,13 @@ public class PhysicsProcessor {
 	}
 	
 	public void addRigidBody(RigidBody body){
-		dynamicsWorld.addRigidBody(body);
+		if(body != null){
+			dynamicsWorld.addRigidBody(body);
+			System.out.println("Adding rigidBody " + body);
+		}
 
 	}
+	
+	
 
 }

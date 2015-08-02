@@ -118,6 +118,13 @@
 			<version>1.0</version>
 			<systemPath>${project.basedir}/lib/slick.jar</systemPath>
 		</dependency>
+		<dependency>
+			<groupId>stack-alloc</groupId>
+			<artifactId>stack-alloc</artifactId>
+			<scope>system</scope>
+			<version>1.0</version>
+			<systemPath>${project.basedir}/lib/stack-alloc.jar</systemPath>
+		</dependency>
 
 		<dependency>
 			<groupId>com.sudoplay.joise</groupId>

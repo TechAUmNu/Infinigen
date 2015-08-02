@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
@@ -32,6 +33,8 @@ import org.newdawn.slick.opengl.TextureLoader;
 
 import com.bulletphysics.collision.shapes.BvhTriangleMeshShape;
 import com.bulletphysics.collision.shapes.ConvexHullShape;
+import com.bulletphysics.collision.shapes.IndexedMesh;
+import com.bulletphysics.collision.shapes.ScalarType;
 import com.bulletphysics.collision.shapes.TriangleIndexVertexArray;
 import com.bulletphysics.collision.shapes.TriangleMeshShape;
 import com.bulletphysics.util.ObjectArrayList;
@@ -79,16 +82,30 @@ public class Loader implements IModule {
 		vboIDs.add(storeDataInAttributeList(2, 3, normals));
 		unbindVAO();
 		// Generate a new physics object to represent the model;
-		ObjectArrayList<Vector3f> verticesPhysics = new ObjectArrayList<Vector3f>();
-
-	
+		
+		
+		ByteBuffer ind = ByteBuffer.allocateDirect(indices.length * 4).order(ByteOrder.nativeOrder());
+		ind.asIntBuffer().put(storeDataInIntBuffer(indices));
+		
+		ByteBuffer verts = ByteBuffer.allocateDirect(positions.length * 4).order(ByteOrder.nativeOrder());
+		verts.asFloatBuffer().put(storeDataInFloatBuffer(positions));
+		
+		IndexedMesh indexedMesh = new IndexedMesh();
+		indexedMesh.indexType = ScalarType.INTEGER;
+		indexedMesh.numTriangles = indices.length / 3;
+		indexedMesh.numVertices = vertices.size();
+		indexedMesh.triangleIndexStride = 12;
+		indexedMesh.vertexStride = 4;
+		indexedMesh.triangleIndexBase = ind;
+		indexedMesh.vertexBase = verts;
+		
 		TriangleIndexVertexArray indexVertexArrays = new TriangleIndexVertexArray();
 		
-	
+		indexVertexArrays.addIndexedMesh(indexedMesh, ScalarType.INTEGER);
+		BvhTriangleMeshShape collisionShape = new BvhTriangleMeshShape(indexVertexArrays, true);
+
 		
-		//BvhTriangleMeshShape collisionShape = new BvhTriangleMeshShape(indexVertexArrays, true);
-		
-		return new PhysicsModel(vaoID, vboIDs, indices.length);
+		return new PhysicsModel(vaoID, vboIDs, indices.length, collisionShape);
 	}
 
 	public PhysicsModel loadToVAOWithGeneratedPhysics(float[] positions, List<Vertex> vertices, float[] textureCoords, float[] normals, int[] indices) {

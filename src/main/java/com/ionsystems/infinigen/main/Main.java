@@ -3,31 +3,6 @@ package main.java.com.ionsystems.infinigen.main;
 import java.util.ArrayList;
 import java.util.List;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 import java.util.Set;
 
 import javax.sound.sampled.AudioInputStream;
@@ -91,7 +66,7 @@ public class Main {
 	private ICamera activeCamera;
 	private int activeCameraID;
 	private ThirdPersonCamera thirdPersonCamera;
-	private RTSCamera rtsCamera;	
+	private RTSCamera rtsCamera;
 	private MasterRenderer renderer;
 	private boolean mouse1 = false;
 
@@ -106,15 +81,9 @@ public class Main {
 	private WaterShader waterShader;
 	private WaterRenderer waterRenderer;
 	private List<WaterTile> waters;
-	
+
 	private ShadowFrameBuffers sfbos;
-	
-	
-	
-	
-	
-	
-	
+	private int debugKeyTimer;
 
 	/**
 	 * Main entry point to the game
@@ -151,24 +120,21 @@ public class Main {
 			loadAssets();
 
 			// setUpTerrain();
-			
+
 		}
 		Globals.setLoading(false);
 
 		if (!Globals.isServer()) {
-			
+
 			fbos = new WaterFrameBuffers();
 			waterShader = new WaterShader();
-			waterRenderer = new WaterRenderer(loader, waterShader, renderer.getProjectionMatrix(), fbos);			
-			
+			waterRenderer = new WaterRenderer(loader, waterShader, renderer.getProjectionMatrix(), fbos);
+
 			waters = new ArrayList<WaterTile>();
 			waters.add(new WaterTile(75, -75, 0));
-			
-			
-			
-			
+
 			generateGui();
-			
+
 			while (!Display.isCloseRequested()) {
 
 				update();
@@ -200,11 +166,11 @@ public class Main {
 
 			loader = new Loader();
 			gui = new GuiManager(loader);
-			
+
 			sfbos = new ShadowFrameBuffers();
 			renderer = new MasterRenderer(loader, sfbos);
 			physics = new PhysicsManager();
-			
+
 			lights = new ArrayList<Light>();
 
 			world = new ChunkManager();
@@ -213,10 +179,7 @@ public class Main {
 			text = new TextManager();
 			physics.setUp();
 			Globals.setPhysics(physics);
-
-			
-			
-			
+			Globals.setDebugRendering(false);
 
 			thirdPersonCamera = new ThirdPersonCamera();
 			rtsCamera = new RTSCamera();
@@ -230,15 +193,15 @@ public class Main {
 			loadedModules.add(loader);
 			loadedModules.add(gui);
 			loadedModules.add(renderer);
+			Globals.setRenderer(renderer);
 			loadedModules.add(physics);
-
-			
 
 			// Cameras
 			// loadedModules.add(thirdPersonCamera);
 			loadedModules.add(rtsCamera);
 			activeCameraID = 2;
 			Globals.setActiveCameraID(2);
+			Globals.setActiveCamera(activeCamera);
 			loadedModules.add(picker);
 			loadedModules.add(unitBuilder);
 			loadedModules.add(world);
@@ -247,23 +210,18 @@ public class Main {
 
 			// Add anything to the globals that might be needed elsewhere.
 			Globals.setLoader(loader);
-			//loadAudio();
+			// loadAudio();
 
 			for (IModule module : loadedModules) {
 				module.setUp();
 			}
 		} else {
-			
-		
-		    
-		    
-		   
-			
+
 			loadedModules = new ArrayList<IModule>();
 
 			// loader = new Loader();
 			physics = new PhysicsManager();
-			
+
 			world = new ChunkManager();
 			physics.setUp();
 			Globals.setPhysics(physics);
@@ -278,7 +236,7 @@ public class Main {
 			loadedModules.add(networking);
 
 			// Add anything to the globals that might be needed elsewhere.
-			Globals.setLoader(loader);			
+			Globals.setLoader(loader);
 
 			for (IModule module : loadedModules) {
 				module.setUp();
@@ -288,14 +246,12 @@ public class Main {
 	}
 
 	private void loadAudio() {
-		
-		
-		
+
 		MaryInterface marytts;
 		try {
 			marytts = new LocalMaryInterface();
 			Set<String> voices = marytts.getAvailableVoices();
-			
+
 			marytts.setVoice(voices.iterator().next());
 			AudioInputStream audio = marytts.generateAudio("Hello world.");
 			AudioPlayer player = new AudioPlayer(audio);
@@ -311,33 +267,29 @@ public class Main {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		
+
 		AudioManager.loadWAVAudioFile("stalker.wav");
-		
+
 		AudioManager.playMusic("stalker.wav", 1.0f, 1.0f, false);
-		
+
 	}
 
 	/**
 	 * Put anything to do with loading models etc here
 	 */
 	private void loadAssets() {
-		
-		sun = new Light(new Vector3f(activeCamera.getPosition().x + 5000, 3000,activeCamera.getPosition().z), new Vector3f(1, 1, 1));
+
+		sun = new Light(new Vector3f(activeCamera.getPosition().x + 5000, 3000, activeCamera.getPosition().z), new Vector3f(1, 1, 1));
 		lights.add(sun); // Sun
-		
+
 	}
-
-
-
 
 	/**
 	 * Anything to do with setting up the gui
 	 */
-	private void generateGui() {	
-		gui.addElement(0, 0, sfbos.getDepthTexture());
-		
+	private void generateGui() {
+		//gui.addElement(0, 0, sfbos.getDepthTexture());
+
 	}
 
 	/**
@@ -351,9 +303,9 @@ public class Main {
 		for (IModule module : loadedModules) {
 			module.update();
 		}
-		
-		//sun.setPosition(new Vector3f(activeCamera.getPosition().x + 500, 500,activeCamera.getPosition().z +  500));
-		
+
+		// sun.setPosition(new Vector3f(activeCamera.getPosition().x + 500,
+		// 500,activeCamera.getPosition().z + 500));
 
 	}
 
@@ -390,13 +342,27 @@ public class Main {
 		for (IModule module : loadedModules) {
 			module.process();
 		}
-		
-		while(Keyboard.next()){
-			if(Keyboard.getEventKey() == Keyboard.KEY_P){
-				ChunkManager.loadDistance++;				
-			}
-			if(Keyboard.getEventKey() == Keyboard.KEY_L){
-				ChunkManager.loadDistance--;
+
+		while (Keyboard.next()) {
+			if (!Keyboard.getEventKeyState()) {
+				if (Keyboard.getEventKey() == Keyboard.KEY_P) {
+
+					ChunkManager.loadDistance++;
+				}
+				if (Keyboard.getEventKey() == Keyboard.KEY_L) {
+					ChunkManager.loadDistance--;
+				}
+				if (Keyboard.getEventKey() == Keyboard.KEY_O) {
+
+					if (!Globals.debugRendering()) {
+						Globals.setDebugRendering(true);
+
+					} else {
+						Globals.setDebugRendering(false);
+
+					}
+
+				}
 			}
 		}
 
@@ -408,7 +374,7 @@ public class Main {
 			loadedModules.add(rtsCamera);
 			activeCamera = rtsCamera;
 			activeCameraID = 2;
-			
+
 			keyTimer = keyDelayTime;
 		} else if (activeCameraID == 2) {
 			loadedModules.remove(rtsCamera);
@@ -419,6 +385,7 @@ public class Main {
 		}
 		picker.setCamera(activeCamera);
 		Globals.setActiveCameraID(activeCameraID);
+		Globals.setActiveCamera(activeCamera);
 	}
 
 	/**
@@ -426,7 +393,6 @@ public class Main {
 	 */
 	private void prepareRender() {
 		ArrayList<PhysicsEntity> entitiesToRender = new ArrayList<PhysicsEntity>();
-		
 
 		for (IModule module : loadedModules) {
 			ArrayList<PhysicsEntity> toAdd = module.prepare();
@@ -436,16 +402,11 @@ public class Main {
 		}
 
 		entitiesToRender.addAll(Globals.getEntities());
-		
+
 		for (PhysicsEntity entity : entitiesToRender) {
 			renderer.processEntity(entity);
 		}
-		
-		
-	
-		
-		
-		
+
 	}
 
 	/**
@@ -453,9 +414,7 @@ public class Main {
 	 */
 	private void render() {
 
-		
-		
-		//// Water Setup
+		// // Water Setup
 		GL11.glEnable(GL30.GL_CLIP_DISTANCE0);
 		fbos.bindReflectionFrameBuffer();
 		float distance = 2 * (activeCamera.getPosition().y - 0);
@@ -463,30 +422,27 @@ public class Main {
 		activeCamera.invertPitch();
 		renderer.render(lights, activeCamera, false, new Vector4f(0, 1, 0, 0), sun, false);
 		activeCamera.getPosition().y += distance;
-		activeCamera.invertPitch();		
+		activeCamera.invertPitch();
 		fbos.bindRefractionFrameBuffer();
-		renderer.render(lights, activeCamera, false, new Vector4f(0, -1, 0, 0), sun, false);		
+		renderer.render(lights, activeCamera, false, new Vector4f(0, -1, 0, 0), sun, false);
 		GL11.glDisable(GL30.GL_CLIP_DISTANCE0);
-		fbos.unbindCurrentFrameBuffer();		
-		////
-		
-		
-		
-		/// Main rendering
+		fbos.unbindCurrentFrameBuffer();
+		// //
+
+		// / Main rendering
 		renderer.render(lights, activeCamera, true, new Vector4f(0, 1, 0, 0), sun, true);
-		
-		//WaterRendering
-		//waterRenderer.render(waters, activeCamera);
-		
+
+		// WaterRendering
+		// waterRenderer.render(waters, activeCamera);
+
 		//
 		gui.render();
-		
-		//Test Font rendering
-		text.renderString("Times New Roman", 50, 50, "Hello World");
 
-		// for (IModule module : loadedModules) {
-		// / module.render();
-		// }
+		// Test Font rendering
+
+		for (IModule module : loadedModules) {
+			module.render();
+		}
 	}
 
 	private void cleanUp() {

@@ -16,8 +16,10 @@ import org.lwjgl.util.vector.Vector4f;
 import main.java.com.ionsystems.infinigen.cameras.ICamera;
 import main.java.com.ionsystems.infinigen.entities.Light;
 import main.java.com.ionsystems.infinigen.entities.PhysicsEntity;
+import main.java.com.ionsystems.infinigen.global.Globals;
 import main.java.com.ionsystems.infinigen.global.IModule;
 import main.java.com.ionsystems.infinigen.models.TexturedPhysicsModel;
+import main.java.com.ionsystems.infinigen.physics.PhysicsDebugShader;
 import main.java.com.ionsystems.infinigen.shaders.ChunkShader;
 import main.java.com.ionsystems.infinigen.shaders.StaticShader;
 import main.java.com.ionsystems.infinigen.shadows.ShadowFrameBuffers;
@@ -51,6 +53,9 @@ public class MasterRenderer implements IModule {
 	private Map<TexturedPhysicsModel, List<PhysicsEntity>> entities = new HashMap<TexturedPhysicsModel, List<PhysicsEntity>>();
 	
 	private SkyboxRenderer skyboxRenderer;
+	
+	
+	
 
 	public MasterRenderer(Loader loader, ShadowFrameBuffers sfbos) {
 		//enableCulling();
@@ -60,6 +65,7 @@ public class MasterRenderer implements IModule {
 		terrainRenderer = new WorldRenderer(terrainShader, projectionMatrix);
 		skyboxRenderer = new SkyboxRenderer(loader, projectionMatrix);
 		shadowRenderer = new ShadowRenderer(shadowShader, sfbos);
+		
 	}
 
 	public static void enableCulling() {
@@ -79,6 +85,7 @@ public class MasterRenderer implements IModule {
 		ShadowMap shadowMap = shadowRenderer.getShadowMap();
 		
 		prepareRender();
+		if(!Globals.debugRendering()){
 		shader.start();
 		shader.loadClipPlane(clipPlane);
 		shader.loadSkyColour(RED, GREEN, BLUE);
@@ -97,6 +104,7 @@ public class MasterRenderer implements IModule {
 		skyboxRenderer.render(camera, RED, GREEN, BLUE);	
 		if(clearEntities){
 			entities.clear();
+		}
 		}
 	}
 

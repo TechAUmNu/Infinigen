@@ -197,7 +197,7 @@ public class RenderingFace {
 		
 		
 		PhysicsModel model = Globals.getLoader().loadChunkToVAOWithGeneratedPhysics(positionsArray, vertices,  texturesArray, normalsArray, indiciesArray);
-		//model.generateWorldRigidBody();
+		model.generateWorldRigidBody();
 		return model;
 	}
 	

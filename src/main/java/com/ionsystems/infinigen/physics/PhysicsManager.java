@@ -31,7 +31,7 @@ public class PhysicsManager implements IModule {
 	@Override
 	public void setUp() {
 		processor = new PhysicsProcessor();
-		processor.setUpPhysics(true,true);
+		processor.setUpPhysics(false,true);
 
 	}
 
@@ -43,8 +43,10 @@ public class PhysicsManager implements IModule {
 
 	@Override
 	public void render() {
-		// TODO Auto-generated method stub
-
+		if(Globals.debugRendering()){
+			System.out.println("Rendering Debug World");
+			processor.getDynamicsWorld().debugDrawWorld();
+		}
 	}
 
 	@Override

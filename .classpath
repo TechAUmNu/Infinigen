@@ -22,5 +22,15 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="lib/jbullet.jar"/>
+	<classpathentry kind="lib" path="C:/Infinigen Development Pack/workspace/Infinigen/lib/jbullet.jar" sourcepath="C:/libraries/jbullet-20101010/src">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+			<attribute name="maven.groupId" value="jbullet"/>
+			<attribute name="maven.artifactId" value="jbullet"/>
+			<attribute name="maven.version" value="1.0"/>
+			<attribute name="maven.scope" value="system"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

@@ -141,7 +141,7 @@ public class ShadowRenderer {
 		//Hooray it works!
 		Vector3f cameraPosition = Globals.getCameraPosition();
 		int camera = Globals.getActiveCameraID();
-		System.out.println(camera);
+		
 		if(camera == 1){
 			depthProjectionMatrix.initOrthographicMatrix(-200 - cameraPosition.z, 200 - cameraPosition.z, -200, 200, -200 - cameraPosition.x, 200 - cameraPosition.x);
 		}else{

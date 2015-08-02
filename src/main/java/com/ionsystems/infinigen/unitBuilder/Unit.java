@@ -32,7 +32,7 @@ public class Unit {
 	}
 
 	private void createBaseCube(PhysicsProcessor processor) {
-		PhysicsEntity base = makeBox(10,10,10,0);
+		PhysicsEntity base = makeBox(10,100,10,0);
 		//PhysicsEntity jointTest = makeBox(10,10,20,1);
 		//Generic6DofConstraint binding = BindEntities(base,jointTest,0.0f,2.3f,0.0f);
 		entities.add(base);

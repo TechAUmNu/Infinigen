@@ -9,11 +9,14 @@ import org.lwjgl.util.vector.Vector3f;
 
 import com.bulletphysics.dynamics.RigidBody;
 
+import main.java.com.ionsystems.infinigen.cameras.ICamera;
 import main.java.com.ionsystems.infinigen.entities.PhysicsEntity;
 import main.java.com.ionsystems.infinigen.networking.ChunkData;
+import main.java.com.ionsystems.infinigen.physics.DebugDrawer;
 import main.java.com.ionsystems.infinigen.physics.PhysicsManager;
 import main.java.com.ionsystems.infinigen.physics.PhysicsProcessor;
 import main.java.com.ionsystems.infinigen.rendering.Loader;
+import main.java.com.ionsystems.infinigen.rendering.MasterRenderer;
 import main.java.com.ionsystems.infinigen.world.Chunk;
 
 
@@ -41,6 +44,9 @@ public class Globals {
 	private static PhysicsEntity cameraEntity;
 	private static Vector3d cameraDirection;
 	private static int activeCameraID;
+	private static boolean debugRendering;
+	private static MasterRenderer renderer;
+	private static ICamera activeCamera;
 	
 	
 	
@@ -212,6 +218,38 @@ public class Globals {
 
 	public static int getActiveCameraID() {
 		return activeCameraID;
+	}
+
+	public static boolean debugRendering() {
+		return debugRendering;
+	}
+
+	public static void setDebugRendering(boolean debugRendering) {
+		Globals.debugRendering = debugRendering;
+		
+		if(debugRendering){
+			if(Globals.getPhysics().getProcessor().getDynamicsWorld().getDebugDrawer() == null){
+				DebugDrawer drawer = new DebugDrawer();
+				Globals.getPhysics().getProcessor().getDynamicsWorld().setDebugDrawer(drawer);	
+			}
+		}
+	}
+
+	public static void setRenderer(MasterRenderer renderer) {
+		Globals.renderer = renderer;		
+	}
+
+	public static MasterRenderer getRenderer() {
+		return renderer;
+	}
+
+	public static void setActiveCamera(ICamera activeCamera) {
+		Globals.activeCamera = activeCamera;
+		
+	}
+
+	public static ICamera getActiveCamera() {
+		return activeCamera;
 	}
 	
 
