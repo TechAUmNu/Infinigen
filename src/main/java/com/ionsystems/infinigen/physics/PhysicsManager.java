@@ -31,7 +31,7 @@ public class PhysicsManager implements IModule {
 	@Override
 	public void setUp() {
 		processor = new PhysicsProcessor();
-		processor.setUpPhysics(false,true);
+		processor.setUpPhysics(true,true);
 
 	}
 
