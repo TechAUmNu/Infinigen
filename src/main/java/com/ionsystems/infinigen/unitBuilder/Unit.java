@@ -56,7 +56,7 @@ public class Unit {
 	}
 	
 	public PhysicsEntity makeBox(float x, float y , float z, int mass){
-		PhysicsModel pmodel = OBJFileLoader.loadOBJtoVAOWithGeneratedPhysics("box", Globals.getLoader());
+		PhysicsModel pmodel = OBJFileLoader.loadOBJtoVAOWithGeneratedPhysics("cube2x2", Globals.getLoader());
 		TexturedPhysicsModel boxModel = new TexturedPhysicsModel(pmodel, new ModelTexture(Globals.getLoader().loadTexture("box")));
 		PhysicsEntity store = new PhysicsEntity(boxModel, new Vector3f(x, y, z), 0, 0, 0, 1, mass, processor, 1, 1, 1);
 		for(LocationID i : store.gridPoints){
