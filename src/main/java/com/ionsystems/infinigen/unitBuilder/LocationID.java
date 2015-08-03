@@ -17,12 +17,12 @@ public class LocationID {
 
 	@Override
 	public int hashCode() {
-	final int prime = 31;
-	int result = 1;
-	result = prime * result + Float.floatToIntBits(x);
-	result = prime * result + Float.floatToIntBits(y);
-	result = prime * result + Float.floatToIntBits(z);
-	return result;
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + Float.floatToIntBits(x);
+		result = prime * result + Float.floatToIntBits(y);
+		result = prime * result + Float.floatToIntBits(z);
+		return result;
 	}
 
 
@@ -38,13 +38,13 @@ public class LocationID {
 			return false;
 		}
 		LocationID other = (LocationID) obj;
-		if (x != other.x) {
+		if (Float.floatToIntBits(x) != Float.floatToIntBits(other.x)) {
 			return false;
 		}
-		if (y != other.y) {
+		if (Float.floatToIntBits(y) != Float.floatToIntBits(other.y)) {
 			return false;
 		}
-		if (z != other.z) {
+		if (Float.floatToIntBits(z) != Float.floatToIntBits(other.z)) {
 			return false;
 		}
 		return true;

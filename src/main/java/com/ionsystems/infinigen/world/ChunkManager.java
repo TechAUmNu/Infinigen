@@ -163,7 +163,7 @@ public class ChunkManager implements IModule {
 		ac.setSource(gen); // set source (can usually be either another Module
 							// or a
 							// double value; see specific module for details)
-		ac.setRange(0.0f, 32.0f); // set the range to auto-correct to
+		ac.setRange(0.0f, chunkSize); // set the range to auto-correct to
 		ac.setSamples(10000); // set how many samples to take
 		ac.calculate(); // perform the caclulations
 
