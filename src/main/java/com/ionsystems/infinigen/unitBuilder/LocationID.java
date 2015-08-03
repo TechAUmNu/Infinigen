@@ -7,23 +7,24 @@ package main.java.com.ionsystems.infinigen.unitBuilder;
  *
  */
 public class LocationID {
-	public int x, y, z;
+	public float x, y, z;
 
-	public LocationID(int x, int y, int z) {
-		this.x = x;
-		this.y = y;
-		this.z = z;
+	public LocationID(float x2, float y2, float z2) {
+		this.x = x2;
+		this.y = y2;
+		this.z = z2;
 	}
 
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + x;
-		result = prime * result + y;
-		result = prime * result + z;
-		return result;
+	final int prime = 31;
+	int result = 1;
+	result = prime * result + Float.floatToIntBits(x);
+	result = prime * result + Float.floatToIntBits(y);
+	result = prime * result + Float.floatToIntBits(z);
+	return result;
 	}
+
 
 	@Override
 	public boolean equals(Object obj) {

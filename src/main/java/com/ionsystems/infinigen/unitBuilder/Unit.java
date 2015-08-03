@@ -1,6 +1,7 @@
 package main.java.com.ionsystems.infinigen.unitBuilder;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import main.java.com.ionsystems.infinigen.entities.PhysicsEntity;
@@ -23,6 +24,8 @@ public class Unit {
 	List<PhysicsEntity> entities;
 	List<TypedConstraint> joints;
 	private PhysicsProcessor processor;
+	private HashMap<LocationID,PhysicsEntity> points = new HashMap<>();
+
 	
 	public void setup(PhysicsProcessor processor) {
 		entities = new ArrayList<PhysicsEntity>();
@@ -55,7 +58,11 @@ public class Unit {
 	public PhysicsEntity makeBox(float x, float y , float z, int mass){
 		PhysicsModel pmodel = OBJFileLoader.loadOBJtoVAOWithGeneratedPhysics("box", Globals.getLoader());
 		TexturedPhysicsModel boxModel = new TexturedPhysicsModel(pmodel, new ModelTexture(Globals.getLoader().loadTexture("box")));
-		return new PhysicsEntity(boxModel, new Vector3f(x, y, z), 0, 0, 0, 1, mass, processor);
+		PhysicsEntity store = new PhysicsEntity(boxModel, new Vector3f(x, y, z), 0, 0, 0, 1, mass, processor, 1, 1, 1);
+		for(LocationID i : store.gridPoints){
+			points.put(i,store);
+		}
+		return store;
 	}
 	
 	public Generic6DofConstraint BindEntities(PhysicsEntity entity1, PhysicsEntity entity2, float x, float y , float z){
@@ -87,20 +94,15 @@ public class Unit {
 		}
 	}
 	
+	
 	public boolean spaceOcupied(float x,float y,float z){ //check if a space is ocupied
-		javax.vecmath.Vector3f lock = new javax.vecmath.Vector3f((float)x,(float)y,(float)z);
-		for(PhysicsEntity i: entities){
-			if(i.getPosition().x == lock.x && i.getPosition().y == lock.y && i.getPosition().z == lock.z)return true;
-		}
-		return false;
+		LocationID store = new LocationID(x,y,z);
+		return points.containsKey(store);
 	}
 	
-	public PhysicsEntity getBoxAt(float x,float y,float z){ //check if a space is ocupied
-		javax.vecmath.Vector3f lock = new javax.vecmath.Vector3f((float)x,(float)y,(float)z);
-		for(PhysicsEntity i: entities){
-			if(i.getPosition().x == lock.x && i.getPosition().y == lock.y && i.getPosition().z == lock.z)return i;
-		}
-		return null;
+	public PhysicsEntity getBoxAt(float x,float y,float z){
+		LocationID store = new LocationID(x,y,z);
+		return points.get(store);
 	}
 	
 	public void printJoints(){ 
@@ -134,17 +136,6 @@ public class Unit {
 			
 			processor.addPhysicsEntity(i);
 		}
-	}
-	
-	
-	public void makeCenterpoint(){
-		/*this takes in the center and a size in the form XxYxZ
-		 we take the x and if it is evan  make (x -1) / 2
-		 	if odd a just the x of the center by half a cube down and make x/2 above and x/2 - 1 below
-		 	
-		 for y and z tak the existing list and do the above to each point in the list
-		 */
-		
 	}
 	
 }
