@@ -47,7 +47,7 @@ public class UnitBuilderManager implements IModule {
 
 		PhysicsModel pmodel = OBJFileLoader.loadOBJtoVAOWithGeneratedPhysics("box", Globals.getLoader());
 		boxModel = new TexturedPhysicsModel(pmodel, new ModelTexture(Globals.getLoader().loadTexture("box")));
-
+		Globals.setPlacementOffset((float) 2.5);
 	}
 
 	@Override
@@ -150,7 +150,7 @@ public class UnitBuilderManager implements IModule {
 					}
 					javax.vecmath.Vector3f offsets = new javax.vecmath.Vector3f(xOffset, yOffset, zOffset);
 					//System.out.println(offsets);
-					float placementOffset = (float) 2.5;
+					float placementOffset = Globals.getPlacementOffset();
 					float newPositionx =  (positionBody.x + xOffset * placementOffset);
 					float newPositiony =  (positionBody.y + yOffset * placementOffset);
 					float newPositionz =  (positionBody.z + zOffset * placementOffset);

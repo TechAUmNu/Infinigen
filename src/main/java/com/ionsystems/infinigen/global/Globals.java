@@ -49,7 +49,7 @@ public class Globals {
 	private static ICamera activeCamera;
 	
 	
-	
+	private static float placementOffset;
 	
 
 	// //////////////////////////////////////////////////////////////////////////////////////
@@ -252,7 +252,14 @@ public class Globals {
 		return activeCamera;
 	}
 	
+	public static void setPlacementOffset(float placementOffset) {
+		Globals.placementOffset = placementOffset;
+		
+	}
 
+	public static float getPlacementOffset() {
+		return placementOffset;
+	}
 	
 	
 }
