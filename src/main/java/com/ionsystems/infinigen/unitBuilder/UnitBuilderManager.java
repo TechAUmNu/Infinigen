@@ -13,6 +13,7 @@ import com.bulletphysics.dynamics.RigidBody;
 import main.java.com.ionsystems.infinigen.entities.PhysicsEntity;
 import main.java.com.ionsystems.infinigen.global.Globals;
 import main.java.com.ionsystems.infinigen.global.IModule;
+import main.java.com.ionsystems.infinigen.global.Units;
 import main.java.com.ionsystems.infinigen.models.PhysicsModel;
 import main.java.com.ionsystems.infinigen.models.TexturedPhysicsModel;
 import main.java.com.ionsystems.infinigen.objConverter.OBJFileLoader;
@@ -213,6 +214,7 @@ public class UnitBuilderManager implements IModule {
 		if(Keyboard.isKeyDown(Keyboard.KEY_Q)){
 			System.out.print("woops");
 			Unit cloneTest = unit.Clone(0, 10, 0);
+			Units.addUnit(cloneTest);
 			//cloneTest.makeMass();
 		}
 	}

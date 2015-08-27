@@ -21,6 +21,7 @@ import com.bulletphysics.linearmath.Transform;
 
 public class Unit {
 
+	private String name;
 	List<PhysicsEntity> entities;
 	List<TypedConstraint> joints;
 	private PhysicsProcessor processor;
@@ -141,6 +142,10 @@ public class Unit {
 			
 		}		
 		System.out.println(newUnit.entities.size());
+		
+		
+		//Must make a name for the Units manager so make a temporary one here
+		newUnit.setName("ClonedUnit");
 		return newUnit;
 	}
 	
@@ -158,6 +163,14 @@ public class Unit {
 			
 			processor.addPhysicsEntity(i);
 		}
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 	
 }

@@ -82,11 +82,16 @@ public class ModelLoaderManager implements IModule{
 		}
 		
 		
-		//Load them		
+		//Load them	and the associated textures.
+		
 		for(ModelFile m : modelFiles){
 			//System.out.println(m.getFilePath());
-			//System.out.println(m.getFolder() + "/" + m.getSpawnName());			
-			Globals.addLoadedPhysicsModel(m.getFolder() +"/"+ m.getSpawnName(), OBJFileLoader.loadOBJtoVAOWithGeneratedPhysics(m.getFilePath()));			
+			//System.out.println(m.getFolder() + "/" + m.getSpawnName());	
+			PhysicsModel model = OBJFileLoader.loadOBJtoVAOWithGeneratedPhysics(m.getFilePath());
+			String texture = model.getTexture();
+			Globals.getLoader().loadTexture(texture); //This just loads the texture now so we get the error on startup
+													  //saying the texture is missing rather than halfway through a game
+			Globals.addLoadedPhysicsModel(m.getFolder() +"/"+ m.getSpawnName(), model);			
 		}
 	}
 

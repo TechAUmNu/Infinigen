@@ -14,6 +14,7 @@ import main.java.com.ionsystems.infinigen.entities.Light;
 import main.java.com.ionsystems.infinigen.entities.PhysicsEntity;
 import main.java.com.ionsystems.infinigen.global.Globals;
 import main.java.com.ionsystems.infinigen.global.IModule;
+import main.java.com.ionsystems.infinigen.global.Units;
 import main.java.com.ionsystems.infinigen.gui.GuiManager;
 import main.java.com.ionsystems.infinigen.modelLoader.ModelLoaderManager;
 import main.java.com.ionsystems.infinigen.networking.NetworkingManager;
@@ -405,6 +406,7 @@ public class Main {
 		}
 
 		entitiesToRender.addAll(Globals.getEntities());
+		entitiesToRender.addAll(Units.getEntities());
 
 		for (PhysicsEntity entity : entitiesToRender) {
 			renderer.processEntity(entity);
