@@ -1,5 +1,6 @@
 package main.java.com.ionsystems.infinigen.rendering;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -7,14 +8,18 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Stream;
 
 import javax.vecmath.Vector3f;
 
 import main.java.com.ionsystems.infinigen.entities.PhysicsEntity;
 import main.java.com.ionsystems.infinigen.global.IModule;
+import main.java.com.ionsystems.infinigen.modelLoader.ModelFile;
 import main.java.com.ionsystems.infinigen.models.PhysicsModel;
 import main.java.com.ionsystems.infinigen.models.RawModel;
 import main.java.com.ionsystems.infinigen.objConverter.Vertex;
@@ -82,14 +87,13 @@ public class Loader implements IModule {
 		vboIDs.add(storeDataInAttributeList(2, 3, normals));
 		unbindVAO();
 		// Generate a new physics object to represent the model;
-		
-		
+
 		ByteBuffer ind = ByteBuffer.allocateDirect(indices.length * 4).order(ByteOrder.nativeOrder());
 		ind.asIntBuffer().put(storeDataInIntBuffer(indices));
-		
+
 		ByteBuffer verts = ByteBuffer.allocateDirect(positions.length * 4).order(ByteOrder.nativeOrder());
 		verts.asFloatBuffer().put(storeDataInFloatBuffer(positions));
-		
+
 		IndexedMesh indexedMesh = new IndexedMesh();
 		indexedMesh.indexType = ScalarType.INTEGER;
 		indexedMesh.numTriangles = indices.length / 3;
@@ -98,17 +102,17 @@ public class Loader implements IModule {
 		indexedMesh.vertexStride = 4;
 		indexedMesh.triangleIndexBase = ind;
 		indexedMesh.vertexBase = verts;
-		
+
 		TriangleIndexVertexArray indexVertexArrays = new TriangleIndexVertexArray();
-		
+
 		indexVertexArrays.addIndexedMesh(indexedMesh, ScalarType.INTEGER);
 		BvhTriangleMeshShape collisionShape = new BvhTriangleMeshShape(indexVertexArrays, true);
 
-		
 		return new PhysicsModel(vaoID, vboIDs, indices.length, collisionShape);
 	}
 
-	public PhysicsModel loadToVAOWithGeneratedPhysics(float[] positions, List<Vertex> vertices, float[] textureCoords, float[] normals, int[] indices) {
+	public PhysicsModel loadToVAOWithGeneratedPhysics(float[] positions, List<Vertex> vertices, float[] textureCoords, float[] normals, int[] indices,
+			String objFile) {
 		int vaoID = createVAO();
 		ArrayList<Integer> vboIDs = new ArrayList<Integer>();
 		vboIDs.add(bindIndicesBuffer(indices));
@@ -129,7 +133,50 @@ public class Loader implements IModule {
 		ConvexHullShape collisionShape = new ConvexHullShape(verticesPhysics);
 		// Now simplify the shape to speed up physics
 		ConvexHullShape simplifiedShape = PhysicsUtils.simplifyConvexShape(collisionShape);
-		return new PhysicsModel(vaoID, vboIDs, indices.length, simplifiedShape);
+
+		PhysicsModel model = new PhysicsModel(vaoID, vboIDs, indices.length, simplifiedShape);
+
+		// Add the model parameters
+		try (Stream<String> lines = Files.lines(new File(objFile + ".imo").toPath(), StandardCharsets.UTF_8)) {
+			for (String line : (Iterable<String>) lines::iterator) {
+				System.out.println(line);
+				String[] splitLine = line.split("=");
+				String parameterName = splitLine[0];
+				String parameterValue = splitLine[1];
+				switch (parameterName) {
+				case "name":
+					model.setName(parameterValue);
+					break;
+				case "description":
+					model.setDescription(parameterValue);
+					break;
+				case "sizex":
+					model.setSizeX(Float.parseFloat(parameterValue));
+					break;
+				case "sizey":
+					model.setSizeY(Float.parseFloat(parameterValue));
+					break;
+				case "sizez":
+					model.setSizeZ(Float.parseFloat(parameterValue));
+					break;
+				case "scale":
+					model.setScale(Float.parseFloat(parameterValue));
+					break;
+				case "mass":
+					model.setMass(Float.parseFloat(parameterValue));
+					break;
+				case "texture":
+					model.setTexture(parameterValue);
+					break;
+				}
+
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return model;
 	}
 
 	public RawModel loadToVAO(float[] positions, int dimensions) {

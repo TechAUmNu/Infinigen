@@ -39,14 +39,14 @@ public class EntityRenderer {
 			List<PhysicsEntity> batch = entities.get(model);
 			for (PhysicsEntity entity : batch) {
 				prepareInstance(entity);
-				GL11.glDrawElements(GL11.GL_TRIANGLES, model.getRawModel().getVertexCount(), GL11.GL_UNSIGNED_INT, 0);
+				GL11.glDrawElements(GL11.GL_TRIANGLES, model.getPhysicsModel().getVertexCount(), GL11.GL_UNSIGNED_INT, 0);
 			}
 			unbindTexturedModel();
 		}
 	}
 
 	private void prepareTexturedModel(TexturedModel model) {
-		RawModel rawModel = model.getRawModel();
+		RawModel rawModel = model.getPhysicsModel();
 		GL30.glBindVertexArray(rawModel.getVaoID());
 		GL20.glEnableVertexAttribArray(0);
 		GL20.glEnableVertexAttribArray(1);

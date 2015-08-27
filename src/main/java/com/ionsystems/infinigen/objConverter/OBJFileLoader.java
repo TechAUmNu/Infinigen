@@ -12,22 +12,23 @@ import java.util.List;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
+import main.java.com.ionsystems.infinigen.global.Globals;
 import main.java.com.ionsystems.infinigen.models.PhysicsModel;
 import main.java.com.ionsystems.infinigen.models.RawModel;
 import main.java.com.ionsystems.infinigen.rendering.Loader;
 
 public class OBJFileLoader {
 
-	private static final String RES_LOC = "res/models/";
-	private static HashMap<String, PhysicsModel> loadedPhysicsModels = new HashMap<String, PhysicsModel>();
+	
+	
 
 	public static ModelData loadOBJ(String objFileName) {
 		FileReader isr = null;
-		File objFile = new File(RES_LOC + objFileName + ".obj");
+		File objFile = new File(objFileName + ".obj");
 		try {
 			isr = new FileReader(objFile);
 		} catch (FileNotFoundException e) {
-			System.err.println("File not found in res; don't use any extention");
+			System.err.println(e.getMessage());
 		}
 		BufferedReader reader = new BufferedReader(isr);
 		String line;
@@ -70,7 +71,7 @@ public class OBJFileLoader {
 			}
 			reader.close();
 		} catch (IOException e) {
-			System.err.println("Error reading the file");
+			System.err.println("Error reading the file: " + e.getMessage());
 		}
 		removeUnusedVertices(vertices);
 		float[] verticesArray = new float[vertices.size() * 3];
@@ -87,16 +88,19 @@ public class OBJFileLoader {
 		return loader.loadToVAO(model.getVertices(), model.getTextureCoords(), model.getNormals(), model.getIndices());
 	}
 
-	public static PhysicsModel loadOBJtoVAOWithGeneratedPhysics(String objFile, Loader loader) {
+	
+	/**
+	 * This Method should only be called from ModelLoader.
+	 * @param objFile
+	 * @return 
+	 */
+	public static PhysicsModel loadOBJtoVAOWithGeneratedPhysics(String objFile) {
 
-		if (loadedPhysicsModels.containsKey(objFile)) {
-			return loadedPhysicsModels.get(objFile);
-		}
 		System.out.println("Loading model: " + objFile);
 		ModelData model = loadOBJ(objFile);
-		PhysicsModel m = loader.loadToVAOWithGeneratedPhysics(model.getVertices(), model.getVerticesList(), model.getTextureCoords(), model.getNormals(),
-				model.getIndices());
-		loadedPhysicsModels.put(objFile, m);
+		PhysicsModel m = Globals.getLoader().loadToVAOWithGeneratedPhysics(model.getVertices(), model.getVerticesList(), model.getTextureCoords(), model.getNormals(),
+				model.getIndices(), objFile);
+		
 
 		return m;
 

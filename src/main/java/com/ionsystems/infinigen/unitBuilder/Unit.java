@@ -62,9 +62,10 @@ public class Unit {
 	}
 	
 	public PhysicsEntity makeBox(float x, float y , float z, int mass){
-		PhysicsModel pmodel = OBJFileLoader.loadOBJtoVAOWithGeneratedPhysics("cube1x1", Globals.getLoader());
-		TexturedPhysicsModel boxModel = new TexturedPhysicsModel(pmodel, new ModelTexture(Globals.getLoader().loadTexture("box")));
-		PhysicsEntity store = new PhysicsEntity(boxModel, new Vector3f(x, y, z), 0, 0, 0, 1, mass, processor, 1, 1, 1);
+		
+		TexturedPhysicsModel boxModel = Globals.getTexturedModel("base/cube1x1");
+		PhysicsEntity store = new PhysicsEntity(boxModel, new Vector3f(x, y, z), 0, 0, 0, boxModel.getPhysicsModel().getScale(), mass, processor, 1, 1, 1);
+
 		for(LocationID i : store.gridPoints){
 			points.put(i,store);
 		}
@@ -151,8 +152,8 @@ public class Unit {
 			processor.removePhysicsEntity(i);
 			
 			javax.vecmath.Vector3f inertia = new javax.vecmath.Vector3f(0f,0f,0f);;
-			i.getBody().getCollisionShape().calculateLocalInertia(1, inertia);
-			i.getBody().setMassProps(1, inertia);
+			i.getBody().getCollisionShape().calculateLocalInertia(i.getModel().getPhysicsModel().getMass(), inertia);
+			i.getBody().setMassProps(i.getModel().getPhysicsModel().getMass(), inertia);
 			System.out.println(i.getBody().getInvMass());
 			
 			processor.addPhysicsEntity(i);

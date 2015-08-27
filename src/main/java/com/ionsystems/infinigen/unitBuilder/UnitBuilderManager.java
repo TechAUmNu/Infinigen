@@ -45,7 +45,7 @@ public class UnitBuilderManager implements IModule {
 		unit.setup(Globals.getPhysics().getProcessor());
 		area = new ConstructionArea(unit);
 
-		PhysicsModel pmodel = OBJFileLoader.loadOBJtoVAOWithGeneratedPhysics("box", Globals.getLoader());
+		PhysicsModel pmodel = Globals.getModel("base/cube1x1");
 		boxModel = new TexturedPhysicsModel(pmodel, new ModelTexture(Globals.getLoader().loadTexture("box")));
 		Globals.setPlacementOffset((float) 2.5);
 	}

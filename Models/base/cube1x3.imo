@@ -1,0 +1,8 @@
+name=cube1x3
+description=A simple 1x3 cube
+sizex=1
+sizey=3
+sizez=1
+scale=1
+mass=3
+texture=cube

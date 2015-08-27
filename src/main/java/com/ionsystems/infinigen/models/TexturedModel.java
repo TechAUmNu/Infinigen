@@ -10,16 +10,16 @@ public class TexturedModel implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = 7077715080759594243L;
-	private RawModel rawModel;
+	private PhysicsModel physicsModel;
 	private ModelTexture texture;
 
-	public TexturedModel(RawModel model, ModelTexture texture) {
-		this.rawModel = model;
+	public TexturedModel(PhysicsModel physicsModel, ModelTexture texture) {
+		this.physicsModel = physicsModel;
 		this.texture = texture;
 	}
 
-	public RawModel getRawModel() {
-		return rawModel;
+	public PhysicsModel getPhysicsModel() {
+		return physicsModel;
 	}
 
 	public ModelTexture getTexture() {
