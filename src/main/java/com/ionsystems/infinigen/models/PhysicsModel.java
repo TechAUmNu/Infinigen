@@ -24,6 +24,85 @@ public class PhysicsModel extends RawModel implements Serializable {
 	private static final long serialVersionUID = 6033176731940245791L;
 	private CollisionShape collisionShape;
 	private RigidBody body;
+	private String name, description, texture;
+	private float sizeX, sizeY, sizeZ, scale, mass;
+	
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public String getTexture() {
+		return texture;
+	}
+
+	public void setTexture(String texture) {
+		this.texture = texture;
+	}
+
+	public float getSizeX() {
+		return sizeX;
+	}
+
+	public void setSizeX(float sizeX) {
+		this.sizeX = sizeX;
+	}
+
+	public float getSizeY() {
+		return sizeY;
+	}
+
+	public void setSizeY(float sizeY) {
+		this.sizeY = sizeY;
+	}
+
+	public float getSizeZ() {
+		return sizeZ;
+	}
+
+	public void setSizeZ(float sizeZ) {
+		this.sizeZ = sizeZ;
+	}
+
+	public float getScale() {
+		return scale;
+	}
+
+	public void setScale(float scale) {
+		this.scale = scale;
+	}
+
+	public float getMass() {
+		return mass;
+	}
+
+	public void setMass(float mass) {
+		this.mass = mass;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+
+	public void setCollisionShape(CollisionShape collisionShape) {
+		this.collisionShape = collisionShape;
+	}
+
+	public void setBody(RigidBody body) {
+		this.body = body;
+	}
 
 	public PhysicsModel(int vaoID, ArrayList<Integer> vboIDs, int vertexCount, CollisionShape cs) {
 		super(vaoID, vboIDs, vertexCount);

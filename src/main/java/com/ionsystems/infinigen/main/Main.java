@@ -2,7 +2,6 @@ package main.java.com.ionsystems.infinigen.main;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import java.util.Set;
 
 import javax.sound.sampled.AudioInputStream;
@@ -16,6 +15,7 @@ import main.java.com.ionsystems.infinigen.entities.PhysicsEntity;
 import main.java.com.ionsystems.infinigen.global.Globals;
 import main.java.com.ionsystems.infinigen.global.IModule;
 import main.java.com.ionsystems.infinigen.gui.GuiManager;
+import main.java.com.ionsystems.infinigen.modelLoader.ModelLoaderManager;
 import main.java.com.ionsystems.infinigen.networking.NetworkingManager;
 import main.java.com.ionsystems.infinigen.physics.PhysicsManager;
 import main.java.com.ionsystems.infinigen.rendering.DisplayManager;
@@ -69,6 +69,7 @@ public class Main {
 	private RTSCamera rtsCamera;
 	private MasterRenderer renderer;
 	private boolean mouse1 = false;
+	private ModelLoaderManager modelLoader;
 
 	private List<Light> lights;
 	private Light sun;
@@ -164,6 +165,7 @@ public class Main {
 
 			loadedModules = new ArrayList<IModule>();
 
+			modelLoader = new ModelLoaderManager();
 			loader = new Loader();
 			gui = new GuiManager(loader);
 
@@ -190,6 +192,7 @@ public class Main {
 			networking = new NetworkingManager();
 
 			// Core modules
+			loadedModules.add(modelLoader);
 			loadedModules.add(loader);
 			loadedModules.add(gui);
 			loadedModules.add(renderer);

@@ -1,0 +1,8 @@
+name=cube2x2
+description=A simple 2x2 cube
+sizex=2
+sizey=2
+sizez=1
+scale=1
+mass=4
+texture=cube

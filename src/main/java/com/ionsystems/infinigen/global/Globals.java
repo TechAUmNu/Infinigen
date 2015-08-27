@@ -1,6 +1,7 @@
 package main.java.com.ionsystems.infinigen.global;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.vecmath.Vector3d;
@@ -11,12 +12,15 @@ import com.bulletphysics.dynamics.RigidBody;
 
 import main.java.com.ionsystems.infinigen.cameras.ICamera;
 import main.java.com.ionsystems.infinigen.entities.PhysicsEntity;
+import main.java.com.ionsystems.infinigen.models.PhysicsModel;
+import main.java.com.ionsystems.infinigen.models.TexturedPhysicsModel;
 import main.java.com.ionsystems.infinigen.networking.ChunkData;
 import main.java.com.ionsystems.infinigen.physics.DebugDrawer;
 import main.java.com.ionsystems.infinigen.physics.PhysicsManager;
 import main.java.com.ionsystems.infinigen.physics.PhysicsProcessor;
 import main.java.com.ionsystems.infinigen.rendering.Loader;
 import main.java.com.ionsystems.infinigen.rendering.MasterRenderer;
+import main.java.com.ionsystems.infinigen.textures.ModelTexture;
 import main.java.com.ionsystems.infinigen.world.Chunk;
 
 
@@ -38,6 +42,9 @@ public class Globals {
 	private static PhysicsManager physics;
 	private static ArrayList<PhysicsEntity> newEntities = new ArrayList<PhysicsEntity>();
 	private static ArrayList<PhysicsEntity> entities = new ArrayList<PhysicsEntity>();
+	
+	private static HashMap<String, PhysicsModel> loadedPhysicsModels = new HashMap<String, PhysicsModel>();
+	
 	private static int rigidBodyID = 35;
 	private static int clientID = 0;
 	
@@ -259,6 +266,28 @@ public class Globals {
 
 	public static float getPlacementOffset() {
 		return placementOffset;
+	}
+	
+	public static boolean isModelLoaded(String name) {
+		return loadedPhysicsModels.containsKey(name);
+	}
+	
+	public static PhysicsModel getModel(String name){
+		return loadedPhysicsModels.get(name);
+	}
+
+	public static void addLoadedPhysicsModel(String name, PhysicsModel model) {
+		Globals.loadedPhysicsModels.put(name, model);
+	}
+
+	public static TexturedPhysicsModel getModelWithTexture(String model, String texture) {
+		return new TexturedPhysicsModel(Globals.getModel(model), new ModelTexture(Globals.getLoader().loadTexture(texture)));
+		
+	}
+	
+	public static TexturedPhysicsModel getTexturedModel(String model) {
+		return new TexturedPhysicsModel(Globals.getModel(model), new ModelTexture(Globals.getLoader().loadTexture(Globals.getModel(model).getTexture())));
+		
 	}
 	
 	
