@@ -58,7 +58,7 @@ public class Unit {
 	public PhysicsEntity makeBox(float x, float y , float z, int mass){
 		
 		TexturedPhysicsModel boxModel = Globals.getTexturedModel("base/cube1x1");
-		PhysicsEntity store = new PhysicsEntity(boxModel, new Vector3f(x, y, z), 0, 0, 0, boxModel.getPhysicsModel().getScale(), 0, processor, 1, 1, 1);
+		PhysicsEntity store = new PhysicsEntity(boxModel, new Vector3f(x, y, z), 0, 0, 0, boxModel.getPhysicsModel().getScale(), mass, processor, 1, 1, 1);
 		for(LocationID i : store.gridPoints){
 			points.put(i,store);
 		}
