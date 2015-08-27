@@ -212,7 +212,8 @@ public class UnitBuilderManager implements IModule {
 		cameraSwitchTimer--;
 		if(Keyboard.isKeyDown(Keyboard.KEY_Q)){
 			System.out.print("woops");
-			unit.makeMass();
+			Unit cloneTest = unit.Clone(0, 10, 0);
+			//cloneTest.makeMass();
 		}
 	}
 

@@ -110,7 +110,7 @@ public class PhysicsEntity extends Entity implements Serializable {
 				
 			}
 			else{ //odd
-				
+				int itirations = (xScale - 1) /2;
 			}
 		}
 		

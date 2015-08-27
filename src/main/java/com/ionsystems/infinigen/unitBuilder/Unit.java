@@ -33,6 +33,12 @@ public class Unit {
 		this.processor = processor;
 		createBaseCube(processor);
 	}
+	
+	public void setupClone(PhysicsProcessor processor) {
+		entities = new ArrayList<PhysicsEntity>();
+		joints = new ArrayList<TypedConstraint>();
+		this.processor = processor;
+	}
 
 	private void createBaseCube(PhysicsProcessor processor) {
 		PhysicsEntity base = makeBox(10,100,10,0);
@@ -56,7 +62,7 @@ public class Unit {
 	}
 	
 	public PhysicsEntity makeBox(float x, float y , float z, int mass){
-		PhysicsModel pmodel = OBJFileLoader.loadOBJtoVAOWithGeneratedPhysics("cube2x2", Globals.getLoader());
+		PhysicsModel pmodel = OBJFileLoader.loadOBJtoVAOWithGeneratedPhysics("cube1x1", Globals.getLoader());
 		TexturedPhysicsModel boxModel = new TexturedPhysicsModel(pmodel, new ModelTexture(Globals.getLoader().loadTexture("box")));
 		PhysicsEntity store = new PhysicsEntity(boxModel, new Vector3f(x, y, z), 0, 0, 0, 1, mass, processor, 1, 1, 1);
 		for(LocationID i : store.gridPoints){
@@ -122,6 +128,21 @@ public class Unit {
 	}
 	
 
+	public Unit Clone(float x, float y, float z){
+		Unit newUnit = new Unit();
+		newUnit.setupClone(Globals.getPhysics().getProcessor());
+		System.out.println(entities.size());
+		for(PhysicsEntity i: entities){
+			PhysicsEntity newBox = makeBox(i.getPosition().x + x, i.getPosition().y + y, i.getPosition().z + z, 0);
+			System.out.println(i.getPosition().x + " " + i.getPosition().y  + " " + i.getPosition().z);
+			System.out.println(newBox.getPosition().x + " " + newBox.getPosition().y  + " " + newBox.getPosition().z);
+			newUnit.entities.add(newBox);
+			
+		}		
+		System.out.println(newUnit.entities.size());
+		return newUnit;
+	}
+	
 	public void makeMass(){
 		
 		for(PhysicsEntity i: entities){
