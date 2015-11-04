@@ -2,8 +2,6 @@ package main.java.com.ionsystems.infinigen.global;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-
 import javax.vecmath.Vector3d;
 
 import org.lwjgl.util.vector.Vector3f;
@@ -17,9 +15,9 @@ import main.java.com.ionsystems.infinigen.models.TexturedPhysicsModel;
 import main.java.com.ionsystems.infinigen.networking.ChunkData;
 import main.java.com.ionsystems.infinigen.physics.DebugDrawer;
 import main.java.com.ionsystems.infinigen.physics.PhysicsManager;
-import main.java.com.ionsystems.infinigen.physics.PhysicsProcessor;
 import main.java.com.ionsystems.infinigen.rendering.Loader;
 import main.java.com.ionsystems.infinigen.rendering.MasterRenderer;
+
 import main.java.com.ionsystems.infinigen.textures.ModelTexture;
 import main.java.com.ionsystems.infinigen.world.Chunk;
 
@@ -55,6 +53,8 @@ public class Globals {
 	private static MasterRenderer renderer;
 	private static ICamera activeCamera;
 	
+	
+//	private static ArrayList<TextElement> textElements = new ArrayList<TextElement>();
 	
 	private static float placementOffset;
 	
@@ -289,6 +289,18 @@ public class Globals {
 		return new TexturedPhysicsModel(Globals.getModel(model), new ModelTexture(Globals.getLoader().loadTexture(Globals.getModel(model).getTexture())));
 		
 	}
+
+//	public static ArrayList<TextElement> getTextElements() {
+//		return textElements;
+//	}
+//
+//	public static void setTextElements(ArrayList<TextElement> textElements) {
+//		Globals.textElements = textElements;
+//	}
+//	
+//	public static void addTextElement(TextElement textElement){
+//		Globals.textElements.add(textElement);
+//	}
 	
 	
 }

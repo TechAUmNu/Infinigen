@@ -1,5 +1,6 @@
 package main.java.com.ionsystems.infinigen.main;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -12,6 +13,9 @@ import main.java.com.ionsystems.infinigen.cameras.RTSCamera;
 import main.java.com.ionsystems.infinigen.cameras.ThirdPersonCamera;
 import main.java.com.ionsystems.infinigen.entities.Light;
 import main.java.com.ionsystems.infinigen.entities.PhysicsEntity;
+import main.java.com.ionsystems.infinigen.fontMeshCreator.FontType;
+import main.java.com.ionsystems.infinigen.fontMeshCreator.GUIText;
+import main.java.com.ionsystems.infinigen.fontRendering.TextMaster;
 import main.java.com.ionsystems.infinigen.global.Globals;
 import main.java.com.ionsystems.infinigen.global.IModule;
 import main.java.com.ionsystems.infinigen.global.Units;
@@ -23,8 +27,6 @@ import main.java.com.ionsystems.infinigen.rendering.DisplayManager;
 import main.java.com.ionsystems.infinigen.rendering.Loader;
 import main.java.com.ionsystems.infinigen.rendering.MasterRenderer;
 import main.java.com.ionsystems.infinigen.shadows.ShadowFrameBuffers;
-import main.java.com.ionsystems.infinigen.shadows.ShadowShader;
-import main.java.com.ionsystems.infinigen.text.TextManager;
 import main.java.com.ionsystems.infinigen.unitBuilder.UnitBuilderManager;
 import main.java.com.ionsystems.infinigen.utility.MousePicker;
 import main.java.com.ionsystems.infinigen.utility.OSValidator;
@@ -44,6 +46,7 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
+import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 
@@ -63,7 +66,7 @@ public class Main {
 	private Loader loader;
 	private PhysicsManager physics;
 	private MousePicker picker;
-	private TextManager text;
+	
 	private ICamera activeCamera;
 	private int activeCameraID;
 	private ThirdPersonCamera thirdPersonCamera;
@@ -179,7 +182,7 @@ public class Main {
 			world = new ChunkManager();
 
 			unitBuilder = new UnitBuilderManager();
-			text = new TextManager();
+			//text = new TextManager();
 			physics.setUp();
 			Globals.setPhysics(physics);
 			Globals.setDebugRendering(false);
@@ -210,7 +213,7 @@ public class Main {
 			loadedModules.add(unitBuilder);
 			loadedModules.add(world);
 			loadedModules.add(networking);
-			loadedModules.add(text);
+			
 
 			// Add anything to the globals that might be needed elsewhere.
 			Globals.setLoader(loader);
@@ -292,6 +295,11 @@ public class Main {
 	 * Anything to do with setting up the gui
 	 */
 	private void generateGui() {
+		TextMaster.init(loader);
+		
+		FontType font = new FontType(loader.loadTexture("harrington"), new File("res/fonts/harrington.fnt"));
+		GUIText text = new GUIText("This is some text!", 3f, font, new Vector2f(0f, 0f), 1f, true);
+		text.setColour(1, 0, 0);
 		//gui.addElement(0, 0, sfbos.getDepthTexture());
 
 	}
@@ -442,6 +450,7 @@ public class Main {
 
 		//
 		gui.render();
+		TextMaster.render();
 
 		// Test Font rendering
 

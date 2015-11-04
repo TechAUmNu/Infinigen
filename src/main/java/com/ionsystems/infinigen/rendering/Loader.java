@@ -66,6 +66,16 @@ public class Loader implements IModule {
 		return new RawModel(vaoID, vboIDs, indices.length);
 	}
 
+	
+	public int loadToVAO(float[] vertexPositions, float[] textureCoords) {
+		int vaoID = createVAO();
+		ArrayList<Integer> vboIDs = new ArrayList<Integer>();		
+		vboIDs.add(storeDataInAttributeList(0, 2, vertexPositions));
+		vboIDs.add(storeDataInAttributeList(1, 2, textureCoords));		
+		unbindVAO();
+		return vaoID;
+	}
+	
 	// public RawModel loadToVAO(float[] positions, float[] textureCoords,
 	// float[] normals, int vertexCount) {
 	// int vaoID = createVAO();
@@ -186,6 +196,8 @@ public class Loader implements IModule {
 		unbindVAO();
 		return new RawModel(vaoID, vboIDs, positions.length / dimensions);
 	}
+	
+	
 
 	public RawModel loadToVAO(float[] positions, float[] textureCoords, int dimensions) {
 		int vaoID = createVAO();
@@ -347,5 +359,7 @@ public class Loader implements IModule {
 		// TODO Auto-generated method stub
 		return new ArrayList<PhysicsEntity>();
 	}
+
+	
 
 }
