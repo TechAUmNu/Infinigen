@@ -108,7 +108,17 @@ public class UnitBuilderManager implements IModule {
 
 			if (Mouse.isButtonDown(0) && timeLeft < 0) {
 				
-
+/**
+ * This needs to be done with the LocationID not with center of mass.
+ * 
+ * It should find the unit that is being picked and then work out where on that unit is being pointed at. 
+ * Then it needs to know which way to place the new object (ie some way to rotate it)
+ * Once the mouse is clicked then it should work out what other objects are around the placed object by searching the unit by distance 
+ * from the center of the placed object. (Or there could be a manual mode to select the objects it gets joined too.)
+ * 
+ * Since we know the size of the object we can simply check the hashmap for each of the locations that would be occupied by the object to be placed, 
+ * and once the object is placed we just fill those locations with the placed object.
+ */
 				if (unit.IsBodyInUnit(body) != null) {
 					timeLeft = 10;
 					javax.vecmath.Vector3f positionBody = new javax.vecmath.Vector3f(0f, 0f, 0f);
