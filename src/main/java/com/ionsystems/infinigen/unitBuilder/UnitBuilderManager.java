@@ -36,18 +36,20 @@ public class UnitBuilderManager implements IModule {
 	int yOffset;
 	int zOffset;
 
+	
+	PhysicsModel pmodel;
 	// bind boxes to surrounding boxes
 	// make a method that makes a copy of boxes
 	// make a method that works out the size of the unit
 
 	@Override
 	public void setUp() {
-
+		
 		unit = new Unit();
 		unit.setup(Globals.getPhysics().getProcessor());
 		area = new ConstructionArea(unit);
 
-		PhysicsModel pmodel = Globals.getModel("base/cube1x1");
+		pmodel = Globals.getModel("base/cube1x1");
 
 		boxModel = new TexturedPhysicsModel(pmodel, new ModelTexture(Globals.getLoader().loadTexture("box")));
 		Globals.setPlacementOffset((float) 2.05);
@@ -110,7 +112,7 @@ public class UnitBuilderManager implements IModule {
 
 			if (Mouse.isButtonDown(0) && timeLeft < 0) {
 
-				placeBoxWIthMouse(rayCallback, body, 3, 1, 1);
+				placeBoxWIthMouse(rayCallback, body);
 			}
 
 			// Switch Camera
@@ -137,7 +139,7 @@ public class UnitBuilderManager implements IModule {
 		}
 	}
 
-	private void placeBoxWIthMouse(CollisionWorld.ClosestRayResultCallback rayCallback, RigidBody body, int x, int y, int z) {
+	private void placeBoxWIthMouse(CollisionWorld.ClosestRayResultCallback rayCallback, RigidBody body) {
 		float placementOffset = Globals.getPlacementOffset();
 		/**
 		 * This needs to be done with the LocationID not with center of mass.
@@ -156,7 +158,7 @@ public class UnitBuilderManager implements IModule {
 		 * with the placed object.
 		 */
 		if (unit.IsBodyInUnit(body) != null) {
-			timeLeft = 0;
+			timeLeft = 10;
 			javax.vecmath.Vector3f positionBody = new javax.vecmath.Vector3f(0f, 0f, 0f);
 			body.getCenterOfMassPosition(positionBody);
 			PhysicsEntity baseEntity = unit.getEntity(body);
@@ -225,28 +227,28 @@ public class UnitBuilderManager implements IModule {
 			offsets.y += yBaseOffset;
 			offsets.z += zBaseOffset;
 
-			if (x > 1) {
+			if (baseEntity.getSizeX() > 1) {
 				if (xOffset > 0) {
-					offsets.x += (((float) x + 1) / 2.0) * placementOffset;
+					offsets.x += (((float) pmodel.getSizeX() + 1) / 2.0) * placementOffset;
 				}
 				if (xOffset < 0) {
-					offsets.x -= (((float) x + 1) / 2.0) * placementOffset;
+					offsets.x -= (((float) pmodel.getSizeX() + 1) / 2.0) * placementOffset;
 				}
 			}
-			if (y > 1) {
+			if (baseEntity.getSizeY() > 1) {
 				if (yOffset > 0) {
-					offsets.y += (((float) y + 1) / 2.0) * placementOffset;
+					offsets.y += (((float) pmodel.getSizeY() + 1) / 2.0) * placementOffset;
 				}
 				if (yOffset < 0) {
-					offsets.y -= (((float) y + 1) / 2.0) * placementOffset;
+					offsets.y -= (((float) pmodel.getSizeY() + 1) / 2.0) * placementOffset;
 				}
 			}
-			if (z > 1) {
+			if (baseEntity.getSizeZ() > 1) {
 				if (zOffset > 0) {
-					offsets.z += (((float) z + 1) / 2.0) * placementOffset;
+					offsets.z += (((float) pmodel.getSizeZ() + 1) / 2.0) * placementOffset;
 				}
 				if (zOffset < 0) {
-					offsets.z -= (((float) z + 1) / 2.0) * placementOffset;
+					offsets.z -= (((float) pmodel.getSizeZ() + 1) / 2.0) * placementOffset;
 				}
 			}
 			System.out.println("Offsets After Modification: " + offsets);
@@ -265,7 +267,7 @@ public class UnitBuilderManager implements IModule {
 			if (unit.spaceOcupied(newPositionx, newPositiony, newPositionz))
 				System.out.println("space ocupied");
 			else {
-				PhysicsEntity newBox = unit.makeBox(newPositionx, newPositiony, newPositionz, 0, "base/cube1x3");
+				PhysicsEntity newBox = unit.makeBox(newPositionx, newPositiony, newPositionz, 0, pmodel);
 				unit.entities.add(newBox);
 
 				if (unit.spaceOcupied(newPositionx, newPositiony, newPositionz + placementOffset)) {

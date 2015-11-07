@@ -100,6 +100,7 @@ public class OBJFileLoader {
 		ModelData model = loadOBJ(objFile);
 		PhysicsModel m = Globals.getLoader().loadToVAOWithGeneratedPhysics(model.getVertices(), model.getVerticesList(), model.getTextureCoords(), model.getNormals(),
 				model.getIndices(), objFile);
+		m.setFileName(m.getName());
 		
 
 		return m;

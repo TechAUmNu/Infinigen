@@ -42,6 +42,7 @@ public class PhysicsProcessor {
 		//System.out.println(entity.getBody());
 		//System.out.println(entity.getBody().getAngularVelocity(new Vector3f()));
 		bodies.add(entity.getBody());
+		System.out.println("entities:" + bodies.size());
 	}
 
 	
@@ -94,7 +95,7 @@ public class PhysicsProcessor {
 		// affects all bodies with a mass larger than
 		// zero.
 		
-		if(gravity)	dynamicsWorld.setGravity(new Vector3f(0, -10, 0));
+		if(gravity)	dynamicsWorld.setGravity(new Vector3f(0, -20, 0));
 		else dynamicsWorld.setGravity(new Vector3f(0, 0, 0));
 		// Initialise 'groundShape' to a static plane shape on the origin facing
 		// upwards ([0, 1, 0] is the normal).

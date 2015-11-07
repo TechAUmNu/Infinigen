@@ -1,7 +1,7 @@
 name=cube1x3
 description=A simple 1x3 cube
-sizex=1
-sizey=3
+sizex=3
+sizey=1
 sizez=1
 scale=1
 mass=3

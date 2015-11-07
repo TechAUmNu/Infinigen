@@ -24,7 +24,7 @@ public class PhysicsModel extends RawModel implements Serializable {
 	private static final long serialVersionUID = 6033176731940245791L;
 	private CollisionShape collisionShape;
 	private RigidBody body;
-	private String name, description, texture;
+	private String name, description, texture, fileName;
 	private float sizeX, sizeY, sizeZ, scale, mass;
 	
 
@@ -135,6 +135,14 @@ public class PhysicsModel extends RawModel implements Serializable {
 		// ground, to a rigid body with the previously
 		// assigned construction information.
 		body = new RigidBody(groundBodyConstructionInfo);
+	}
+
+	public String getFileName() {
+		return fileName;
+	}
+
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
 	}
 
 }

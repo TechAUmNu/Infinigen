@@ -12,7 +12,7 @@ public class Entity implements Serializable{
 	protected TexturedModel model;
 	protected Vector3f position;
 	protected float rotX, rotY, rotZ;
-	private int sizeX, sizeY,sizeZ;
+	
 	protected float scale;
 	protected Matrix4f transformationMatrix;
 
@@ -124,28 +124,29 @@ public class Entity implements Serializable{
 		return Maths.createTransformationMatrix(getPosition(), getRotX(), getRotY(), getRotZ(), 1, getScale(), false);
 	}
 
-	public int getSizeX() {
-		return sizeX;
+	public float getSizeX() {
+		return model.getPhysicsModel().getSizeX();
 	}
 
-	public void setSizeX(int sizeX) {
-		this.sizeX = sizeX;
+	public void setSizeX(float sizeX) {
+		model.getPhysicsModel().setSizeX(sizeX);
 	}
 
-	public int getSizeY() {
-		return sizeY;
+	public float getSizeY() {
+		return model.getPhysicsModel().getSizeY();
+	}
+	
+	public void setSizeY(float sizeY) {
+		model.getPhysicsModel().setSizeY(sizeY);
+	}
+	
+
+	public float getSizeZ() {
+		return model.getPhysicsModel().getSizeZ();
 	}
 
-	public void setSizeY(int sizeY) {
-		this.sizeY = sizeY;
-	}
-
-	public int getSizeZ() {
-		return sizeZ;
-	}
-
-	public void setSizeZ(int sizeZ) {
-		this.sizeZ = sizeZ;
+	public void setSizeZ(float sizeZ) {
+		model.getPhysicsModel().setSizeX(sizeZ);
 	}
 
 }

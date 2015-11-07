@@ -26,6 +26,7 @@ public class Unit {
 	List<TypedConstraint> joints;
 	private PhysicsProcessor processor;
 	private HashMap<LocationID,PhysicsEntity> points = new HashMap<>();
+	private String baseModel = "base/cube1x3";
 
 	
 	public void setup(PhysicsProcessor processor) {
@@ -50,7 +51,8 @@ public class Unit {
 	}
 
 	private void createBaseCube(PhysicsProcessor processor) {
-		PhysicsEntity base = makeBox(10,100,10,0, "base/cube1x3");
+		PhysicsModel model = Globals.getModel(baseModel);
+		PhysicsEntity base = makeBox(10,100,10,0, model);
 		//PhysicsEntity jointTest = makeBox(10,10,20,1);
 		//Generic6DofConstraint binding = BindEntities(base,jointTest,0.0f,2.3f,0.0f);
 		entities.add(base);
@@ -70,9 +72,9 @@ public class Unit {
 		return joints;
 	}
 	
-	public PhysicsEntity makeBox(float x, float y , float z, int mass, String unitType){
+	public PhysicsEntity makeBox(float x, float y , float z, int mass, PhysicsModel model){
 		
-		TexturedPhysicsModel boxModel = Globals.getTexturedModel(unitType);
+		TexturedPhysicsModel boxModel = Globals.getTexturedModel(model);
 		PhysicsEntity store = new PhysicsEntity(boxModel, new Vector3f(x, y, z), 0, 0, 0, boxModel.getPhysicsModel().getScale(), mass, processor, 1, 1, 1);
 
 		for(LocationID i : store.gridPoints){
@@ -144,7 +146,7 @@ public class Unit {
 		newUnit.setupClone(Globals.getPhysics().getProcessor());
 		//System.out.println(entities.size());
 		for(PhysicsEntity i: entities){
-			PhysicsEntity newBox = makeBox(i.getPosition().x + x, i.getPosition().y + y, i.getPosition().z + z, 0, "base/cube1x3");
+			PhysicsEntity newBox = makeBox(i.getPosition().x + x, i.getPosition().y + y, i.getPosition().z + z, 0, i.getModel().getPhysicsModel());
 			//System.out.println(i.getPosition().x + " " + i.getPosition().y  + " " + i.getPosition().z);
 			//System.out.println(newBox.getPosition().x + " " + newBox.getPosition().y  + " " + newBox.getPosition().z);
 			newUnit.entities.add(newBox);

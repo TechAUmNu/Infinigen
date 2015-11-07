@@ -286,8 +286,11 @@ public class Globals {
 	}
 	
 	public static TexturedPhysicsModel getTexturedModel(String model) {
-		return new TexturedPhysicsModel(Globals.getModel(model), new ModelTexture(Globals.getLoader().loadTexture(Globals.getModel(model).getTexture())));
-		
+		return new TexturedPhysicsModel(Globals.getModel(model), new ModelTexture(Globals.getLoader().loadTexture(Globals.getModel(model).getTexture())));		
+	}
+	
+	public static TexturedPhysicsModel getTexturedModel(PhysicsModel model){
+		return new TexturedPhysicsModel(model, new ModelTexture(Globals.getLoader().loadTexture(model.getTexture())));
 	}
 
 //	public static ArrayList<TextElement> getTextElements() {
