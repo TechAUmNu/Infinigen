@@ -40,9 +40,17 @@ public class Unit {
 		joints = new ArrayList<TypedConstraint>();
 		this.processor = processor;
 	}
+	
+	public PhysicsEntity getEntity(RigidBody body){
+		for (PhysicsEntity entity : entities){
+			if(entity.getBody().equals(body))
+				return entity;			
+		}
+		return null;
+	}
 
 	private void createBaseCube(PhysicsProcessor processor) {
-		PhysicsEntity base = makeBox(10,100,10,0);
+		PhysicsEntity base = makeBox(10,100,10,0, "base/cube1x3");
 		//PhysicsEntity jointTest = makeBox(10,10,20,1);
 		//Generic6DofConstraint binding = BindEntities(base,jointTest,0.0f,2.3f,0.0f);
 		entities.add(base);
@@ -62,9 +70,9 @@ public class Unit {
 		return joints;
 	}
 	
-	public PhysicsEntity makeBox(float x, float y , float z, int mass){
+	public PhysicsEntity makeBox(float x, float y , float z, int mass, String unitType){
 		
-		TexturedPhysicsModel boxModel = Globals.getTexturedModel("base/cube1x1");
+		TexturedPhysicsModel boxModel = Globals.getTexturedModel(unitType);
 		PhysicsEntity store = new PhysicsEntity(boxModel, new Vector3f(x, y, z), 0, 0, 0, boxModel.getPhysicsModel().getScale(), mass, processor, 1, 1, 1);
 
 		for(LocationID i : store.gridPoints){
@@ -87,6 +95,7 @@ public class Unit {
 		binding.setAngularUpperLimit(lock);
 		binding.setLinearLowerLimit(lock);
 		binding.setLinearUpperLimit(lock);
+		
 		processor.addConstraint((TypedConstraint)binding);
 		return binding;
 	}
@@ -114,9 +123,9 @@ public class Unit {
 	}
 	
 	public void printJoints(){ 
-		System.out.println("new check");
+		//System.out.println("new check");
 		for(TypedConstraint i: joints){
-			System.out.println("joint " + i);
+			//System.out.println("joint " + i);
 		}
 
 	}
@@ -133,15 +142,15 @@ public class Unit {
 	public Unit Clone(float x, float y, float z){
 		Unit newUnit = new Unit();
 		newUnit.setupClone(Globals.getPhysics().getProcessor());
-		System.out.println(entities.size());
+		//System.out.println(entities.size());
 		for(PhysicsEntity i: entities){
-			PhysicsEntity newBox = makeBox(i.getPosition().x + x, i.getPosition().y + y, i.getPosition().z + z, 0);
-			System.out.println(i.getPosition().x + " " + i.getPosition().y  + " " + i.getPosition().z);
-			System.out.println(newBox.getPosition().x + " " + newBox.getPosition().y  + " " + newBox.getPosition().z);
+			PhysicsEntity newBox = makeBox(i.getPosition().x + x, i.getPosition().y + y, i.getPosition().z + z, 0, "base/cube1x3");
+			//System.out.println(i.getPosition().x + " " + i.getPosition().y  + " " + i.getPosition().z);
+			//System.out.println(newBox.getPosition().x + " " + newBox.getPosition().y  + " " + newBox.getPosition().z);
 			newUnit.entities.add(newBox);
 			
 		}		
-		System.out.println(newUnit.entities.size());
+		//System.out.println(newUnit.entities.size());
 		
 		
 		//Must make a name for the Units manager so make a temporary one here
@@ -152,14 +161,14 @@ public class Unit {
 	public void makeMass(){
 		
 		for(PhysicsEntity i: entities){
-			System.out.println(i.getBody().getInvMass());
+			//System.out.println(i.getBody().getInvMass());
 			
 			processor.removePhysicsEntity(i);
 			
 			javax.vecmath.Vector3f inertia = new javax.vecmath.Vector3f(0f,0f,0f);;
 			i.getBody().getCollisionShape().calculateLocalInertia(i.getModel().getPhysicsModel().getMass(), inertia);
 			i.getBody().setMassProps(i.getModel().getPhysicsModel().getMass(), inertia);
-			System.out.println(i.getBody().getInvMass());
+			//System.out.println(i.getBody().getInvMass());
 			
 			processor.addPhysicsEntity(i);
 		}

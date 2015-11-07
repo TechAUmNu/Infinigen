@@ -1,6 +1,7 @@
 package main.java.com.ionsystems.infinigen.unitBuilder;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.vecmath.Vector3f;
 
@@ -35,10 +36,10 @@ public class UnitBuilderManager implements IModule {
 	int yOffset;
 	int zOffset;
 
-	//bind boxes to surrounding boxes
-	//make a method that makes a copy of boxes
-	//make a method that works out the size of the unit
-	
+	// bind boxes to surrounding boxes
+	// make a method that makes a copy of boxes
+	// make a method that works out the size of the unit
+
 	@Override
 	public void setUp() {
 
@@ -47,8 +48,9 @@ public class UnitBuilderManager implements IModule {
 		area = new ConstructionArea(unit);
 
 		PhysicsModel pmodel = Globals.getModel("base/cube1x1");
+
 		boxModel = new TexturedPhysicsModel(pmodel, new ModelTexture(Globals.getLoader().loadTexture("box")));
-		Globals.setPlacementOffset((float) 2.5);
+		Globals.setPlacementOffset((float) 2.05);
 	}
 
 	@Override
@@ -107,101 +109,8 @@ public class UnitBuilderManager implements IModule {
 			area.getUnit().highlight(body);
 
 			if (Mouse.isButtonDown(0) && timeLeft < 0) {
-				
-/**
- * This needs to be done with the LocationID not with center of mass.
- * 
- * It should find the unit that is being picked and then work out where on that unit is being pointed at. 
- * Then it needs to know which way to place the new object (ie some way to rotate it)
- * Once the mouse is clicked then it should work out what other objects are around the placed object by searching the unit by distance 
- * from the center of the placed object. (Or there could be a manual mode to select the objects it gets joined too.)
- * 
- * Since we know the size of the object we can simply check the hashmap for each of the locations that would be occupied by the object to be placed, 
- * and once the object is placed we just fill those locations with the placed object.
- */
-				if (unit.IsBodyInUnit(body) != null) {
-					timeLeft = 10;
-					javax.vecmath.Vector3f positionBody = new javax.vecmath.Vector3f(0f, 0f, 0f);
-					body.getCenterOfMassPosition(positionBody);
-					javax.vecmath.Vector3f positionCursor = rayCallback.hitPointWorld;
-					//System.out.println(body);
-					//System.out.println(positionBody);
-					//System.out.println(positionCursor);
-					float xDif = positionCursor.x - positionBody.x;
-					float yDif = positionCursor.y - positionBody.y;
-					float zDif = positionCursor.z - positionBody.z;
 
-					float xDifP = Math.abs(xDif);
-					float yDifP = Math.abs(yDif);
-					float zDifP = Math.abs(zDif);
-
-					xOffset = 0;
-					yOffset = 0;
-					zOffset = 0;
-
-					if (xDifP > yDifP && xDifP > zDifP) {
-						if (xDif > 0)
-							xOffset = 1;
-						else
-							xOffset = -1;
-					}
-
-					if (yDifP > xDifP && yDifP > zDifP) {
-						if (yDif > 0)
-							yOffset = 1;
-						else
-							yOffset = -1;
-					}
-
-					if (zDifP > yDifP && zDifP > xDifP) {
-						if (zDif > 0)
-							zOffset = 1;
-						else
-							zOffset = -1;
-					}
-					javax.vecmath.Vector3f offsets = new javax.vecmath.Vector3f(xOffset, yOffset, zOffset);
-					//System.out.println(offsets);
-					float placementOffset = Globals.getPlacementOffset();
-					float newPositionx =  (positionBody.x + xOffset * placementOffset);
-					float newPositiony =  (positionBody.y + yOffset * placementOffset);
-					float newPositionz =  (positionBody.z + zOffset * placementOffset);
-					
-					//System.out.println("make at" + newPositionx + " " + newPositiony + " " + newPositionz);
-					
-					if(unit.spaceOcupied(newPositionx, newPositiony, newPositionz)) System.out.println("space ocupied");
-					else{
-						PhysicsEntity newBox = unit.makeBox( newPositionx, newPositiony, newPositionz, 0);
-						unit.entities.add(newBox);
-						
-						if(unit.spaceOcupied(newPositionx, newPositiony, newPositionz + placementOffset)){
-							PhysicsEntity entityNextoNew = unit.getBoxAt(newPositionx, newPositiony, newPositionz + placementOffset);
-							unit.joints.add(unit.BindEntities(newBox, entityNextoNew, 0, 0, placementOffset));
-						}
-						if(unit.spaceOcupied(newPositionx, newPositiony, newPositionz - placementOffset)){
-							PhysicsEntity entityNextoNew = unit.getBoxAt(newPositionx, newPositiony, newPositionz - placementOffset);
-							unit.joints.add(unit.BindEntities(newBox, entityNextoNew, 0, 0, -placementOffset));
-						}
-						if(unit.spaceOcupied(newPositionx, newPositiony + placementOffset, newPositionz)){
-							PhysicsEntity entityNextoNew = unit.getBoxAt(newPositionx, newPositiony + placementOffset, newPositionz);
-							unit.joints.add(unit.BindEntities(newBox, entityNextoNew, 0, placementOffset, 0));
-						}
-						if(unit.spaceOcupied(newPositionx, newPositiony - placementOffset, newPositionz)){
-							PhysicsEntity entityNextoNew = unit.getBoxAt(newPositionx, newPositiony - placementOffset, newPositionz);
-							unit.joints.add(unit.BindEntities(newBox, entityNextoNew, 0, -placementOffset, 0));
-						}
-						if(unit.spaceOcupied(newPositionx + placementOffset, newPositiony, newPositionz)){
-							PhysicsEntity entityNextoNew = unit.getBoxAt(newPositionx + placementOffset, newPositiony, newPositionz);
-							unit.joints.add(unit.BindEntities(newBox, entityNextoNew, placementOffset, 0, 0));
-						}
-						if(unit.spaceOcupied(newPositionx - placementOffset, newPositiony, newPositionz)){
-							PhysicsEntity entityNextoNew = unit.getBoxAt(newPositionx - placementOffset, newPositiony, newPositionz);
-							unit.joints.add(unit.BindEntities(newBox, entityNextoNew, -placementOffset, 0, 0));
-						}
-						unit.printJoints();
-					}
-					
-
-				}
+				placeBoxWIthMouse(rayCallback, body, 3, 1, 1);
 			}
 
 			// Switch Camera
@@ -215,21 +124,180 @@ public class UnitBuilderManager implements IModule {
 				}
 
 			}
-			
 
 		}
 
 		timeLeft--;
 		cameraSwitchTimer--;
-		if(Keyboard.isKeyDown(Keyboard.KEY_Q)){
+		if (Keyboard.isKeyDown(Keyboard.KEY_Q)) {
 			System.out.print("woops");
 			Unit cloneTest = unit.Clone(0, 10, 0);
 			Units.addUnit(cloneTest);
-			//cloneTest.makeMass();
+			cloneTest.makeMass();
 		}
 	}
 
-	
+	private void placeBoxWIthMouse(CollisionWorld.ClosestRayResultCallback rayCallback, RigidBody body, int x, int y, int z) {
+		float placementOffset = Globals.getPlacementOffset();
+		/**
+		 * This needs to be done with the LocationID not with center of mass.
+		 * 
+		 * It should find the unit that is being picked and then work out where
+		 * on that unit is being pointed at. Then it needs to know which way to
+		 * place the new object (ie some way to rotate it) Once the mouse is
+		 * clicked then it should work out what other objects are around the
+		 * placed object by searching the unit by distance from the center of
+		 * the placed object. (Or there could be a manual mode to select the
+		 * objects it gets joined too.)
+		 * 
+		 * Since we know the size of the object we can simply check the hashmap
+		 * for each of the locations that would be occupied by the object to be
+		 * placed, and once the object is placed we just fill those locations
+		 * with the placed object.
+		 */
+		if (unit.IsBodyInUnit(body) != null) {
+			timeLeft = 0;
+			javax.vecmath.Vector3f positionBody = new javax.vecmath.Vector3f(0f, 0f, 0f);
+			body.getCenterOfMassPosition(positionBody);
+			PhysicsEntity baseEntity = unit.getEntity(body);
+
+			Vector3f positionCursor = rayCallback.hitPointWorld;
+			// System.out.println(body);
+			// System.out.println(positionBody);
+			// System.out.println(positionCursor);
+
+			List<LocationID> gridPoints = baseEntity.gridPoints;
+
+			float minDistance = 1000000;
+			LocationID minGridPoint = null;
+			for (LocationID location : gridPoints) {
+				float xDif = positionCursor.x - location.x;
+				float yDif = positionCursor.y - location.y;
+				float zDif = positionCursor.z - location.z;
+				float total = xDif + yDif + zDif;
+
+				if (total < minDistance) {
+					minDistance = total;
+					minGridPoint = location;
+				}
+			}
+
+			float xBaseOffset = (minGridPoint.x - positionBody.x) * placementOffset;
+			float yBaseOffset = (minGridPoint.y - positionBody.y) * placementOffset;
+			float zBaseOffset = (minGridPoint.z - positionBody.z) * placementOffset;
+
+			float xDif = positionCursor.x - positionBody.x;
+			float yDif = positionCursor.y - positionBody.y;
+			float zDif = positionCursor.z - positionBody.z;
+
+			float xDifP = Math.abs(xDif);
+			float yDifP = Math.abs(yDif);
+			float zDifP = Math.abs(zDif);
+
+			xOffset = 0;
+			yOffset = 0;
+			zOffset = 0;
+
+			if (xDifP > yDifP && xDifP > zDifP) {
+				if (xDif > 0)
+					xOffset = 1;
+				else
+					xOffset = -1;
+			}
+
+			if (yDifP > xDifP && yDifP > zDifP) {
+				if (yDif > 0)
+					yOffset = 1;
+				else
+					yOffset = -1;
+			}
+
+			if (zDifP > yDifP && zDifP > xDifP) {
+				if (zDif > 0)
+					zOffset = 1;
+				else
+					zOffset = -1;
+			}
+
+			javax.vecmath.Vector3f offsets = new javax.vecmath.Vector3f(xOffset * placementOffset, yOffset * placementOffset, zOffset * placementOffset);
+			System.out.println("Offsets Before Modification: " + offsets);
+			offsets.x += xBaseOffset;
+			offsets.y += yBaseOffset;
+			offsets.z += zBaseOffset;
+
+			if (x > 1) {
+				if (xOffset > 0) {
+					offsets.x += (((float) x + 1) / 2.0) * placementOffset;
+				}
+				if (xOffset < 0) {
+					offsets.x -= (((float) x + 1) / 2.0) * placementOffset;
+				}
+			}
+			if (y > 1) {
+				if (yOffset > 0) {
+					offsets.y += (((float) y + 1) / 2.0) * placementOffset;
+				}
+				if (yOffset < 0) {
+					offsets.y -= (((float) y + 1) / 2.0) * placementOffset;
+				}
+			}
+			if (z > 1) {
+				if (zOffset > 0) {
+					offsets.z += (((float) z + 1) / 2.0) * placementOffset;
+				}
+				if (zOffset < 0) {
+					offsets.z -= (((float) z + 1) / 2.0) * placementOffset;
+				}
+			}
+			System.out.println("Offsets After Modification: " + offsets);
+
+			// System.out.println(offsets);
+
+			float newPositionx = (positionBody.x + offsets.x);
+			float newPositiony = (positionBody.y + offsets.y);
+			float newPositionz = (positionBody.z + offsets.z);
+
+			System.out.println("New Position: " + newPositionx + ", " + newPositiony + ", " + newPositionz);
+
+			// System.out.println("make at" + newPositionx + " " + newPositiony
+			// + " " + newPositionz);
+
+			if (unit.spaceOcupied(newPositionx, newPositiony, newPositionz))
+				System.out.println("space ocupied");
+			else {
+				PhysicsEntity newBox = unit.makeBox(newPositionx, newPositiony, newPositionz, 0, "base/cube1x3");
+				unit.entities.add(newBox);
+
+				if (unit.spaceOcupied(newPositionx, newPositiony, newPositionz + placementOffset)) {
+					PhysicsEntity entityNextoNew = unit.getBoxAt(newPositionx, newPositiony, newPositionz + placementOffset);
+					unit.joints.add(unit.BindEntities(newBox, entityNextoNew, 0, 0, placementOffset));
+				}
+				if (unit.spaceOcupied(newPositionx, newPositiony, newPositionz - placementOffset)) {
+					PhysicsEntity entityNextoNew = unit.getBoxAt(newPositionx, newPositiony, newPositionz - placementOffset);
+					unit.joints.add(unit.BindEntities(newBox, entityNextoNew, 0, 0, -placementOffset));
+				}
+				if (unit.spaceOcupied(newPositionx, newPositiony + placementOffset, newPositionz)) {
+					PhysicsEntity entityNextoNew = unit.getBoxAt(newPositionx, newPositiony + placementOffset, newPositionz);
+					unit.joints.add(unit.BindEntities(newBox, entityNextoNew, 0, placementOffset, 0));
+				}
+				if (unit.spaceOcupied(newPositionx, newPositiony - placementOffset, newPositionz)) {
+					PhysicsEntity entityNextoNew = unit.getBoxAt(newPositionx, newPositiony - placementOffset, newPositionz);
+					unit.joints.add(unit.BindEntities(newBox, entityNextoNew, 0, -placementOffset, 0));
+				}
+				if (unit.spaceOcupied(newPositionx + placementOffset, newPositiony, newPositionz)) {
+					PhysicsEntity entityNextoNew = unit.getBoxAt(newPositionx + placementOffset, newPositiony, newPositionz);
+					unit.joints.add(unit.BindEntities(newBox, entityNextoNew, placementOffset, 0, 0));
+				}
+				if (unit.spaceOcupied(newPositionx - placementOffset, newPositiony, newPositionz)) {
+					PhysicsEntity entityNextoNew = unit.getBoxAt(newPositionx - placementOffset, newPositiony, newPositionz);
+					unit.joints.add(unit.BindEntities(newBox, entityNextoNew, -placementOffset, 0, 0));
+				}
+				unit.printJoints();
+			}
+
+		}
+	}
+
 	@Override
 	public void render() {
 		// TODO Auto-generated method stub
