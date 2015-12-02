@@ -1,5 +1,7 @@
 package main.java.com.ionsystems.infinigen.world;
 
+import java.util.ArrayList;
+
 import org.lwjgl.util.vector.Vector3f;
 
 import com.sudoplay.joise.module.Module;
@@ -21,6 +23,7 @@ public class Chunk {
 	
 	
 	private static float isolevel = 0.5f;
+	public ArrayList<Triangle> triangles = new ArrayList<Triangle>();
 
 	public Block[][][] blocks;
 	public int x;
@@ -152,6 +155,10 @@ public class Chunk {
 	
 
 	private int triangulate(int x, int y, int z) {
+		
+		Vector3f vertlist[] = new Vector3f[12];
+		
+		
 		int cubeindex = 0;
 		if (blocks[x][y][z].weight < isolevel) cubeindex |= 1;
 		if (blocks[x+1][y][z].weight < isolevel) cubeindex |= 2;
@@ -218,9 +225,20 @@ public class Chunk {
 		      vertlist[11] =
 		         VertexInterp(new Vector3f(x,y,z+1),new Vector3f(x,y+1,z+1),blocks[x][y][z+1].weight,blocks[x][y+1][z+1].weight);
 
-		
-		//System.out.println("" + x + y + z + " : " + cubeindex);
-		
+		   
+		   /* Create the triangle */
+		   int nTriangles = 0;
+		   for (int i = 0; triTable[cubeindex][i] != -1; i += 3) {
+			  Triangle t = new Triangle();
+		      t.p[0] = vertlist[triTable[cubeindex][i  ]];
+		      t.p[1] = vertlist[triTable[cubeindex][i+1]];
+		      t.p[2] = vertlist[triTable[cubeindex][i+2]];		 
+		      triangles.add(t);
+		      nTriangles++;
+		   }
+		   
+		   System.out.println("Number of triangles: "+ triangles.size());
+		   return(nTriangles);
 		
 		
 	}
