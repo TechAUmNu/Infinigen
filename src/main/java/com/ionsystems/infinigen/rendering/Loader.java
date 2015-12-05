@@ -13,6 +13,7 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Stream;
 
 import javax.vecmath.Vector3f;
@@ -25,6 +26,7 @@ import main.java.com.ionsystems.infinigen.models.RawModel;
 import main.java.com.ionsystems.infinigen.objConverter.Vertex;
 import main.java.com.ionsystems.infinigen.physics.PhysicsUtils;
 import main.java.com.ionsystems.infinigen.textures.TextureData;
+import main.java.com.ionsystems.infinigen.world.ChunkRenderingData;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
@@ -54,7 +56,10 @@ public class Loader implements IModule {
 	private List<Integer> vbos = new ArrayList<Integer>();
 	private List<Integer> textures = new ArrayList<Integer>();
 	private HashMap<String, Vector3f> loadedTextures = new HashMap<String, Vector3f>();
-
+	private CopyOnWriteArrayList<ChunkRenderingData> chunkLoadingQueue = new CopyOnWriteArrayList<ChunkRenderingData>();
+	private CopyOnWriteArrayList<RawModel> modelUnloadingQueue = new CopyOnWriteArrayList<RawModel>();
+	
+	
 	public RawModel loadToVAO(float[] positions, float[] textureCoords, float[] normals, int[] indices) {
 		int vaoID = createVAO();
 		ArrayList<Integer> vboIDs = new ArrayList<Integer>();
@@ -64,6 +69,17 @@ public class Loader implements IModule {
 		vboIDs.add(storeDataInAttributeList(2, 3, normals));
 		unbindVAO();
 		return new RawModel(vaoID, vboIDs, indices.length);
+	}
+	
+	public RawModel loadToVAO(float[] positions, float[] textureCoords, float[] normals, int dimensions) {
+		int vaoID = createVAO();
+		ArrayList<Integer> vboIDs = new ArrayList<Integer>();
+		
+		vboIDs.add(storeDataInAttributeList(0, 3, positions));
+		vboIDs.add(storeDataInAttributeList(1, 2, textureCoords));
+		vboIDs.add(storeDataInAttributeList(2, 3, normals));
+		unbindVAO();
+		return new RawModel(vaoID, vboIDs, positions.length / dimensions);
 	}
 
 	
@@ -332,8 +348,31 @@ public class Loader implements IModule {
 
 	@Override
 	public void process() {
-		// TODO Auto-generated method stub
-
+		//Here we process all the models, etc to be loaded/unloaded
+		//We will only allocate a few ms to this each frame to stop the framerate from dipping when lots of stuff is happening.
+		long startTime = System.nanoTime();
+		ArrayList<ChunkRenderingData> crdRemove = new ArrayList<ChunkRenderingData>();
+		for(ChunkRenderingData crd : chunkLoadingQueue){
+			RawModel m = loadToVAO(crd.positions, crd.textureCoords, crd.normals, 3);
+			crd.c.setModel(m);
+			crd.c.setRenderable(true);	
+			crdRemove.add(crd);
+			long elapsedTime = System.nanoTime() - startTime;
+			if(elapsedTime > 100000) break;
+		}
+		chunkLoadingQueue.removeAll(crdRemove);
+		
+		startTime = System.nanoTime();
+		ArrayList<RawModel> rmRemove = new ArrayList<RawModel>();
+		for(RawModel rm : modelUnloadingQueue){
+			rm.cleanUp();	
+			rmRemove.add(rm);
+			long elapsedTime = System.nanoTime() - startTime;
+			if(elapsedTime > 100000) break;
+		}
+		modelUnloadingQueue.removeAll(rmRemove);
+		
+		
 	}
 
 	@Override
@@ -357,7 +396,15 @@ public class Loader implements IModule {
 	@Override
 	public ArrayList<PhysicsEntity> prepare() {
 		// TODO Auto-generated method stub
-		return new ArrayList<PhysicsEntity>();
+		return null;
+	}
+
+	public void addChunkToLoadQueue(ChunkRenderingData crd) {
+		chunkLoadingQueue.add(crd);		
+	}
+
+	public void addModelToUnloadQueue(RawModel model) {
+		modelUnloadingQueue.add(model);		
 	}
 
 	

@@ -46,26 +46,23 @@ public class MasterRenderer implements IModule {
 
 	private WorldRenderer terrainRenderer;
 	private ChunkShader terrainShader = new ChunkShader();
-	
+
 	private ShadowShader shadowShader = new ShadowShader();
 	private ShadowRenderer shadowRenderer;
 
 	private Map<TexturedPhysicsModel, List<PhysicsEntity>> entities = new HashMap<TexturedPhysicsModel, List<PhysicsEntity>>();
-	
+
 	private SkyboxRenderer skyboxRenderer;
-	
-	
-	
 
 	public MasterRenderer(Loader loader, ShadowFrameBuffers sfbos) {
-		//enableCulling();
+		// enableCulling();
 		createProjectionMatrix();
-		
+
 		renderer = new EntityRenderer(shader, projectionMatrix);
 		terrainRenderer = new WorldRenderer(terrainShader, projectionMatrix);
 		skyboxRenderer = new SkyboxRenderer(loader, projectionMatrix);
 		shadowRenderer = new ShadowRenderer(shadowShader, sfbos);
-		
+
 	}
 
 	public static void enableCulling() {
@@ -78,37 +75,35 @@ public class MasterRenderer implements IModule {
 	}
 
 	public void render(List<Light> lights, ICamera camera, boolean clearEntities, Vector4f clipPlane, Light sun, boolean shadows) {
-		if(shadows){
-			shadowRenderer.render(sun, camera, entities);
+		if (shadows) {
+			 shadowRenderer.render(sun, camera, entities);
 		}
-		
+
 		ShadowMap shadowMap = shadowRenderer.getShadowMap();
-		
+
 		prepareRender();
-		if(!Globals.debugRendering()){
-		shader.start();
-		shader.loadClipPlane(clipPlane);
-		shader.loadSkyColour(RED, GREEN, BLUE);
-		shader.loadLights(lights);
-		shader.loadViewMatrix(camera);
-		shader.loadShadowMap(shadowMap);
-		renderer.render(entities);
-		shader.stop();
-		terrainShader.start();	
-		terrainShader.loadClipPlane(clipPlane);
-		terrainShader.loadLights(lights);
-		terrainShader.loadViewMatrix(camera);
-		terrainShader.loadShadowMap(shadowMap);
-		terrainRenderer.renderChunks();
-		terrainShader.stop();
-		skyboxRenderer.render(camera, RED, GREEN, BLUE);	
-		if(clearEntities){
-			entities.clear();
-		}
+		if (!Globals.debugRendering()) {
+			shader.start();
+			shader.loadClipPlane(clipPlane);
+			shader.loadSkyColour(RED, GREEN, BLUE);
+			shader.loadLights(lights);
+			shader.loadViewMatrix(camera);
+			shader.loadShadowMap(shadowMap);
+			renderer.render(entities);
+			shader.stop();
+			terrainShader.start();
+			terrainShader.loadClipPlane(clipPlane);
+			terrainShader.loadLights(lights);
+			terrainShader.loadViewMatrix(camera);
+			terrainShader.loadShadowMap(shadowMap);
+			terrainRenderer.renderChunks();
+			terrainShader.stop();
+			skyboxRenderer.render(camera, RED, GREEN, BLUE);
+			if (clearEntities) {
+				entities.clear();
+			}
 		}
 	}
-
-	
 
 	public void processEntity(PhysicsEntity entity) {
 		TexturedPhysicsModel entityModel = entity.getModel();
@@ -121,9 +116,6 @@ public class MasterRenderer implements IModule {
 			entities.put(entityModel, newBatch);
 		}
 	}
-	
-	
-	
 
 	public void cleanUp() {
 		shader.cleanUp();
@@ -190,5 +182,4 @@ public class MasterRenderer implements IModule {
 		return null;
 	}
 
-	
 }

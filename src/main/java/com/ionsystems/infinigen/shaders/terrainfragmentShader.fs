@@ -73,10 +73,11 @@ void main(void){
 		specularFactor = max(specularFactor, 0.0);
 		float dampedFactor = pow(specularFactor, shineDamper);
 		totalDiffuse = totalDiffuse + (brightness * lightColour[i])/attFactor;	
-		//totalSpecular = totalSpecular + (dampedFactor * reflectivity * lightColour[i])/attFactor;
+		totalSpecular = totalSpecular + (dampedFactor * reflectivity * lightColour[i])/attFactor;
 	}
 	
 	totalDiffuse = max(totalDiffuse, 0.0);
+	
 	
 	float shadow = 1.0;
 	
@@ -92,8 +93,8 @@ void main(void){
 	
 	
 	
-
-	out_Color = shadow * vec4(totalDiffuse, 1.0) * texture(textureSampler, pass_textureCoords); //+ shadow * vec4(totalSpecular, 1.0) ;
+	//out_Color = vec4(1.0,1.0,1.0,1.0);
+	out_Color = shadow * vec4(totalDiffuse, 1.0) * texture(textureSampler, pass_textureCoords) + shadow * vec4(totalSpecular, 1.0) ;
 	//////////////
 	
 	//out_Color = mix(vec4(skyColour, 1.0), out_Color, visibility);

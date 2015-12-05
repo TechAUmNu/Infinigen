@@ -2,6 +2,8 @@ package main.java.com.ionsystems.infinigen.global;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
+
 import javax.vecmath.Vector3d;
 
 import org.lwjgl.util.vector.Vector3f;
@@ -17,7 +19,6 @@ import main.java.com.ionsystems.infinigen.physics.DebugDrawer;
 import main.java.com.ionsystems.infinigen.physics.PhysicsManager;
 import main.java.com.ionsystems.infinigen.rendering.Loader;
 import main.java.com.ionsystems.infinigen.rendering.MasterRenderer;
-
 import main.java.com.ionsystems.infinigen.textures.ModelTexture;
 import main.java.com.ionsystems.infinigen.world.Chunk;
 
@@ -28,7 +29,7 @@ public class Globals {
 	private static Loader loader;
 	private static Vector3f mouseRay;
 	private static Vector3f cameraPosition;
-	private static ArrayList<Chunk> visibleChunks;
+	private static CopyOnWriteArrayList<Chunk> visibleChunks;
 	private static boolean isServer;
 	private static boolean loading;
 	
@@ -57,6 +58,7 @@ public class Globals {
 //	private static ArrayList<TextElement> textElements = new ArrayList<TextElement>();
 	
 	private static float placementOffset;
+	private static boolean running = true;
 	
 
 	// //////////////////////////////////////////////////////////////////////////////////////
@@ -137,11 +139,11 @@ public class Globals {
 		Globals.isServer = isServer;
 	}
 
-	public static void setLoadedChunks(ArrayList<Chunk> visibleChunks) {
+	public static void setLoadedChunks(CopyOnWriteArrayList<Chunk> visibleChunks) {
 		Globals.visibleChunks = visibleChunks;
 	}
 
-	public static ArrayList<Chunk> getLoadedChunks(){
+	public static CopyOnWriteArrayList<Chunk> getLoadedChunks(){
 		return visibleChunks;
 	}
 
@@ -291,6 +293,14 @@ public class Globals {
 	
 	public static TexturedPhysicsModel getTexturedModel(PhysicsModel model){
 		return new TexturedPhysicsModel(model, new ModelTexture(Globals.getLoader().loadTexture(model.getTexture())));
+	}
+
+	public static boolean isRunning() {		
+		return running;
+	}
+	
+	public static void endThreads(){
+		running = false;
 	}
 
 //	public static ArrayList<TextElement> getTextElements() {

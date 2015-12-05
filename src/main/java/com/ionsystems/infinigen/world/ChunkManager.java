@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.lwjgl.util.vector.Vector3f;
 
@@ -31,19 +32,18 @@ import main.java.com.ionsystems.infinigen.networking.ChunkData;
 
 //This handles all loading and unloading of chunks. The chunks within the set range of each camera must be kept loaded so switching camera is fast.
 
-public class ChunkManager implements IModule {
+public class ChunkManager implements Runnable {
 
-	int chunkSize = 32;
-	float blockSize = 2f;
-	ArrayList<Chunk> loadedChunks;
+	public static int chunkSize =64;
+	float blockSize = 1f;
+	CopyOnWriteArrayList<Chunk> loadedChunks;
 	HashMap<ChunkID, Chunk> chunks;
 	Module terrainNoise;
 	WorldRenderer renderer;
 
-	public static int loadDistance = 5;
+	public static int loadDistance = 2;
 	long seed = 828382;
 
-	@Override
 	public void process() {
 
 		// Here we will decide which chunks to load/unload
@@ -52,8 +52,19 @@ public class ChunkManager implements IModule {
 
 		// loadDistance is how far away in a circle to load chunks
 		// So first we shall just loop through every chunk in the area and load
-		// the chunk if it isnt already.
-
+		// the chunk if it isn't already.
+		while(Globals.loading() && Globals.getCameraPosition() == null ){
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		//We dont want to let this thread use 100% cpu.
+		
+		
 		Vector3f cameraChunkLocation = findContainingChunk(Globals.getCameraPosition()); // Where
 																							// the
 																							// camera
@@ -99,37 +110,17 @@ public class ChunkManager implements IModule {
 
 	}
 
-	@Override
 	public void setUp() {
 
 		initNoiseGenerator();
-		loadedChunks = new ArrayList<Chunk>();
+		loadedChunks = new CopyOnWriteArrayList<Chunk>();
 		chunks = new HashMap<ChunkID, Chunk>();
 
-		// if (Globals.isServer()) { // We only initialise the chunks on the
-		// server
-		// since the client downloads them when they
-		// connect.
-
-		int xNum = 10;
-		int yNum = 1;
-		int zNum = 10;
-		int count = xNum * 2 * yNum * zNum * 2;
-		System.out.println("Number of chunks to generate: " + count);
-		for (int x = -xNum; x < xNum; x++) {
-			for (int y = -yNum; y < 0; y++) {
-				for (int z = -zNum; z < zNum; z++) {
-					//Chunk testChunk = new Chunk(x, y, z, chunkSize, (float) blockSize, terrainNoise);
-					//chunks.put(new ChunkID(x, y, z), testChunk);
-					//loadedChunks.add(testChunk);
-				}
-			}
-
-		}
+		
 
 		Globals.setLoadedChunks(loadedChunks);
 
-		// }
+		
 
 	}
 
@@ -170,13 +161,8 @@ public class ChunkManager implements IModule {
 		terrainNoise = ac;
 	}
 
-	@Override
-	public void cleanUp() {
-		// TODO Auto-generated method stub
+	
 
-	}
-
-	@Override
 	public void update() {
 		for (Chunk c : loadedChunks) {
 			c.update();
@@ -207,16 +193,28 @@ public class ChunkManager implements IModule {
 	
 	
 
-	@Override
-	public ArrayList<PhysicsEntity> prepare() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	
+
+
 
 	@Override
-	public void render() {
-		// TODO Auto-generated method stub
-
+	public void run() {
+		Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
+		setUp();
+		
+		while(Globals.isRunning()){
+			process();
+			update();
+//			try {
+//				//Thread.sleep(100);
+//			} catch (InterruptedException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+		}
+		
+		
+		
 	}
 
 }

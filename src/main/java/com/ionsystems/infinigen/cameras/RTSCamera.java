@@ -49,7 +49,7 @@ public class RTSCamera implements IModule, ICamera {
 		Globals.setCameraDirection(calculateDirectionVector());
 		
 		
-		float terrainHeight = (float) 0;
+		float terrainHeight = (float) -1000;
 
 		if (position.y < terrainHeight) {
 			position.y = terrainHeight;

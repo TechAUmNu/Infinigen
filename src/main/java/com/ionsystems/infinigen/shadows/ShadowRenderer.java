@@ -63,15 +63,13 @@ public class ShadowRenderer {
 		}
 
 		// Render terrain
-		for (Chunk chunk : Globals.getLoadedChunks()) {
-
-			loadModelMatrix(chunk);
-			renderFace(chunk.getBottomModel());
-			renderFace(chunk.getTopModel());
-			renderFace(chunk.getBackModel());
-			renderFace(chunk.getFrontModel());
-			renderFace(chunk.getLeftModel());
-			renderFace(chunk.getRightModel());
+		if (Globals.getLoadedChunks() != null) {
+			for (Chunk chunk : Globals.getLoadedChunks()) {
+				if(chunk.isRenderable()){
+				loadModelMatrix(chunk);
+				renderFace(chunk.getModel());
+				}
+			}
 		}
 
 		shader.stop();
@@ -83,7 +81,7 @@ public class ShadowRenderer {
 	private void renderFace(RawModel rawModel) {
 		prepareChunkFace(rawModel);
 		// System.out.println(rawModel.getVertexCount());
-		GL11.glDrawElements(GL11.GL_TRIANGLES, rawModel.getVertexCount(), GL11.GL_UNSIGNED_INT, 0);
+		GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, rawModel.getVertexCount());
 		unbindFace();
 	}
 
@@ -91,10 +89,7 @@ public class ShadowRenderer {
 		GL30.glBindVertexArray(rawModel.getVaoID());
 		GL20.glEnableVertexAttribArray(0);
 
-		
 	}
-
-	
 
 	private void unbindFace() {
 		GL20.glDisableVertexAttribArray(0);
@@ -136,22 +131,21 @@ public class ShadowRenderer {
 		MatrixHandler depthProjectionMatrix = new MatrixHandler();
 		MatrixHandler depthViewMatrix = new MatrixHandler();
 
-	
-		
-		//Hooray it works!
+		// Hooray it works!
 		Vector3f cameraPosition = Globals.getCameraPosition();
 		int camera = Globals.getActiveCameraID();
-		
-		if(camera == 1){
-			depthProjectionMatrix.initOrthographicMatrix(-200 - cameraPosition.z, 200 - cameraPosition.z, -200, 200, -200 - cameraPosition.x, 200 - cameraPosition.x);
-		}else{
-		depthProjectionMatrix.initOrthographicMatrix(-500 - cameraPosition.z, 500 - cameraPosition.z, -500, 500, -500 - cameraPosition.x, 500 - cameraPosition.x);
+
+		if (camera == 1) {
+			depthProjectionMatrix.initOrthographicMatrix(-200 - cameraPosition.z, 200 - cameraPosition.z, -200, 200, -200 - cameraPosition.x,
+					200 - cameraPosition.x);
+		} else {
+			depthProjectionMatrix.initOrthographicMatrix(-500 - cameraPosition.z, 500 - cameraPosition.z, -500, 500, -500 - cameraPosition.x,
+					500 - cameraPosition.x);
 		}
-		
-	
-		
-		depthViewMatrix.lookAt(light.getPosition().normalise(new Vector3f()), new Vector3f(0,0,0), new Vector3f(0, 1, 0));
-		//depthViewMatrix.setPosition(Globals.getCameraPosition().normalise(new Vector3f()));
+
+		depthViewMatrix.lookAt(light.getPosition().normalise(new Vector3f()), new Vector3f(0, 0, 0), new Vector3f(0, 1, 0));
+		// depthViewMatrix.setPosition(Globals.getCameraPosition().normalise(new
+		// Vector3f()));
 		Matrix4f.mul(depthProjectionMatrix, depthViewMatrix, depthMatrix);
 
 		shader.loadDepthMatrix(depthMatrix);

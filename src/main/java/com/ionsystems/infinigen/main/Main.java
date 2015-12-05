@@ -97,7 +97,7 @@ public class Main {
 	 *            Arguments
 	 */
 	public static void main(String[] args) {
-
+		Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
 		Main g = new Main();
 		if (args.length > 0) {
 			if (args[0].equals("server")) {
@@ -110,7 +110,7 @@ public class Main {
 			}
 
 		}
-
+		
 		Globals.setLoading(true);
 		g.setup();
 		g.mainGame();
@@ -179,8 +179,7 @@ public class Main {
 
 			lights = new ArrayList<Light>();
 
-			world = new ChunkManager();
-
+			
 			unitBuilder = new UnitBuilderManager();
 			//text = new TextManager();
 			physics.setUp();
@@ -211,17 +210,22 @@ public class Main {
 			Globals.setActiveCamera(activeCamera);
 			loadedModules.add(picker);
 			loadedModules.add(unitBuilder);
-			loadedModules.add(world);
+			
 			loadedModules.add(networking);
 			
 
 			// Add anything to the globals that might be needed elsewhere.
 			Globals.setLoader(loader);
+			
+			
 			// loadAudio();
 
 			for (IModule module : loadedModules) {
 				module.setUp();
 			}
+			
+			world = new ChunkManager();
+			(new Thread(world)).start();
 		} else {
 
 			loadedModules = new ArrayList<IModule>();
@@ -229,7 +233,7 @@ public class Main {
 			// loader = new Loader();
 			physics = new PhysicsManager();
 
-			world = new ChunkManager();
+			
 			physics.setUp();
 			Globals.setPhysics(physics);
 			// Networking
@@ -239,15 +243,18 @@ public class Main {
 			// Core modules
 			// loadedModules.add(loader);
 			loadedModules.add(physics);
-			loadedModules.add(world);
+			
 			loadedModules.add(networking);
 
 			// Add anything to the globals that might be needed elsewhere.
 			Globals.setLoader(loader);
 
+			
 			for (IModule module : loadedModules) {
 				module.setUp();
 			}
+			world = new ChunkManager();
+			(new Thread(world)).start();
 		}
 
 	}
@@ -286,7 +293,7 @@ public class Main {
 	 */
 	private void loadAssets() {
 
-		sun = new Light(new Vector3f(activeCamera.getPosition().x + 5000, 3000, activeCamera.getPosition().z), new Vector3f(1, 1, 1));
+		sun = new Light(new Vector3f(activeCamera.getPosition().x + 6000, 3000, activeCamera.getPosition().z), new Vector3f(1, 1, 1));
 		lights.add(sun); // Sun
 
 	}

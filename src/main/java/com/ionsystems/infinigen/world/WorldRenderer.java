@@ -27,84 +27,49 @@ import main.java.com.ionsystems.infinigen.utility.Maths;
 public class WorldRenderer implements IModule {
 
 	private ChunkShader shader;
-	//private static int CHUNK_SIZE = 32;
+	// private static int CHUNK_SIZE = 32;
 	private TerrainTexture texture;
-	
 
 	public WorldRenderer(ChunkShader shader, Matrix4f projectionMatrix) {
 		this.shader = shader;
 		shader.start();
-		shader.loadProjectionMatrix(projectionMatrix);		
+		shader.loadProjectionMatrix(projectionMatrix);
 		shader.stop();
-		
-		
+
 	}
 
 	public void renderChunks() {
 		bindTextures();
-		for (Chunk chunk : Globals.getLoadedChunks()) {		
-			//We need to check which faces should actually be visible/
-			//We will use a dot product on the normal for the face and the camera 
-			
-			Vector3d cameraDirection = Globals.getCameraDirection();
-			
-			
-		
-			
-			
-			loadModelMatrix(chunk);
-			//if(cameraDirection.dot(new Vector3d(0,0,-1)) > -.7){
-				renderFace(chunk.getBottomModel());
-			//}
-			
-			//if(cameraDirection.dot(new Vector3d(0,0,1)) > -.7){
-				renderFace(chunk.getTopModel());
-			//}
-			
-			//if(cameraDirection.dot(new Vector3d(-1,0,0)) > -.7){
-				renderFace(chunk.getBackModel());
-			//}
-			
-			//if(cameraDirection.dot(new Vector3d(1,0,0)) > -.7){
-				renderFace(chunk.getFrontModel());
-			//}
-			
-			//if(cameraDirection.dot(new Vector3d(0,1,0)) > -.7){
-				renderFace(chunk.getLeftModel());
-			//}
-			
-			//if(cameraDirection.dot(new Vector3d(0,-1,0)) > -.7){
-				renderFace(chunk.getRightModel());				
-			//}
-			
-			
-			
-			
-			
-			
-			
-			
-			
+		if (Globals.getLoadedChunks() != null) {
+			for (Chunk chunk : Globals.getLoadedChunks()) {
+				if (chunk.isRenderable()) {
+
+					loadModelMatrix(chunk);
+
+					renderFace(chunk.getModel());
+
+				}
+			}
 		}
 	}
 
 	private void renderFace(RawModel rawModel) {
-		prepareChunkFace(rawModel);		
-		//System.out.println(rawModel.getVertexCount());
-		GL11.glDrawElements(GL11.GL_TRIANGLES, rawModel.getVertexCount(), GL11.GL_UNSIGNED_INT, 0);
+		prepareChunkFace(rawModel);
+		// System.out.println(rawModel.getVertexCount());
+		GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, rawModel.getVertexCount());
 		unbindFace();
 	}
 
-	private void prepareChunkFace(RawModel rawModel) {		
+	private void prepareChunkFace(RawModel rawModel) {
 		GL30.glBindVertexArray(rawModel.getVaoID());
 		GL20.glEnableVertexAttribArray(0);
 		GL20.glEnableVertexAttribArray(1);
 		GL20.glEnableVertexAttribArray(2);
-		
+
 		shader.loadShineVariables(1, 0);
 	}
 
-	private void bindTextures() {	
+	private void bindTextures() {
 		GL13.glActiveTexture(GL13.GL_TEXTURE0);
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, texture.getTextureID());
 	}
@@ -117,8 +82,9 @@ public class WorldRenderer implements IModule {
 	}
 
 	private void loadModelMatrix(Chunk chunk) {
-		Vector3f position = new Vector3f(chunk.x * chunk.size * chunk.blockSize,chunk.y * chunk.size * chunk.blockSize, chunk.z * chunk.size * chunk.blockSize);
-		//System.out.println(position);
+		Vector3f position = new Vector3f(chunk.x * ChunkManager.chunkSize * chunk.blockSize, chunk.y * ChunkManager.chunkSize * chunk.blockSize, chunk.z
+				* ChunkManager.chunkSize * chunk.blockSize);
+		// System.out.println(position);
 		Matrix4f transformationMatrix = Maths.createTransformationMatrix(position, 0, 0, 0, 1, 1, false);
 		shader.loadTransformationMatrix(transformationMatrix);
 	}
@@ -126,24 +92,24 @@ public class WorldRenderer implements IModule {
 	@Override
 	public void process() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void setUp() {
-		texture = new TerrainTexture(Globals.getLoader().loadTexture("grassMinecraft"));		
+		texture = new TerrainTexture(Globals.getLoader().loadTexture("grassMinecraft"));
 	}
 
 	@Override
 	public void cleanUp() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void update() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -155,7 +121,7 @@ public class WorldRenderer implements IModule {
 	@Override
 	public void render() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }
