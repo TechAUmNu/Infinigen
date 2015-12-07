@@ -21,7 +21,7 @@ import main.java.com.ionsystems.infinigen.utility.FileSearch;
 public class ModelLoaderManager implements IModule{
 
 	
-	private static final String MODELS_LOCATION = "Models";
+	private static final String MODELS_LOCATION = "res/models";
 	private static final String MODEL_FILE_LIST_NAME = "modellist.txt";
 	private ArrayList<ModelFile> modelFiles = new ArrayList<ModelFile>();
 	
@@ -53,7 +53,7 @@ public class ModelLoaderManager implements IModule{
 		for(File modelList : modelLists){
 			//System.out.println(modelList.toPath());
 			Path pathRelative = pathBase.relativize(modelList.toPath());
-			String folderName = pathRelative.getName(2).toString();
+			String folderName = pathRelative.getName(3).toString();
 			String fileName = pathRelative.getFileName().toString();
 			//System.out.println(folderName);
 			//System.out.println(fileName);

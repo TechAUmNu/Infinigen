@@ -20,8 +20,8 @@ public class ChunkShader extends ShaderProgram {
 
 	private static final int MAX_LIGHTS = 4;
 
-	private static final String VERTEX_FILE = "src/main/java/com/ionsystems/infinigen/shaders/terrainvertexShader.vs";
-	private static final String FRAGMENT_FILE = "src/main/java/com/ionsystems/infinigen/shaders/terrainfragmentShader.fs";
+	private static final String VERTEX_FILE = "res/shaders/terrainvertexShader.vs";
+	private static final String FRAGMENT_FILE = "res/shaders/terrainfragmentShader.fs";
 
 	private int location_transformationMatrix;
 	private int location_projectionMatrix;

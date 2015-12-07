@@ -35,15 +35,15 @@ public class WorldRenderer implements IModule {
 		shader.start();
 		shader.loadProjectionMatrix(projectionMatrix);
 		shader.stop();
-
 	}
 
 	public void renderChunks() {
+		int numTriangles = 0;
 		bindTextures();
 		if (Globals.getLoadedChunks() != null) {
 			for (Chunk chunk : Globals.getLoadedChunks()) {
 				if (chunk.isRenderable()) {
-
+					numTriangles += chunk.triangles.size();
 					loadModelMatrix(chunk);
 
 					renderFace(chunk.getModel());
@@ -51,12 +51,13 @@ public class WorldRenderer implements IModule {
 				}
 			}
 		}
+		System.out.println("Triangles: " + numTriangles);
 	}
 
 	private void renderFace(RawModel rawModel) {
 		prepareChunkFace(rawModel);
 		// System.out.println(rawModel.getVertexCount());
-		GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, rawModel.getVertexCount());
+		GL11.glDrawArrays(GL11.GL_LINES, 0, rawModel.getVertexCount());
 		unbindFace();
 	}
 

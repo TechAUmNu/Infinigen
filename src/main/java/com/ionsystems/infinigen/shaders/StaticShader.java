@@ -21,8 +21,8 @@ public class StaticShader extends ShaderProgram {
 
 	private static final int MAX_LIGHTS = 4;
 
-	private static final String VERTEX_FILE = "src/main/java/com/ionsystems/infinigen/shaders/vertexShader.vs";
-	private static final String FRAGMENT_FILE = "src/main/java/com/ionsystems/infinigen/shaders/fragmentShader.fs";
+	private static final String VERTEX_FILE = "res/shaders/vertexShader.vs";
+	private static final String FRAGMENT_FILE = "res/shaders/fragmentShader.fs";
 
 	private int location_transformationMatrix;
 	private int location_projectionMatrix;

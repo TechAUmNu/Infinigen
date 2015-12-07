@@ -6,8 +6,8 @@ import org.lwjgl.util.vector.Vector3f;
 
 public class FontShader extends ShaderProgram{
 
-	private static final String VERTEX_FILE = "src/main/java/com/ionsystems/infinigen/fontRendering/fontVertex.txt";
-	private static final String FRAGMENT_FILE = "src/main/java/com/ionsystems/infinigen/fontRendering/fontFragment.txt";
+	private static final String VERTEX_FILE = "res/shaders/fontVertex.txt";
+	private static final String FRAGMENT_FILE = "res/shaders/fontFragment.txt";
 	
 	private int location_colour;
 	private int location_translation;

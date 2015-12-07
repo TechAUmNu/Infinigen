@@ -43,6 +43,7 @@ public class ChunkManager implements Runnable {
 
 	public static int loadDistance = 2;
 	long seed = 828382;
+	int state = 0;
 
 	public void process() {
 
@@ -55,7 +56,7 @@ public class ChunkManager implements Runnable {
 		// the chunk if it isn't already.
 		while(Globals.loading() && Globals.getCameraPosition() == null ){
 			try {
-				Thread.sleep(100);
+				Thread.sleep(1000);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -75,14 +76,18 @@ public class ChunkManager implements Runnable {
 		//System.out.println(cameraChunkLocation);
 		int cameraX = (int) cameraChunkLocation.x;
 		int cameraZ = (int) cameraChunkLocation.z;
-
+		int chunksRequired = 0;
 		for (int x = -loadDistance + cameraX; x < loadDistance + cameraX + 1; x++) {
 			for (int z = -loadDistance + cameraZ; z < loadDistance + cameraZ + 1; z++) {
 				if (inCircle(cameraX, cameraZ, loadDistance, x, z)) {
 					loadChunk(x, -1, z);
+					chunksRequired++;
 				}
 			}
 		}
+		
+		System.out.print(state + " Chunks Needed: "+ chunksRequired);
+		System.out.println(" Chunks Loaded: " + chunks.keySet().size());
 		ArrayList<ChunkID> toUnload  = new ArrayList<ChunkID>();
 		for(ChunkID c : chunks.keySet()){
 			if (!inCircle(cameraX, cameraZ, loadDistance, c.x, c.z)) {
@@ -93,10 +98,9 @@ public class ChunkManager implements Runnable {
 			chunks.get(c).cleanUp();			
 			loadedChunks.remove(chunks.get(c));
 			Globals.getLoadedChunks().remove(chunks.get(c));
-			chunks.remove(c);
-			
+			chunks.remove(c);			
 		}
-		
+		toUnload = null;
 		
 		Globals.setLoadedChunks(loadedChunks);
 
@@ -182,8 +186,7 @@ public class ChunkManager implements Runnable {
 	}
 
 	public void loadChunk(int x, int y, int z) {
-		//Checks if the chunk is already loaded, if not then queues a chunk load on one of the loading threads.
-		//TODO: Make loading threads.
+		
 		if (!chunks.containsKey(new ChunkID(x, y, z))) {
 			Chunk testChunk = new Chunk(x, y, z, chunkSize, (float) blockSize, terrainNoise);
 			chunks.put(new ChunkID(x, y, z), testChunk);
@@ -205,12 +208,13 @@ public class ChunkManager implements Runnable {
 		while(Globals.isRunning()){
 			process();
 			update();
-//			try {
-//				//Thread.sleep(100);
-//			} catch (InterruptedException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
+			state++;
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		
 		

@@ -6,8 +6,8 @@ import org.lwjgl.util.vector.Matrix4f;
 
 public class GuiShader extends ShaderProgram {
 
-	private static final String VERTEX_FILE = "src/main/java/com/ionsystems/infinigen/gui/guiVertexShader.txt";
-	private static final String FRAGMENT_FILE = "src/main/java/com/ionsystems/infinigen/gui/guiFragmentShader.txt";
+	private static final String VERTEX_FILE = "res/shaders/guiVertexShader.txt";
+	private static final String FRAGMENT_FILE = "res/shaders/guiFragmentShader.txt";
 
 	private int location_mouseOver;
 

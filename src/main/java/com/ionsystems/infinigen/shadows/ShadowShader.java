@@ -6,8 +6,8 @@ import org.lwjgl.util.vector.Matrix4f;
 
 public class ShadowShader extends ShaderProgram {
 
-	private final static String VERTEX_FILE = "src/main/java/com/ionsystems/infinigen/shadows/shadowVertex.txt";
-	private final static String FRAGMENT_FILE = "src/main/java/com/ionsystems/infinigen/shadows/shadowFragment.txt";
+	private final static String VERTEX_FILE = "res/shaders/shadowVertex.txt";
+	private final static String FRAGMENT_FILE = "res/shaders/shadowFragment.txt";
 
 	
 	private int location_depthMatrix;

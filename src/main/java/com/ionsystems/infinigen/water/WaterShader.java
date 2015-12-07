@@ -9,8 +9,8 @@ import org.lwjgl.util.vector.Matrix4f;
 
 public class WaterShader extends ShaderProgram {
 
-	private final static String VERTEX_FILE = "src/main/java/com/ionsystems/infinigen/water/waterVertex.txt";
-	private final static String FRAGMENT_FILE = "src/main/java/com/ionsystems/infinigen/water/waterFragment.txt";
+	private final static String VERTEX_FILE = "res/shaders/waterVertex.txt";
+	private final static String FRAGMENT_FILE = "res/shaders/waterFragment.txt";
 
 	private int location_modelMatrix;
 	private int location_viewMatrix;

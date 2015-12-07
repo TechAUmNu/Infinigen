@@ -293,9 +293,9 @@ public class Main {
 	 */
 	private void loadAssets() {
 
-		sun = new Light(new Vector3f(activeCamera.getPosition().x + 6000, 3000, activeCamera.getPosition().z), new Vector3f(1, 1, 1));
+		sun = new Light(new Vector3f(100, 1000, 100), new Vector3f(1, 1, 1));
 		lights.add(sun); // Sun
-
+		
 	}
 
 	/**
@@ -332,6 +332,7 @@ public class Main {
 	 * Called every frame Put anything to do with the user here
 	 */
 	private void process() {
+		//System.out.println(activeCamera.getPosition());
 		if (Mouse.isButtonDown(1) && !mouse1) {
 			Mouse.setGrabbed(true);
 			mouse1 = true;
