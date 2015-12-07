@@ -29,6 +29,7 @@ public class WorldRenderer implements IModule {
 	private ChunkShader shader;
 	// private static int CHUNK_SIZE = 32;
 	private TerrainTexture texture;
+	int i = 120;
 
 	public WorldRenderer(ChunkShader shader, Matrix4f projectionMatrix) {
 		this.shader = shader;
@@ -51,13 +52,13 @@ public class WorldRenderer implements IModule {
 				}
 			}
 		}
-		System.out.println("Triangles: " + numTriangles);
+		//System.out.println("Triangles: " + numTriangles);
 	}
 
 	private void renderFace(RawModel rawModel) {
 		prepareChunkFace(rawModel);
 		// System.out.println(rawModel.getVertexCount());
-		GL11.glDrawArrays(GL11.GL_LINES, 0, rawModel.getVertexCount());
+		GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, rawModel.getVertexCount());
 		unbindFace();
 	}
 

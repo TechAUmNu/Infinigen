@@ -74,20 +74,13 @@ public class ChunkManager implements Runnable {
 																							// chunk
 																							// space
 		//System.out.println(cameraChunkLocation);
+		
+		
 		int cameraX = (int) cameraChunkLocation.x;
 		int cameraZ = (int) cameraChunkLocation.z;
 		int chunksRequired = 0;
-		for (int x = -loadDistance + cameraX; x < loadDistance + cameraX + 1; x++) {
-			for (int z = -loadDistance + cameraZ; z < loadDistance + cameraZ + 1; z++) {
-				if (inCircle(cameraX, cameraZ, loadDistance, x, z)) {
-					loadChunk(x, -1, z);
-					chunksRequired++;
-				}
-			}
-		}
 		
-		System.out.print(state + " Chunks Needed: "+ chunksRequired);
-		System.out.println(" Chunks Loaded: " + chunks.keySet().size());
+		
 		ArrayList<ChunkID> toUnload  = new ArrayList<ChunkID>();
 		for(ChunkID c : chunks.keySet()){
 			if (!inCircle(cameraX, cameraZ, loadDistance, c.x, c.z)) {
@@ -101,6 +94,21 @@ public class ChunkManager implements Runnable {
 			chunks.remove(c);			
 		}
 		toUnload = null;
+		
+		
+		
+		for (int x = -loadDistance + cameraX; x < loadDistance + cameraX + 1; x++) {
+			for (int z = -loadDistance + cameraZ; z < loadDistance + cameraZ + 1; z++) {
+				if (inCircle(cameraX, cameraZ, loadDistance, x, z)) {
+					loadChunk(x, -1, z);
+					chunksRequired++;
+				}
+			}
+		}
+		
+		System.out.print(state + " Chunks Needed: "+ chunksRequired);
+		System.out.println(" Chunks Loaded: " + chunks.keySet().size());
+		
 		
 		Globals.setLoadedChunks(loadedChunks);
 

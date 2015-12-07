@@ -156,8 +156,8 @@ public class Globals {
 	}
 
 	public static boolean showFPS() {
-		// TODO Auto-generated method stub
-		return false;
+		
+		return true;
 	}
 
 	public static boolean loading() {		

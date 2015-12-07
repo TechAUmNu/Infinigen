@@ -116,7 +116,7 @@ public class Chunk {
 		}
 		marchingCubes();
 		save();
-
+		blocks = null;
 	}
 
 	public void update() {
@@ -199,7 +199,7 @@ public class Chunk {
 		ChunkRenderingData crd = new ChunkRenderingData(positions, textureCoords, normals, this);
 		Globals.getLoader().addChunkToLoadQueue(crd);
 		
-		blocks = null;
+		
 	}
 
 	private int triangulate(int x, int y, int z) {

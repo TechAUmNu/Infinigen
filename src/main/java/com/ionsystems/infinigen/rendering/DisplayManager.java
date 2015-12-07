@@ -70,7 +70,7 @@ public class DisplayManager {
 		}
 		fps++;
 
-		 //System.out.println(fpsCounter);
+		 //System.out.println("FPS: "+ fpsCounter);
 
 	}
 
