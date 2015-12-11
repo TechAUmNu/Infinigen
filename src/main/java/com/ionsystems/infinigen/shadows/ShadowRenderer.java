@@ -29,6 +29,8 @@ public class ShadowRenderer {
 	private ShadowFrameBuffers fbos;
 
 	private MatrixHandler depthMatrix;
+	int calls = 0;
+	private Vector3f position = new Vector3f();
 
 	public ShadowMap getShadowMap() {
 		MatrixHandler biasMatrix = new MatrixHandler();
@@ -97,8 +99,11 @@ public class ShadowRenderer {
 	}
 
 	private void loadModelMatrix(Chunk chunk) {
-		Vector3f position = new Vector3f(chunk.x * chunk.size * chunk.blockSize, chunk.y * chunk.size * chunk.blockSize, chunk.z * chunk.size * chunk.blockSize);
-		// System.out.println(position);
+		
+		position.x = chunk.x * chunk.size * chunk.blockSize;
+		position.y = chunk.y * chunk.size * chunk.blockSize;
+		position.z = chunk.z * chunk.size * chunk.blockSize;
+		
 		Matrix4f transformationMatrix = Maths.createTransformationMatrix(position, 0, 0, 0, 1, 1, false);
 		shader.loadDepthModelMatrix(transformationMatrix);
 	}

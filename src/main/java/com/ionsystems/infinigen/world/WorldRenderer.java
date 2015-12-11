@@ -18,6 +18,7 @@ import main.java.com.ionsystems.infinigen.global.Globals;
 import main.java.com.ionsystems.infinigen.global.IModule;
 import main.java.com.ionsystems.infinigen.models.RawModel;
 import main.java.com.ionsystems.infinigen.models.TexturedModel;
+import main.java.com.ionsystems.infinigen.rendering.DisplayManager;
 import main.java.com.ionsystems.infinigen.shaders.ChunkShader;
 import main.java.com.ionsystems.infinigen.textures.ModelTexture;
 import main.java.com.ionsystems.infinigen.textures.TerrainTexture;
@@ -30,6 +31,7 @@ public class WorldRenderer implements IModule {
 	// private static int CHUNK_SIZE = 32;
 	private TerrainTexture texture;
 	int i = 120;
+	private Vector3f position = new Vector3f();
 
 	public WorldRenderer(ChunkShader shader, Matrix4f projectionMatrix) {
 		this.shader = shader;
@@ -44,6 +46,10 @@ public class WorldRenderer implements IModule {
 		if (Globals.getLoadedChunks() != null) {
 			for (Chunk chunk : Globals.getLoadedChunks()) {
 				if (chunk.isRenderable()) {
+					//if(Globals.getCameraDirection() ){
+					//	
+					//}
+					
 					numTriangles += chunk.triangles.size();
 					loadModelMatrix(chunk);
 
@@ -52,7 +58,8 @@ public class WorldRenderer implements IModule {
 				}
 			}
 		}
-		//System.out.println("Triangles: " + numTriangles);
+		System.out.print("Triangles: " + numTriangles);
+		System.out.println(" FPS: " + DisplayManager.getFpsCounter());
 	}
 
 	private void renderFace(RawModel rawModel) {
@@ -84,8 +91,9 @@ public class WorldRenderer implements IModule {
 	}
 
 	private void loadModelMatrix(Chunk chunk) {
-		Vector3f position = new Vector3f(chunk.x * ChunkManager.chunkSize * chunk.blockSize, chunk.y * ChunkManager.chunkSize * chunk.blockSize, chunk.z
-				* ChunkManager.chunkSize * chunk.blockSize);
+		position.x = chunk.x * ChunkManager.chunkSize * chunk.blockSize;
+		position.y = chunk.y * ChunkManager.chunkSize * chunk.blockSize;
+		position.z = chunk.z * ChunkManager.chunkSize * chunk.blockSize;
 		// System.out.println(position);
 		Matrix4f transformationMatrix = Maths.createTransformationMatrix(position, 0, 0, 0, 1, 1, false);
 		shader.loadTransformationMatrix(transformationMatrix);

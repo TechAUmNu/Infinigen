@@ -3,6 +3,8 @@ package main.java.com.ionsystems.infinigen.global;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import javax.vecmath.Vector3d;
 
@@ -32,6 +34,9 @@ public class Globals {
 	private static CopyOnWriteArrayList<Chunk> visibleChunks;
 	private static boolean isServer;
 	private static boolean loading;
+	
+	private static ReadWriteLock loadingLock = new ReentrantReadWriteLock();
+	private static ReadWriteLock unloadingLock = new ReentrantReadWriteLock();
 	
 	
 	private static ArrayList<ChunkData> chunkUpdate;
@@ -302,6 +307,18 @@ public class Globals {
 	public static void endThreads(){
 		running = false;
 	}
+
+	public static ReadWriteLock getLoadingLock() {
+		return loadingLock;
+	}
+
+	
+
+	public static ReadWriteLock getUnloadingLock() {
+		return unloadingLock;
+	}
+
+	
 
 //	public static ArrayList<TextElement> getTextElements() {
 //		return textElements;

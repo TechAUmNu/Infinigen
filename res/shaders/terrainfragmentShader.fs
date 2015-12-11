@@ -58,8 +58,8 @@ void main(void){
 	
 	vec3 totalDiffuse = vec3(0.0);
 	vec3 totalSpecular = vec3(0.0);
-	
-	for(int i = 0; i < 4; i++){	
+	int i = 0;
+	//for(int i = 0; i < 4; i++){	
 		float distance = length(toLightVector[i]);
 		float attFactor = attenuation[i].x + (attenuation[i].y * distance) + (attenuation[i].z * distance * distance);
 		
@@ -74,7 +74,7 @@ void main(void){
 		float dampedFactor = pow(specularFactor, shineDamper);
 		totalDiffuse = totalDiffuse + (brightness * lightColour[i])/attFactor;	
 		totalSpecular = totalSpecular + (dampedFactor * reflectivity * lightColour[i])/attFactor;
-	}
+	//}
 	
 	totalDiffuse = max(totalDiffuse, 0.0);
 	

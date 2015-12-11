@@ -9,6 +9,10 @@ import main.java.com.ionsystems.infinigen.models.TexturedModel;
 import main.java.com.ionsystems.infinigen.utility.Maths;
 
 public class Entity implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 134868214896741001L;
 	protected TexturedModel model;
 	protected Vector3f position;
 	protected float rotX, rotY, rotZ;

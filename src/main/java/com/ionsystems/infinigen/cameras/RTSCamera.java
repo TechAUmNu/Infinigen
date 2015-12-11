@@ -20,7 +20,7 @@ import org.lwjgl.util.vector.Vector3f;
 public class RTSCamera implements IModule, ICamera {
 
 	private float scrollSpeed = 50;
-	
+	private Vector3d direction = new Vector3d();;
 
 	
 
@@ -29,7 +29,7 @@ public class RTSCamera implements IModule, ICamera {
 	private float yaw = 0;	
 
 	private Vector3d calculateDirectionVector(){
-		Vector3d direction = new Vector3d();
+	
 		direction.x = cos(Math.toRadians(yaw))*cos(Math.toRadians(pitch));
 		direction.y = sin(Math.toRadians(yaw))*cos(Math.toRadians(pitch));
 		direction.z = sin(Math.toRadians(pitch));

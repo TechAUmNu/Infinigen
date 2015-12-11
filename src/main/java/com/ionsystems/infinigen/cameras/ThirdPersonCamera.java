@@ -1,11 +1,14 @@
 package main.java.com.ionsystems.infinigen.cameras;
 
+import static java.lang.Math.cos;
+import static java.lang.Math.sin;
 import static org.lwjgl.opengl.ARBDepthClamp.GL_DEPTH_CLAMP;
 import static org.lwjgl.opengl.GL11.glEnable;
 
 import java.util.ArrayList;
 
 import javax.vecmath.Quat4f;
+import javax.vecmath.Vector3d;
 
 import main.java.com.ionsystems.infinigen.entities.PhysicsEntity;
 import main.java.com.ionsystems.infinigen.global.Globals;
@@ -27,7 +30,7 @@ public class ThirdPersonCamera implements IModule, ICamera {
 	private float pitch = -10;
 	private float yaw = 0;
 	private float roll;
-
+	private Vector3d direction = new Vector3d();
 	private PhysicsEntity entity;
 	private boolean hasEntity = false;
 
@@ -57,9 +60,9 @@ public class ThirdPersonCamera implements IModule, ICamera {
 		Quat4f rotation = new Quat4f();
 		float rotationDegrees = Maths.convertToHeading(transform.getRotation(rotation));
 		calculateCameraPosition(horizontalDistance, verticalDistance, rotationDegrees, transform);
-
-		this.yaw = 180 - (angleAroundPlayer);
 		
+		this.yaw = 180 - (angleAroundPlayer);
+		Globals.setCameraDirection(calculateDirectionVector());
 		Globals.setCameraPosition(position);
 		}
 	}
@@ -141,6 +144,15 @@ public class ThirdPersonCamera implements IModule, ICamera {
 			angleAroundPlayer -= angleChange;
 			
 		}
+	}
+	
+	private Vector3d calculateDirectionVector(){
+		
+		direction.x = cos(Math.toRadians(yaw))*cos(Math.toRadians(pitch));
+		direction.y = sin(Math.toRadians(yaw))*cos(Math.toRadians(pitch));
+		direction.z = sin(Math.toRadians(pitch));
+				
+		return direction;	
 	}
 
 	@Override

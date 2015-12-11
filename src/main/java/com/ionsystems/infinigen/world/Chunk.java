@@ -197,8 +197,10 @@ public class Chunk {
 		}
 
 		ChunkRenderingData crd = new ChunkRenderingData(positions, textureCoords, normals, this);
-		Globals.getLoader().addChunkToLoadQueue(crd);
 		
+		Globals.getLoadingLock().writeLock().lock();
+		Globals.getLoader().addChunkToLoadQueue(crd);
+		Globals.getLoadingLock().writeLock().unlock();
 		
 	}
 
@@ -383,9 +385,11 @@ public class Chunk {
 					}
 				}
 			}
+			fileContent = null;
 			in.close();
 			file.close();
 			marchingCubes();
+			blocks = null;
 			return true;
 		} catch (FileNotFoundException e) {
 			
@@ -398,14 +402,15 @@ public class Chunk {
 
 	public void cleanUp() {
 		if (model != null) {
+			Globals.getUnloadingLock().writeLock().lock();
 			Globals.getLoader().addModelToUnloadQueue(model);
-
+			Globals.getUnloadingLock().writeLock().unlock();
 		}
 
 		blocks = null;
 	}
 
-	int edgeTable[] = { 0x0, 0x109, 0x203, 0x30a, 0x406, 0x50f, 0x605, 0x70c, 0x80c, 0x905, 0xa0f, 0xb06, 0xc0a, 0xd03, 0xe09, 0xf00, 0x190, 0x99, 0x393,
+	static int edgeTable[] = { 0x0, 0x109, 0x203, 0x30a, 0x406, 0x50f, 0x605, 0x70c, 0x80c, 0x905, 0xa0f, 0xb06, 0xc0a, 0xd03, 0xe09, 0xf00, 0x190, 0x99, 0x393,
 			0x29a, 0x596, 0x49f, 0x795, 0x69c, 0x99c, 0x895, 0xb9f, 0xa96, 0xd9a, 0xc93, 0xf99, 0xe90, 0x230, 0x339, 0x33, 0x13a, 0x636, 0x73f, 0x435, 0x53c,
 			0xa3c, 0xb35, 0x83f, 0x936, 0xe3a, 0xf33, 0xc39, 0xd30, 0x3a0, 0x2a9, 0x1a3, 0xaa, 0x7a6, 0x6af, 0x5a5, 0x4ac, 0xbac, 0xaa5, 0x9af, 0x8a6, 0xfaa,
 			0xea3, 0xda9, 0xca0, 0x460, 0x569, 0x663, 0x76a, 0x66, 0x16f, 0x265, 0x36c, 0xc6c, 0xd65, 0xe6f, 0xf66, 0x86a, 0x963, 0xa69, 0xb60, 0x5f0, 0x4f9,
@@ -419,7 +424,7 @@ public class Chunk {
 			0xb9f, 0x895, 0x99c, 0x69c, 0x795, 0x49f, 0x596, 0x29a, 0x393, 0x99, 0x190, 0xf00, 0xe09, 0xd03, 0xc0a, 0xb06, 0xa0f, 0x905, 0x80c, 0x70c, 0x605,
 			0x50f, 0x406, 0x30a, 0x203, 0x109, 0x0 };
 
-	int triTable[][] = { { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 }, { 0, 8, 3, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 },
+	static int triTable[][] = { { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 }, { 0, 8, 3, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 },
 			{ 0, 1, 9, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 }, { 1, 8, 3, 9, 8, 1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 },
 			{ 1, 2, 10, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 }, { 0, 8, 3, 1, 2, 10, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 },
 			{ 9, 2, 10, 0, 2, 9, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 }, { 2, 8, 3, 2, 10, 8, 10, 9, 8, -1, -1, -1, -1, -1, -1, -1 },
