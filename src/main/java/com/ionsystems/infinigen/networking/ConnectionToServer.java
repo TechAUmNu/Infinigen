@@ -18,9 +18,6 @@ import java.util.zip.GZIPOutputStream;
 import javax.swing.Timer;
 
 import com.bulletphysics.dynamics.RigidBody;
-import com.bulletphysics.linearmath.MotionState;
-import com.bulletphysics.linearmath.Transform;
-
 import main.java.com.ionsystems.infinigen.entities.PhysicsEntity;
 import main.java.com.ionsystems.infinigen.global.Globals;
 
@@ -44,6 +41,7 @@ public class ConnectionToServer implements Runnable, ActionListener {
 
 	}
 
+	@Override
 	public void run() {
 		try {
 			// 1. creating a socket to connect to the server
@@ -106,9 +104,9 @@ public class ConnectionToServer implements Runnable, ActionListener {
 		} finally {
 			// 4: Closing connection
 			try {
-				in.close();
-				out.close();
-				socket.close();
+				// in.close();
+				// out.close();
+				// socket.close();
 			} catch (IOException ioException) {
 				ioException.printStackTrace();
 			}
@@ -122,20 +120,22 @@ public class ConnectionToServer implements Runnable, ActionListener {
 		if (inMessage.physicsUpdate) {
 			physicsUpdate();
 		}
-		if(inMessage.newEntity){
+		if (inMessage.newEntity) {
 			newEntity();
 		}
-		if(inMessage.clientIDChange){
+		if (inMessage.clientIDChange) {
 			Globals.setClientID(inMessage.clientID);
 		}
 	}
 
 	private void newEntity() {
-		for(PhysicsEntity e : inMessage.entityData){
-			Globals.getPhysics().getProcessor().addPhysicsEntity(e); //Thats easy :D
-			// now we just at the entities to the list we already have			
+		for (PhysicsEntity e : inMessage.entityData) {
+			Globals.getPhysics().getProcessor().addPhysicsEntity(e); // Thats
+																		// easy
+																		// :D
+			// now we just at the entities to the list we already have
 			Globals.addEntity(e, true);
-		}		
+		}
 	}
 
 	private void physicsUpdate() {
@@ -150,15 +150,15 @@ public class ConnectionToServer implements Runnable, ActionListener {
 		ArrayList<PhysicsNetworkBody> networkBodies = inMessage.physicsData;
 		ArrayList<RigidBody> bodies = Globals.getPhysics().getProcessor().getBodies();
 
-		//System.out.println("Physics update: " + networkBodies.size());
+		// System.out.println("Physics update: " + networkBodies.size());
 
-		for (PhysicsNetworkBody body : networkBodies) {			
-			for (RigidBody rb : bodies) {				
-				if (body.hash.equals(rb.bodyIdHash)) {				
+		for (PhysicsNetworkBody body : networkBodies) {
+			for (RigidBody rb : bodies) {
+				if (body.hash.equals(rb.bodyIdHash)) {
 					rb.setAngularVelocity(body.angularVelocity);
 					rb.setLinearVelocity(body.linearVelocity);
 					rb.setWorldTransform(body.worldTransform);
-					//System.out.println(body.worldTransform.origin);
+					// System.out.println(body.worldTransform.origin);
 					break;
 				}
 
@@ -198,25 +198,27 @@ public class ConnectionToServer implements Runnable, ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		// So the main thing for the client is when new objects are created, we
 		// need to make sure the server knows about them,
-		// The server actually only needs to know about the rigid body, but the other clients need to know what it is we are drawing so we must send the whole entity
-		
-		
-		//We get the list of new entities from globals.
-		
-		ArrayList<PhysicsEntity> newEntities = Globals.getNewEntities();		
-		//System.out.println("SENDING NEW ENTITES: " + newEntities.size());
+		// The server actually only needs to know about the rigid body, but the
+		// other clients need to know what it is we are drawing so we must send
+		// the whole entity
+
+		// We get the list of new entities from globals.
+
+		ArrayList<PhysicsEntity> newEntities = Globals.getNewEntities();
+		// System.out.println("SENDING NEW ENTITES: " + newEntities.size());
 		NetworkMessage outMessage = new NetworkMessage();
-		outMessage.newEntity = true; // We set this so the client knows it is part of the chunk update			
-		outMessage.entityData = newEntities; //TODO: Clearly this is a stupid idea so need to change this to use named models.	
-		
-		for(PhysicsEntity en : newEntities){
-			
-			//System.out.println(en.getBody().getWorldTransform(new Transform()).origin);
+		outMessage.newEntity = true; // We set this so the client knows it is
+										// part of the chunk update
+		outMessage.entityData = newEntities; // TODO: Clearly this is a stupid
+												// idea so need to change this
+												// to use named models.
+
+		for (PhysicsEntity en : newEntities) {
+
+			// System.out.println(en.getBody().getWorldTransform(new
+			// Transform()).origin);
 		}
-		queueMessage(outMessage); //This will probably be huge *Oh dear :S*
-		
-		
-		
+		queueMessage(outMessage); // This will probably be huge *Oh dear :S*
 
 		// Once we have done all this we can process the waiting messages to be
 		// sent.

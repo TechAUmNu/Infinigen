@@ -27,7 +27,7 @@ public class TextMeshCreator {
 		Line currentLine = new Line(metaData.getSpaceWidth(), text.getFontSize(), text.getMaxLineSize());
 		Word currentWord = new Word(text.getFontSize());
 		for (char c : chars) {
-			int ascii = (int) c;
+			int ascii = c;
 			if (ascii == SPACE_ASCII) {
 				boolean added = currentLine.attemptToAddWord(currentWord);
 				if (!added) {
@@ -68,20 +68,19 @@ public class TextMeshCreator {
 			for (Word word : line.getWords()) {
 				for (Character letter : word.getCharacters()) {
 					addVerticesForCharacter(curserX, curserY, letter, text.getFontSize(), vertices);
-					addTexCoords(textureCoords, letter.getxTextureCoord(), letter.getyTextureCoord(),
-							letter.getXMaxTextureCoord(), letter.getYMaxTextureCoord());
+					addTexCoords(textureCoords, letter.getxTextureCoord(), letter.getyTextureCoord(), letter.getXMaxTextureCoord(),
+							letter.getYMaxTextureCoord());
 					curserX += letter.getxAdvance() * text.getFontSize();
 				}
 				curserX += metaData.getSpaceWidth() * text.getFontSize();
 			}
 			curserX = 0;
 			curserY += LINE_HEIGHT * text.getFontSize();
-		}		
+		}
 		return new TextMeshData(listToArray(vertices), listToArray(textureCoords));
 	}
 
-	private void addVerticesForCharacter(double curserX, double curserY, Character character, double fontSize,
-			List<Float> vertices) {
+	private void addVerticesForCharacter(double curserX, double curserY, Character character, double fontSize, List<Float> vertices) {
 		double x = curserX + (character.getxOffset() * fontSize);
 		double y = curserY + (character.getyOffset() * fontSize);
 		double maxX = x + (character.getSizeX() * fontSize);
@@ -123,7 +122,6 @@ public class TextMeshCreator {
 		texCoords.add((float) y);
 	}
 
-	
 	private static float[] listToArray(List<Float> listOfFloats) {
 		float[] array = new float[listOfFloats.size()];
 		for (int i = 0; i < array.length; i++) {

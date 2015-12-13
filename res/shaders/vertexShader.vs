@@ -10,6 +10,7 @@ out vec3 toLightVector[4];
 out vec3 toCameraVector;
 out float visibility;
 
+
 out vec4 worldPosition;
 
 uniform mat4 tranformationMatrix;
@@ -25,6 +26,7 @@ uniform vec3 lightPosition[4];
 
 uniform float useFakeLighting;
 uniform float numberOfRows;
+uniform float shadows;
 uniform vec2 offset;
 uniform vec4 plane;
 
@@ -37,7 +39,7 @@ const float gradient = 1.5;
 
 
 void main(void){
-	shadowCoord = depthBiasMatrix * tranformationMatrix * vec4(position, 1);
+	if(shadows > 0.5) shadowCoord = depthBiasMatrix * tranformationMatrix * vec4(position, 1);
 	worldPosition = tranformationMatrix * vec4(position,1.0);
 
 	vec4 worldPosition2 = tranformationMatrix * vec4(position,1.0);

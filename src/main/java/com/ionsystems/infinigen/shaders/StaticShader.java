@@ -1,9 +1,7 @@
 package main.java.com.ionsystems.infinigen.shaders;
 
 import static org.lwjgl.opengl.GL11.*;
-
 import static org.lwjgl.opengl.GL13.*;
-
 
 import java.util.List;
 
@@ -40,6 +38,7 @@ public class StaticShader extends ShaderProgram {
 	private int location_plane;
 	private int location_shadowMap;
 	private int location_depthBiasMatrix;
+	private int location_shadows;
 
 	public StaticShader() {
 		super(VERTEX_FILE, FRAGMENT_FILE);
@@ -67,6 +66,7 @@ public class StaticShader extends ShaderProgram {
 		location_plane = super.getUniformLocation("plane");
 		location_shadowMap = super.getUniformLocation("shadowMap");
 		location_depthBiasMatrix = super.getUniformLocation("depthBiasMatrix");
+		location_shadows = super.getUniformLocation("shadows");
 
 		location_lightPosition = new int[MAX_LIGHTS];
 		location_lightColour = new int[MAX_LIGHTS];
@@ -77,18 +77,18 @@ public class StaticShader extends ShaderProgram {
 			location_attenuation[i] = super.getUniformLocation("attenuation[" + i + "]");
 		}
 	}
-	
-	public void loadShadowMap(ShadowMap shadowMap){
+
+	public void loadShadowMap(ShadowMap shadowMap) {
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, shadowMap.getShadowMapTexture());
 		super.loadInt(location_shadowMap, shadowMap.getShadowMapTexture());
 		super.loadMatrix(location_depthBiasMatrix, shadowMap.getDepthBiasMatrix());
 	}
 
-	public void loadClipPlane(Vector4f plane){
+	public void loadClipPlane(Vector4f plane) {
 		super.loadVector(location_plane, plane);
 	}
-	
+
 	public void loadNumberOfRows(int numberOfRows) {
 		super.loadFloat(location_numberOfRows, numberOfRows);
 	}
@@ -143,7 +143,12 @@ public class StaticShader extends ShaderProgram {
 	}
 
 	public void highlightEntity(boolean highlight) {
-		super.loadBoolean(location_highlight, highlight);		
+		super.loadBoolean(location_highlight, highlight);
+	}
+
+	public void loadUseShadows(Boolean shadows) {
+		super.loadBoolean(location_shadows, shadows);
+
 	}
 
 }

@@ -13,8 +13,6 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.locks.ReadWriteLock;
 import java.util.stream.Stream;
 
 import javax.vecmath.Vector3f;
@@ -22,12 +20,12 @@ import javax.vecmath.Vector3f;
 import main.java.com.ionsystems.infinigen.entities.PhysicsEntity;
 import main.java.com.ionsystems.infinigen.global.Globals;
 import main.java.com.ionsystems.infinigen.global.IModule;
-import main.java.com.ionsystems.infinigen.modelLoader.ModelFile;
 import main.java.com.ionsystems.infinigen.models.PhysicsModel;
 import main.java.com.ionsystems.infinigen.models.RawModel;
 import main.java.com.ionsystems.infinigen.objConverter.Vertex;
 import main.java.com.ionsystems.infinigen.physics.PhysicsUtils;
 import main.java.com.ionsystems.infinigen.textures.TextureData;
+import main.java.com.ionsystems.infinigen.world.ChunkManager;
 import main.java.com.ionsystems.infinigen.world.ChunkRenderingData;
 
 import org.lwjgl.BufferUtils;
@@ -45,7 +43,6 @@ import com.bulletphysics.collision.shapes.ConvexHullShape;
 import com.bulletphysics.collision.shapes.IndexedMesh;
 import com.bulletphysics.collision.shapes.ScalarType;
 import com.bulletphysics.collision.shapes.TriangleIndexVertexArray;
-import com.bulletphysics.collision.shapes.TriangleMeshShape;
 import com.bulletphysics.util.ObjectArrayList;
 
 import de.matthiasmann.twl.utils.PNGDecoder;
@@ -59,7 +56,7 @@ public class Loader implements IModule {
 	private List<Integer> textures = new ArrayList<Integer>();
 	private HashMap<String, Vector3f> loadedTextures = new HashMap<String, Vector3f>();
 	private ArrayList<ChunkRenderingData> chunkLoadingQueue = new ArrayList<ChunkRenderingData>();
-	private ArrayList<RawModel> modelUnloadingQueue = new ArrayList<RawModel>();
+	private ArrayList<PhysicsModel> modelUnloadingQueue = new ArrayList<PhysicsModel>();
 
 	private int bufferAllocationCount = 0;
 
@@ -70,6 +67,16 @@ public class Loader implements IModule {
 		vboIDs.add(storeDataInAttributeList(0, 3, positions));
 		vboIDs.add(storeDataInAttributeList(1, 2, textureCoords));
 		vboIDs.add(storeDataInAttributeList(2, 3, normals));
+		unbindVAO();
+		return new RawModel(vaoID, vboIDs, indices.length);
+	}
+
+	public RawModel loadToVAO(float[] positions, float[] normals, int[] indices) {
+		int vaoID = createVAO();
+		ArrayList<Integer> vboIDs = new ArrayList<Integer>();
+		vboIDs.add(bindIndicesBuffer(indices));
+		vboIDs.add(storeDataInAttributeList(0, 3, positions));
+		vboIDs.add(storeDataInAttributeList(1, 3, normals));
 		unbindVAO();
 		return new RawModel(vaoID, vboIDs, indices.length);
 	}
@@ -105,29 +112,33 @@ public class Loader implements IModule {
 	// return new RawModel(vaoID, vertexCount);
 	// }
 
-	public PhysicsModel loadChunkToVAOWithGeneratedPhysics(float[] positions, ObjectArrayList<Vector3f> vertices, float[] textureCoords, float[] normals,
-			int[] indices) {
+	public PhysicsModel loadChunkToVAOWithGeneratedPhysics(float[] positions, float[] normals, int[] indices) {
 		int vaoID = createVAO();
 		ArrayList<Integer> vboIDs = new ArrayList<Integer>();
 		vboIDs.add(bindIndicesBuffer(indices));
 		vboIDs.add(storeDataInAttributeList(0, 3, positions));
-		vboIDs.add(storeDataInAttributeList(1, 2, textureCoords));
-		vboIDs.add(storeDataInAttributeList(2, 3, normals));
+		vboIDs.add(storeDataInAttributeList(1, 3, normals));
 		unbindVAO();
 		// Generate a new physics object to represent the model;
 
 		ByteBuffer ind = ByteBuffer.allocateDirect(indices.length * 4).order(ByteOrder.nativeOrder());
-		ind.asIntBuffer().put(storeDataInIntBuffer(indices));
-
+		for (int i : indices) {
+			ind.putInt(i);
+		}
+		ind.flip();
 		ByteBuffer verts = ByteBuffer.allocateDirect(positions.length * 4).order(ByteOrder.nativeOrder());
-		verts.asFloatBuffer().put(storeDataInFloatBuffer(positions));
+
+		for (Float f : positions) {
+			verts.putFloat(f);
+		}
+		verts.flip();
 
 		IndexedMesh indexedMesh = new IndexedMesh();
 		indexedMesh.indexType = ScalarType.INTEGER;
 		indexedMesh.numTriangles = indices.length / 3;
-		indexedMesh.numVertices = vertices.size();
-		indexedMesh.triangleIndexStride = 12;
-		indexedMesh.vertexStride = 4;
+		indexedMesh.numVertices = positions.length / 3;
+		indexedMesh.triangleIndexStride = 3 * 4;
+		indexedMesh.vertexStride = 3 * 4;
 		indexedMesh.triangleIndexBase = ind;
 		indexedMesh.vertexBase = verts;
 
@@ -238,6 +249,8 @@ public class Loader implements IModule {
 			GL30.glGenerateMipmap(GL11.GL_TEXTURE_2D);
 			GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR_MIPMAP_LINEAR);
 			GL11.glTexParameterf(GL11.GL_TEXTURE_2D, GL14.GL_TEXTURE_LOD_BIAS, -0.4f);
+			GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL11.GL_REPEAT);
+			GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL11.GL_REPEAT);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -289,6 +302,7 @@ public class Loader implements IModule {
 		return new TextureData(buffer, width, height);
 	}
 
+	@Override
 	public void cleanUp() {
 		for (int vao : vaos) {
 			GL30.glDeleteVertexArrays(vao);
@@ -336,16 +350,16 @@ public class Loader implements IModule {
 		IntBuffer buffer = BufferUtils.createIntBuffer(data.length);
 		buffer.put(data);
 		buffer.flip();
-		
+
 		return buffer;
 	}
 
 	private FloatBuffer storeDataInFloatBuffer(float[] data) {
-		
+
 		FloatBuffer buffer = BufferUtils.createFloatBuffer(data.length);
 		buffer.put(data);
 		buffer.flip();
-		
+
 		return buffer;
 	}
 
@@ -354,15 +368,19 @@ public class Loader implements IModule {
 		// Here we process all the models, etc to be loaded/unloaded
 		// We will only allocate a few ms to this each frame to stop the
 		// framerate from dipping when lots of stuff is happening.
-		
-		//Also need to be thread safe 
+
+		// Also need to be thread safe
 		long startTime = System.nanoTime();
 		if (Globals.getLoadingLock().readLock().tryLock()) {
 			ArrayList<ChunkRenderingData> crdRemove = new ArrayList<ChunkRenderingData>();
 			for (ChunkRenderingData crd : chunkLoadingQueue) {
-				RawModel m = loadToVAO(crd.positions, crd.textureCoords, crd.normals, 3);
+				PhysicsModel m = loadChunkToVAOWithGeneratedPhysics(crd.positions, crd.normals, crd.indicies);
 				crd.c.setModel(m);
 				crd.c.setRenderable(true);
+				m.generateWorldRigidBody();
+				m.getBody().translate(new Vector3f(crd.c.x * ChunkManager.chunkSize, crd.c.y * ChunkManager.chunkSize, crd.c.z * ChunkManager.chunkSize));
+				Globals.getPhysics().getProcessor().addRigidBody(m.getBody());
+
 				crdRemove.add(crd);
 				long elapsedTime = System.nanoTime() - startTime;
 				if (elapsedTime > 100000)
@@ -374,8 +392,10 @@ public class Loader implements IModule {
 		if (Globals.getUnloadingLock().readLock().tryLock()) {
 			startTime = System.nanoTime();
 			ArrayList<RawModel> rmRemove = new ArrayList<RawModel>();
-			for (RawModel rm : modelUnloadingQueue) {
+			for (PhysicsModel rm : modelUnloadingQueue) {
 				rm.cleanUp();
+				Globals.getPhysics().getProcessor().removeRigidBody(rm.getBody());
+
 				rmRemove.add(rm);
 				long elapsedTime = System.nanoTime() - startTime;
 				if (elapsedTime > 100000)
@@ -415,7 +435,7 @@ public class Loader implements IModule {
 		chunkLoadingQueue.add(crd);
 	}
 
-	public void addModelToUnloadQueue(RawModel model) {
+	public void addModelToUnloadQueue(PhysicsModel model) {
 
 		modelUnloadingQueue.add(model);
 	}

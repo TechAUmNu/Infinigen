@@ -19,7 +19,6 @@ import main.java.com.ionsystems.infinigen.entities.PhysicsEntity;
 import main.java.com.ionsystems.infinigen.global.Globals;
 import main.java.com.ionsystems.infinigen.global.IModule;
 import main.java.com.ionsystems.infinigen.models.TexturedPhysicsModel;
-import main.java.com.ionsystems.infinigen.physics.PhysicsDebugShader;
 import main.java.com.ionsystems.infinigen.shaders.ChunkShader;
 import main.java.com.ionsystems.infinigen.shaders.StaticShader;
 import main.java.com.ionsystems.infinigen.shadows.ShadowFrameBuffers;
@@ -62,7 +61,12 @@ public class MasterRenderer implements IModule {
 		terrainRenderer = new WorldRenderer(terrainShader, projectionMatrix);
 		skyboxRenderer = new SkyboxRenderer(loader, projectionMatrix);
 		shadowRenderer = new ShadowRenderer(shadowShader, sfbos);
+		addSwitches();
+	}
 
+	private void addSwitches() {
+		Globals.switches.put("shadows", true);
+		Globals.switches.put("water", false);
 	}
 
 	public static void enableCulling() {
@@ -75,8 +79,8 @@ public class MasterRenderer implements IModule {
 	}
 
 	public void render(List<Light> lights, ICamera camera, boolean clearEntities, Vector4f clipPlane, Light sun, boolean shadows) {
-		if (shadows) {
-			 shadowRenderer.render(sun, camera, entities);
+		if (Globals.switches.get("shadows") && shadows) {
+			shadowRenderer.render(sun, camera, entities);
 		}
 
 		ShadowMap shadowMap = shadowRenderer.getShadowMap();
@@ -88,14 +92,18 @@ public class MasterRenderer implements IModule {
 			shader.loadSkyColour(RED, GREEN, BLUE);
 			shader.loadLights(lights);
 			shader.loadViewMatrix(camera);
-			shader.loadShadowMap(shadowMap);
+			if (Globals.switches.get("shadows") && shadows){
+				shader.loadShadowMap(shadowMap);
+			}
 			renderer.render(entities);
 			shader.stop();
 			terrainShader.start();
 			terrainShader.loadClipPlane(clipPlane);
 			terrainShader.loadLights(lights);
 			terrainShader.loadViewMatrix(camera);
-			terrainShader.loadShadowMap(shadowMap);
+			if (Globals.switches.get("shadows") && shadows){
+				terrainShader.loadShadowMap(shadowMap);
+			}
 			terrainRenderer.renderChunks();
 			terrainShader.stop();
 			skyboxRenderer.render(camera, RED, GREEN, BLUE);
@@ -117,6 +125,7 @@ public class MasterRenderer implements IModule {
 		}
 	}
 
+	@Override
 	public void cleanUp() {
 		shader.cleanUp();
 		terrainShader.cleanUp();

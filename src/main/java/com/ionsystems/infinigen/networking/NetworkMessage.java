@@ -5,8 +5,8 @@ import java.util.ArrayList;
 
 import main.java.com.ionsystems.infinigen.entities.PhysicsEntity;
 
-public class NetworkMessage implements Serializable{
-	
+public class NetworkMessage implements Serializable {
+
 	/**
 	 * 
 	 */

@@ -8,7 +8,7 @@ import org.lwjgl.util.vector.Vector3f;
 import main.java.com.ionsystems.infinigen.models.TexturedModel;
 import main.java.com.ionsystems.infinigen.utility.Maths;
 
-public class Entity implements Serializable{
+public class Entity implements Serializable {
 	/**
 	 * 
 	 */
@@ -16,16 +16,16 @@ public class Entity implements Serializable{
 	protected TexturedModel model;
 	protected Vector3f position;
 	protected float rotX, rotY, rotZ;
-	
+
 	protected float scale;
 	protected Matrix4f transformationMatrix;
 
 	private int textureIndex = 0;
 
-	public Entity(){
-		
+	public Entity() {
+
 	}
-	
+
 	public Entity(TexturedModel model, Vector3f position, float rotX, float rotY, float rotZ, float scale) {
 		this.model = model;
 		this.position = position;
@@ -35,7 +35,7 @@ public class Entity implements Serializable{
 		this.scale = scale;
 	}
 
-	public Entity(TexturedModel model, int index, Vector3f position, float rotX, float rotY, float rotZ, float scale) {		
+	public Entity(TexturedModel model, int index, Vector3f position, float rotX, float rotY, float rotZ, float scale) {
 		this.textureIndex = index;
 		this.model = model;
 		this.position = position;
@@ -76,7 +76,7 @@ public class Entity implements Serializable{
 	}
 
 	public Vector3f getPosition() {
-		
+
 		return position;
 	}
 
@@ -139,11 +139,10 @@ public class Entity implements Serializable{
 	public float getSizeY() {
 		return model.getPhysicsModel().getSizeY();
 	}
-	
+
 	public void setSizeY(float sizeY) {
 		model.getPhysicsModel().setSizeY(sizeY);
 	}
-	
 
 	public float getSizeZ() {
 		return model.getPhysicsModel().getSizeZ();

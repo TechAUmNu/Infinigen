@@ -46,15 +46,15 @@ public class Maths {
 	}
 
 	public static Matrix4f createTransformationMatrix(Vector3f translation, float rx, float ry, float rz, float rw, float scale, boolean inRadians) {
-		
+
 		Matrix4f matrix = new Matrix4f();
 		matrix.setIdentity();
 		Matrix4f.translate(translation, matrix, matrix);
 
 		if (inRadians) {
-			Matrix4f.rotate((float) (rx * rw), new Vector3f(1, 0, 0), matrix, matrix);
-			Matrix4f.rotate((float) (ry * rw), new Vector3f(0, 1, 0), matrix, matrix);
-			Matrix4f.rotate((float) (rz * rw), new Vector3f(0, 0, 1), matrix, matrix);
+			Matrix4f.rotate(rx * rw, new Vector3f(1, 0, 0), matrix, matrix);
+			Matrix4f.rotate(ry * rw, new Vector3f(0, 1, 0), matrix, matrix);
+			Matrix4f.rotate(rz * rw, new Vector3f(0, 0, 1), matrix, matrix);
 
 		} else {
 			Matrix4f.rotate((float) Math.toRadians(rx * rw), new Vector3f(1, 0, 0), matrix, matrix);
@@ -110,23 +110,22 @@ public class Maths {
 		coord.y *= Display.getHeight();
 		return coord;
 	}
-	
-	public static javax.vecmath.Vector3f convertVector(Vector3f vector){
+
+	public static javax.vecmath.Vector3f convertVector(Vector3f vector) {
 		javax.vecmath.Vector3f newVector = new javax.vecmath.Vector3f();
 		newVector.x = vector.x;
 		newVector.y = vector.y;
 		newVector.z = vector.z;
 		return newVector;
-		
+
 	}
-	
-	
-	public static Vector3f convertVectorBtoL(javax.vecmath.Vector3f vector){
+
+	public static Vector3f convertVectorBtoL(javax.vecmath.Vector3f vector) {
 		Vector3f newVector = new Vector3f();
 		newVector.x = vector.x;
 		newVector.y = vector.y;
 		newVector.z = vector.z;
 		return newVector;
-		
+
 	}
 }

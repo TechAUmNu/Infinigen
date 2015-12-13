@@ -6,8 +6,6 @@ import main.java.com.ionsystems.infinigen.cameras.ICamera;
 import main.java.com.ionsystems.infinigen.entities.PhysicsEntity;
 import main.java.com.ionsystems.infinigen.global.Globals;
 import main.java.com.ionsystems.infinigen.global.IModule;
-import main.java.com.ionsystems.infinigen.rendering.DisplayManager;
-
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.util.vector.Matrix4f;
@@ -22,7 +20,7 @@ public class MousePicker implements IModule {
 	private Matrix4f projectionMatrix;
 	private Matrix4f viewMatrix;
 	private ICamera camera;
-	
+
 	public void setCamera(ICamera camera) {
 		this.camera = camera;
 	}
@@ -37,6 +35,7 @@ public class MousePicker implements IModule {
 		return currentRay;
 	}
 
+	@Override
 	public void update() {
 		this.viewMatrix = Maths.createViewMatrix(camera);
 
@@ -105,5 +104,4 @@ public class MousePicker implements IModule {
 		return new ArrayList<PhysicsEntity>();
 	}
 
-	
 }

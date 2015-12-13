@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import main.java.com.ionsystems.infinigen.textures.ModelTexture;
 
-public class TexturedModel implements Serializable{
+public class TexturedModel implements Serializable {
 
 	/**
 	 * 

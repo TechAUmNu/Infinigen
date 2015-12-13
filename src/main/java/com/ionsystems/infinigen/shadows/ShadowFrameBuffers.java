@@ -1,15 +1,17 @@
 package main.java.com.ionsystems.infinigen.shadows;
 
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL12.*;
+import static org.lwjgl.opengl.GL13.*;
 import static org.lwjgl.opengl.GL14.*;
 import static org.lwjgl.opengl.GL30.*;
 import static org.lwjgl.opengl.GL32.*;
 
 import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
 
 import javax.vecmath.Vector3f;
 
+import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
@@ -49,9 +51,16 @@ public class ShadowFrameBuffers {
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, (ByteBuffer) null);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+		float color[] = { 1.0f, 0.0f, 0.0f, 1.0f };
+
+		FloatBuffer buf = BufferUtils.createFloatBuffer(4);
+		buf.put(color);
+		buf.flip();
+		glTexParameter(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, buf);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+
+		// glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
 		glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, texture, 0);
@@ -75,8 +84,9 @@ public class ShadowFrameBuffers {
 		return new Vector3f(DEPTH_WIDTH, DEPTH_HEIGHT, shadowDepthTexture);
 	}
 
-	public void unbindCurrentFrameBuffer() {//call to switch to default frame buffer
-        GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
-        GL11.glViewport(0, 0, Display.getWidth(), Display.getHeight());
-    }
+	public void unbindCurrentFrameBuffer() {// call to switch to default frame
+											// buffer
+		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
+		GL11.glViewport(0, 0, Display.getWidth(), Display.getHeight());
+	}
 }

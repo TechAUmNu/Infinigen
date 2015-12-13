@@ -18,7 +18,7 @@ public class GUIText {
 
 	private int textMeshVao;
 	private int vertexCount;
-	private Vector3f colour = new Vector3f(0f, 0f, 0f);
+	private Vector3f colour = new Vector3f(1f, 1f, 1f);
 
 	private Vector2f position;
 	private float lineMaxSize;
@@ -53,15 +53,15 @@ public class GUIText {
 	 * @param centered
 	 *            - whether the text should be centered or not.
 	 */
-	public GUIText(String text, float fontSize, FontType font, Vector2f position, float maxLineLength,
-			boolean centered) {
+	public GUIText(String text, float fontSize, FontType font, Vector2f position, float maxLineLength, boolean centered) {
 		this.textString = text;
 		this.fontSize = fontSize;
 		this.font = font;
 		this.position = position;
 		this.lineMaxSize = maxLineLength;
 		this.centerText = centered;
-		TextMaster.loadText(this);;
+		TextMaster.loadText(this);
+		;
 	}
 
 	/**

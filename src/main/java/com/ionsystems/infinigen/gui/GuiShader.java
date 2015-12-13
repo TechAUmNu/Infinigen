@@ -2,8 +2,6 @@ package main.java.com.ionsystems.infinigen.gui;
 
 import main.java.com.ionsystems.infinigen.shaders.ShaderProgram;
 
-import org.lwjgl.util.vector.Matrix4f;
-
 public class GuiShader extends ShaderProgram {
 
 	private static final String VERTEX_FILE = "res/shaders/guiVertexShader.txt";

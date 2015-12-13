@@ -6,7 +6,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import org.lwjgl.util.vector.Vector2f;
@@ -18,9 +17,6 @@ import main.java.com.ionsystems.infinigen.models.RawModel;
 import main.java.com.ionsystems.infinigen.rendering.Loader;
 
 public class OBJFileLoader {
-
-	
-	
 
 	public static ModelData loadOBJ(String objFileName) {
 		FileReader isr = null;
@@ -41,19 +37,19 @@ public class OBJFileLoader {
 				line = reader.readLine();
 				if (line.startsWith("v ")) {
 					String[] currentLine = line.split(" ");
-					Vector3f vertex = new Vector3f((float) Float.valueOf(currentLine[1]), (float) Float.valueOf(currentLine[2]),
-							(float) Float.valueOf(currentLine[3]));
+					Vector3f vertex = new Vector3f(Float.valueOf(currentLine[1]), Float.valueOf(currentLine[2]),
+							Float.valueOf(currentLine[3]));
 					Vertex newVertex = new Vertex(vertices.size(), vertex);
 					vertices.add(newVertex);
 
 				} else if (line.startsWith("vt ")) {
 					String[] currentLine = line.split(" ");
-					Vector2f texture = new Vector2f((float) Float.valueOf(currentLine[1]), (float) Float.valueOf(currentLine[2]));
+					Vector2f texture = new Vector2f(Float.valueOf(currentLine[1]), Float.valueOf(currentLine[2]));
 					textures.add(texture);
 				} else if (line.startsWith("vn ")) {
 					String[] currentLine = line.split(" ");
-					Vector3f normal = new Vector3f((float) Float.valueOf(currentLine[1]), (float) Float.valueOf(currentLine[2]),
-							(float) Float.valueOf(currentLine[3]));
+					Vector3f normal = new Vector3f(Float.valueOf(currentLine[1]), Float.valueOf(currentLine[2]),
+							Float.valueOf(currentLine[3]));
 					normals.add(normal);
 				} else if (line.startsWith("f ")) {
 					break;
@@ -88,20 +84,19 @@ public class OBJFileLoader {
 		return loader.loadToVAO(model.getVertices(), model.getTextureCoords(), model.getNormals(), model.getIndices());
 	}
 
-	
 	/**
 	 * This Method should only be called from ModelLoader.
+	 * 
 	 * @param objFile
-	 * @return 
+	 * @return
 	 */
 	public static PhysicsModel loadOBJtoVAOWithGeneratedPhysics(String objFile) {
 
 		System.out.println("Loading model: " + objFile);
 		ModelData model = loadOBJ(objFile);
-		PhysicsModel m = Globals.getLoader().loadToVAOWithGeneratedPhysics(model.getVertices(), model.getVerticesList(), model.getTextureCoords(), model.getNormals(),
-				model.getIndices(), objFile);
+		PhysicsModel m = Globals.getLoader().loadToVAOWithGeneratedPhysics(model.getVertices(), model.getVerticesList(), model.getTextureCoords(),
+				model.getNormals(), model.getIndices(), objFile);
 		m.setFileName(m.getName());
-		
 
 		return m;
 

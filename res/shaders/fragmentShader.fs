@@ -23,6 +23,7 @@ uniform float shineDamper;
 uniform float reflectivity;
 uniform vec3 skyColour;
 uniform float highlight;
+uniform float shadows;
 
 
 vec2 poissonDisk[16] = vec2[]( 
@@ -58,8 +59,8 @@ void main(void){
 	
 	vec3 totalDiffuse = vec3(0.0);
 	vec3 totalSpecular = vec3(0.0);
-	
-	for(int i=0; i<4; i++){
+	int i = 0;
+	//for(int i=0; i<4; i++){
 		float distance = length(toLightVector[i]);
 		float attFactor = attenuation[i].x + (attenuation[i].y * distance) + (attenuation[i].z * distance * distance);
 		
@@ -73,7 +74,7 @@ void main(void){
 		float dampedFactor = pow(specularFactor, shineDamper);
 		totalDiffuse = totalDiffuse + (brightness * lightColour[i])/attFactor;
 		totalSpecular = totalSpecular + (dampedFactor * reflectivity * lightColour[i])/attFactor;
-	}
+	//}
 	
 	totalDiffuse = max(totalDiffuse, 0.0);
 	
@@ -86,8 +87,10 @@ void main(void){
 	
 	float shadow = 1.0;
 	
-	if(textureProj(shadowMap, shadowCoord) < 0.5){
-		shadow = 0.5;
+	if(shadows > 0.5){
+		if(textureProj(shadowMap, shadowCoord) < 0.5){
+			shadow = 0.5;
+		}
 	}
 	
 	

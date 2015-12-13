@@ -16,7 +16,6 @@ import main.java.com.ionsystems.infinigen.world.Chunk;
 import static org.lwjgl.opengl.GL11.*;
 
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Matrix4f;
@@ -67,9 +66,9 @@ public class ShadowRenderer {
 		// Render terrain
 		if (Globals.getLoadedChunks() != null) {
 			for (Chunk chunk : Globals.getLoadedChunks()) {
-				if(chunk.isRenderable()){
-				loadModelMatrix(chunk);
-				renderFace(chunk.getModel());
+				if (chunk.isRenderable()) {
+					loadModelMatrix(chunk);
+					renderFace(chunk.getModel());
 				}
 			}
 		}
@@ -99,11 +98,11 @@ public class ShadowRenderer {
 	}
 
 	private void loadModelMatrix(Chunk chunk) {
-		
+
 		position.x = chunk.x * chunk.size * chunk.blockSize;
 		position.y = chunk.y * chunk.size * chunk.blockSize;
 		position.z = chunk.z * chunk.size * chunk.blockSize;
-		
+
 		Matrix4f transformationMatrix = Maths.createTransformationMatrix(position, 0, 0, 0, 1, 1, false);
 		shader.loadDepthModelMatrix(transformationMatrix);
 	}
@@ -138,15 +137,9 @@ public class ShadowRenderer {
 
 		// Hooray it works!
 		Vector3f cameraPosition = Globals.getCameraPosition();
-		int camera = Globals.getActiveCameraID();
 
-		if (camera == 1) {
-			depthProjectionMatrix.initOrthographicMatrix(-200 - cameraPosition.z, 200 - cameraPosition.z, -200, 200, -200 - cameraPosition.x,
-					200 - cameraPosition.x);
-		} else {
-			depthProjectionMatrix.initOrthographicMatrix(-500 - cameraPosition.z, 500 - cameraPosition.z, -500, 500, -500 - cameraPosition.x,
-					500 - cameraPosition.x);
-		}
+		depthProjectionMatrix.initOrthographicMatrix(-500 - cameraPosition.z, 500 - cameraPosition.z, -500, 500, -500 - cameraPosition.x,
+				500 - cameraPosition.x);
 
 		depthViewMatrix.lookAt(light.getPosition().normalise(new Vector3f()), new Vector3f(0, 0, 0), new Vector3f(0, 1, 0));
 		// depthViewMatrix.setPosition(Globals.getCameraPosition().normalise(new

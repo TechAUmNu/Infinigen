@@ -9,7 +9,7 @@ import java.io.Serializable;
  *
  */
 public enum BlockType implements Serializable {
-	BlockType_Air((byte) 0), BlockType_Dirt((byte) 1), BlockType_Stone((byte) 2), BlockType_Grass ((byte) 3);
+	BlockType_Air((byte) 0), BlockType_Dirt((byte) 1), BlockType_Stone((byte) 2), BlockType_Grass((byte) 3);
 
 	private byte BlockID;
 

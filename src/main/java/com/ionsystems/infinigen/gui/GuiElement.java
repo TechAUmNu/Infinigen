@@ -22,14 +22,14 @@ public class GuiElement {
 	private Vector2f detectionSize;
 	private float guiRatioX, guiRatioY;
 
-	public GuiElement(Vector2f position, Vector3f texture, Loader loader){
+	public GuiElement(Vector2f position, Vector3f texture, Loader loader) {
 		super();
 		this.texture = texture;
 		scale();
 		generateModel(position, loader);
 		this.position = position;
 	}
-	
+
 	public GuiElement(Vector2f position, String texture, Loader loader) {
 		super();
 		loadTexture(texture, loader);
@@ -38,7 +38,7 @@ public class GuiElement {
 		this.position = position;
 	}
 
-	public GuiElement(Vector2f position, Vector2f detectionSize,Vector3f texture, Loader loader) {
+	public GuiElement(Vector2f position, Vector2f detectionSize, Vector3f texture, Loader loader) {
 		super();
 		this.detectionSize = detectionSize;
 		this.texture = texture;
@@ -104,7 +104,7 @@ public class GuiElement {
 		return box;
 	}
 
-	public boolean CheckHover() {	
+	public boolean CheckHover() {
 		if (Mouse.getX() < position.x + detectionSize.x && Mouse.getX() > position.x && !Mouse.isGrabbed()) {
 			if (Mouse.getY() < position.y + detectionSize.y && Mouse.getY() > position.y) {
 				return true;

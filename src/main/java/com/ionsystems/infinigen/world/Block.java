@@ -2,16 +2,14 @@ package main.java.com.ionsystems.infinigen.world;
 
 import java.io.Serializable;
 
-import org.lwjgl.util.vector.Vector3f;
-
-public class Block implements Serializable{
+public class Block implements Serializable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -3524884246455631273L;
 	BlockType type;
-	boolean visible, top, bottom, left, right, front, back;	
+	boolean visible, top, bottom, left, right, front, back;
 	public float weight;
 
 	public Block(BlockType type) {
@@ -24,7 +22,7 @@ public class Block implements Serializable{
 	}
 
 	public void SetVisible(boolean b) {
-		visible = b;		
+		visible = b;
 	}
 
 	public BlockType getType() {
@@ -90,6 +88,5 @@ public class Block implements Serializable{
 	public void setBack(boolean back) {
 		this.back = back;
 	}
-	
 
 }

@@ -24,7 +24,6 @@ import main.java.com.ionsystems.infinigen.rendering.MasterRenderer;
 import main.java.com.ionsystems.infinigen.textures.ModelTexture;
 import main.java.com.ionsystems.infinigen.world.Chunk;
 
-
 public class Globals {
 
 	private static float gravity = 9.81f;
@@ -34,11 +33,10 @@ public class Globals {
 	private static CopyOnWriteArrayList<Chunk> visibleChunks;
 	private static boolean isServer;
 	private static boolean loading;
-	
+
 	private static ReadWriteLock loadingLock = new ReentrantReadWriteLock();
 	private static ReadWriteLock unloadingLock = new ReentrantReadWriteLock();
-	
-	
+
 	private static ArrayList<ChunkData> chunkUpdate;
 	private static String ip;
 	private static int port;
@@ -46,25 +44,25 @@ public class Globals {
 	private static PhysicsManager physics;
 	private static ArrayList<PhysicsEntity> newEntities = new ArrayList<PhysicsEntity>();
 	private static ArrayList<PhysicsEntity> entities = new ArrayList<PhysicsEntity>();
-	
+
 	private static HashMap<String, PhysicsModel> loadedPhysicsModels = new HashMap<String, PhysicsModel>();
-	
+
 	private static int rigidBodyID = 35;
 	private static int clientID = 0;
-	
+
 	private static PhysicsEntity cameraEntity;
 	private static Vector3d cameraDirection;
 	private static int activeCameraID;
 	private static boolean debugRendering;
 	private static MasterRenderer renderer;
 	private static ICamera activeCamera;
-	
-	
-//	private static ArrayList<TextElement> textElements = new ArrayList<TextElement>();
-	
+
+	// private static ArrayList<TextElement> textElements = new
+	// ArrayList<TextElement>();
+
 	private static float placementOffset;
 	private static boolean running = true;
-	
+	public static HashMap<String, Boolean> switches = new HashMap<String, Boolean>();
 
 	// //////////////////////////////////////////////////////////////////////////////////////
 
@@ -97,7 +95,7 @@ public class Globals {
 	}
 
 	public static ArrayList<ChunkData> getChunkUpdate() {
-		if(chunkUpdate == null){
+		if (chunkUpdate == null) {
 			chunkUpdate = new ArrayList<ChunkData>();
 		}
 		return chunkUpdate;
@@ -122,19 +120,18 @@ public class Globals {
 	public static void setLoader(Loader loader) {
 		Globals.loader = loader;
 	}
-	
-	public static void setCurrentMouseRay(Vector3f ray){
+
+	public static void setCurrentMouseRay(Vector3f ray) {
 		Globals.mouseRay = ray;
 	}
-	
-	public static Vector3f getMouseRay(){
+
+	public static Vector3f getMouseRay() {
 		return mouseRay;
 	}
-	
-	public static void setLoading(boolean loading){
+
+	public static void setLoading(boolean loading) {
 		Globals.loading = loading;
 	}
-	
 
 	public static boolean isServer() {
 		return isServer;
@@ -148,29 +145,29 @@ public class Globals {
 		Globals.visibleChunks = visibleChunks;
 	}
 
-	public static CopyOnWriteArrayList<Chunk> getLoadedChunks(){
+	public static CopyOnWriteArrayList<Chunk> getLoadedChunks() {
 		return visibleChunks;
 	}
 
 	public static void setCameraPosition(Vector3f position) {
-		Globals.cameraPosition = position;		
+		Globals.cameraPosition = position;
 	}
-	
-	public static Vector3f getCameraPosition(){
+
+	public static Vector3f getCameraPosition() {
 		return cameraPosition;
 	}
 
 	public static boolean showFPS() {
-		
+
 		return true;
 	}
 
-	public static boolean loading() {		
+	public static boolean loading() {
 		return loading;
 	}
 
 	public static void setBodies(ArrayList<RigidBody> bodies) {
-		Globals.bodies = bodies;		
+		Globals.bodies = bodies;
 	}
 
 	public static PhysicsManager getPhysics() {
@@ -181,17 +178,28 @@ public class Globals {
 		Globals.physics = physics;
 	}
 
-	public static ArrayList<PhysicsEntity> getNewEntities() {	//This must clear the list otherwise we will add the same thing a lot!		
-		ArrayList<PhysicsEntity> ne = new ArrayList<PhysicsEntity>(); //TODO: maybe put a lock on newEntities here?
+	public static ArrayList<PhysicsEntity> getNewEntities() { // This must clear
+																// the list
+																// otherwise we
+																// will add the
+																// same thing a
+																// lot!
+		ArrayList<PhysicsEntity> ne = new ArrayList<PhysicsEntity>(); // TODO:
+																		// maybe
+																		// put a
+																		// lock
+																		// on
+																		// newEntities
+																		// here?
 		ne.addAll(newEntities);
 		newEntities.clear();
 		return ne;
 	}
 
 	public static void addEntity(PhysicsEntity newEntity, boolean fromNetwork) {
-		if(!fromNetwork){
+		if (!fromNetwork) {
 			Globals.newEntities.add(newEntity);
-		}		
+		}
 		entities.add(newEntity);
 	}
 
@@ -199,7 +207,9 @@ public class Globals {
 		return entities;
 	}
 
-	public static void setEntities(ArrayList<PhysicsEntity> entities) { //For network download
+	public static void setEntities(ArrayList<PhysicsEntity> entities) { // For
+																		// network
+																		// download
 		Globals.entities = entities;
 	}
 
@@ -208,7 +218,7 @@ public class Globals {
 	}
 
 	public static int getClientID() {
-		if(Globals.isServer){
+		if (Globals.isServer) {
 			return clientID++;
 		}
 		return clientID;
@@ -223,11 +233,11 @@ public class Globals {
 	}
 
 	public static void setCameraDirection(Vector3d direction) {
-		Globals.cameraDirection = direction;		
+		Globals.cameraDirection = direction;
 	}
 
 	public static void setActiveCameraID(int i) {
-		Globals.activeCameraID = i;		
+		Globals.activeCameraID = i;
 	}
 
 	public static int getActiveCameraID() {
@@ -240,17 +250,17 @@ public class Globals {
 
 	public static void setDebugRendering(boolean debugRendering) {
 		Globals.debugRendering = debugRendering;
-		
-		if(debugRendering){
-			if(Globals.getPhysics().getProcessor().getDynamicsWorld().getDebugDrawer() == null){
+
+		if (debugRendering) {
+			if (Globals.getPhysics().getProcessor().getDynamicsWorld().getDebugDrawer() == null) {
 				DebugDrawer drawer = new DebugDrawer();
-				Globals.getPhysics().getProcessor().getDynamicsWorld().setDebugDrawer(drawer);	
+				Globals.getPhysics().getProcessor().getDynamicsWorld().setDebugDrawer(drawer);
 			}
 		}
 	}
 
 	public static void setRenderer(MasterRenderer renderer) {
-		Globals.renderer = renderer;		
+		Globals.renderer = renderer;
 	}
 
 	public static MasterRenderer getRenderer() {
@@ -259,27 +269,27 @@ public class Globals {
 
 	public static void setActiveCamera(ICamera activeCamera) {
 		Globals.activeCamera = activeCamera;
-		
+
 	}
 
 	public static ICamera getActiveCamera() {
 		return activeCamera;
 	}
-	
+
 	public static void setPlacementOffset(float placementOffset) {
 		Globals.placementOffset = placementOffset;
-		
+
 	}
 
 	public static float getPlacementOffset() {
 		return placementOffset;
 	}
-	
+
 	public static boolean isModelLoaded(String name) {
 		return loadedPhysicsModels.containsKey(name);
 	}
-	
-	public static PhysicsModel getModel(String name){
+
+	public static PhysicsModel getModel(String name) {
 		return loadedPhysicsModels.get(name);
 	}
 
@@ -289,22 +299,22 @@ public class Globals {
 
 	public static TexturedPhysicsModel getModelWithTexture(String model, String texture) {
 		return new TexturedPhysicsModel(Globals.getModel(model), new ModelTexture(Globals.getLoader().loadTexture(texture)));
-		
+
 	}
-	
+
 	public static TexturedPhysicsModel getTexturedModel(String model) {
-		return new TexturedPhysicsModel(Globals.getModel(model), new ModelTexture(Globals.getLoader().loadTexture(Globals.getModel(model).getTexture())));		
+		return new TexturedPhysicsModel(Globals.getModel(model), new ModelTexture(Globals.getLoader().loadTexture(Globals.getModel(model).getTexture())));
 	}
-	
-	public static TexturedPhysicsModel getTexturedModel(PhysicsModel model){
+
+	public static TexturedPhysicsModel getTexturedModel(PhysicsModel model) {
 		return new TexturedPhysicsModel(model, new ModelTexture(Globals.getLoader().loadTexture(model.getTexture())));
 	}
 
-	public static boolean isRunning() {		
+	public static boolean isRunning() {
 		return running;
 	}
-	
-	public static void endThreads(){
+
+	public static void endThreads() {
 		running = false;
 	}
 
@@ -312,25 +322,20 @@ public class Globals {
 		return loadingLock;
 	}
 
-	
-
 	public static ReadWriteLock getUnloadingLock() {
 		return unloadingLock;
 	}
 
-	
+	// public static ArrayList<TextElement> getTextElements() {
+	// return textElements;
+	// }
+	//
+	// public static void setTextElements(ArrayList<TextElement> textElements) {
+	// Globals.textElements = textElements;
+	// }
+	//
+	// public static void addTextElement(TextElement textElement){
+	// Globals.textElements.add(textElement);
+	// }
 
-//	public static ArrayList<TextElement> getTextElements() {
-//		return textElements;
-//	}
-//
-//	public static void setTextElements(ArrayList<TextElement> textElements) {
-//		Globals.textElements = textElements;
-//	}
-//	
-//	public static void addTextElement(TextElement textElement){
-//		Globals.textElements.add(textElement);
-//	}
-	
-	
 }

@@ -2,32 +2,17 @@ package main.java.com.ionsystems.infinigen.world;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.lwjgl.util.vector.Vector3f;
 
 import com.sudoplay.joise.module.Module;
 import com.sudoplay.joise.module.ModuleAutoCorrect;
-import com.sudoplay.joise.module.ModuleBias;
-import com.sudoplay.joise.module.ModuleCache;
-import com.sudoplay.joise.module.ModuleCombiner;
-import com.sudoplay.joise.module.ModuleCombiner.CombinerType;
 import com.sudoplay.joise.module.ModuleFractal;
 import com.sudoplay.joise.module.ModuleBasisFunction.BasisType;
 import com.sudoplay.joise.module.ModuleBasisFunction.InterpolationType;
 import com.sudoplay.joise.module.ModuleFractal.FractalType;
-import com.sudoplay.joise.module.ModuleGradient;
-import com.sudoplay.joise.module.ModuleScaleDomain;
-import com.sudoplay.joise.module.ModuleScaleOffset;
-import com.sudoplay.joise.module.ModuleSelect;
-import com.sudoplay.joise.module.ModuleTranslateDomain;
-import com.sudoplay.joise.module.SourcedModule;
-
-import main.java.com.ionsystems.infinigen.entities.PhysicsEntity;
 import main.java.com.ionsystems.infinigen.global.Globals;
-import main.java.com.ionsystems.infinigen.global.IModule;
 import main.java.com.ionsystems.infinigen.networking.ChunkData;
 
 //This handles all loading and unloading of chunks. The chunks within the set range of each camera must be kept loaded so switching camera is fast.
@@ -121,7 +106,7 @@ public class ChunkManager implements Runnable {
 		// To find the chunk we just divide the coord by the chunk size * block
 		// size
 		float multiplyer = chunkSize * blockSize;
-		
+
 		chunkLocation.x = (float) Math.floor(location.x / multiplyer);
 		chunkLocation.y = (float) Math.floor(location.y / multiplyer);
 		chunkLocation.z = (float) Math.floor(location.z / multiplyer);
@@ -175,7 +160,7 @@ public class ChunkManager implements Runnable {
 	public void loadChunk(int x, int y, int z) {
 
 		if (!chunks.containsKey(new ChunkID(x, y, z))) {
-			Chunk testChunk = new Chunk(x, y, z, chunkSize, (float) blockSize, terrainNoise);
+			Chunk testChunk = new Chunk(x, y, z, chunkSize, blockSize, terrainNoise);
 			chunks.put(new ChunkID(x, y, z), testChunk);
 			loadedChunks.add(testChunk);
 		}
@@ -187,16 +172,16 @@ public class ChunkManager implements Runnable {
 		setUp();
 
 		while (Globals.isRunning()) {
-			process();
-			update();
-			state++;
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+		process();
+		update();
+		state++;
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+		 }
 
 	}
 

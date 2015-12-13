@@ -11,6 +11,4 @@ public class GuiButton extends GuiElement {
 		// TODO Auto-generated constructor stub
 	}
 
-	
-
 }

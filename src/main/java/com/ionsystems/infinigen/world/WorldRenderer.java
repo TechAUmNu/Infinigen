@@ -1,10 +1,6 @@
 package main.java.com.ionsystems.infinigen.world;
 
 import java.util.ArrayList;
-import java.util.List;
-
-import javax.vecmath.Vector3d;
-
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
@@ -12,17 +8,12 @@ import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
-import main.java.com.ionsystems.infinigen.entities.Entity;
 import main.java.com.ionsystems.infinigen.entities.PhysicsEntity;
 import main.java.com.ionsystems.infinigen.global.Globals;
 import main.java.com.ionsystems.infinigen.global.IModule;
 import main.java.com.ionsystems.infinigen.models.RawModel;
-import main.java.com.ionsystems.infinigen.models.TexturedModel;
-import main.java.com.ionsystems.infinigen.rendering.DisplayManager;
 import main.java.com.ionsystems.infinigen.shaders.ChunkShader;
-import main.java.com.ionsystems.infinigen.textures.ModelTexture;
 import main.java.com.ionsystems.infinigen.textures.TerrainTexture;
-import main.java.com.ionsystems.infinigen.textures.TerrainTexturePack;
 import main.java.com.ionsystems.infinigen.utility.Maths;
 
 public class WorldRenderer implements IModule {
@@ -41,16 +32,16 @@ public class WorldRenderer implements IModule {
 	}
 
 	public void renderChunks() {
-		int numTriangles = 0;
+		shader.loadUseShadows(Globals.switches.get("shadows"));
+
 		bindTextures();
 		if (Globals.getLoadedChunks() != null) {
 			for (Chunk chunk : Globals.getLoadedChunks()) {
 				if (chunk.isRenderable()) {
-					//if(Globals.getCameraDirection() ){
-					//	
-					//}
-					
-					numTriangles += chunk.triangles.size();
+					// if(Globals.getCameraDirection() ){
+					//
+					// }
+
 					loadModelMatrix(chunk);
 
 					renderFace(chunk.getModel());
@@ -58,14 +49,14 @@ public class WorldRenderer implements IModule {
 				}
 			}
 		}
-		System.out.print("Triangles: " + numTriangles);
-		System.out.println(" FPS: " + DisplayManager.getFpsCounter());
+		// System.out.print("Triangles: " + numTriangles);
+		// System.out.println(" FPS: " + DisplayManager.getFpsCounter());
 	}
 
 	private void renderFace(RawModel rawModel) {
 		prepareChunkFace(rawModel);
 		// System.out.println(rawModel.getVertexCount());
-		GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, rawModel.getVertexCount());
+		GL11.glDrawElements(GL11.GL_TRIANGLES, rawModel.getVertexCount(), GL11.GL_UNSIGNED_INT, 0);
 		unbindFace();
 	}
 
@@ -73,7 +64,6 @@ public class WorldRenderer implements IModule {
 		GL30.glBindVertexArray(rawModel.getVaoID());
 		GL20.glEnableVertexAttribArray(0);
 		GL20.glEnableVertexAttribArray(1);
-		GL20.glEnableVertexAttribArray(2);
 
 		shader.loadShineVariables(1, 0);
 	}
@@ -86,7 +76,7 @@ public class WorldRenderer implements IModule {
 	private void unbindFace() {
 		GL20.glDisableVertexAttribArray(0);
 		GL20.glDisableVertexAttribArray(1);
-		GL20.glDisableVertexAttribArray(2);
+
 		GL30.glBindVertexArray(0);
 	}
 

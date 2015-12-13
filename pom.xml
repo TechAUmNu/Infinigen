@@ -146,6 +146,11 @@
 			<artifactId>joise</artifactId>
 			<version>1.0.1</version>
 		</dependency>
+		<dependency>
+			<groupId>org.jcraft</groupId>
+			<artifactId>jorbis</artifactId>
+			<version>0.0.17</version>
+		</dependency>
 	</dependencies>
 
 	<url>http://ionsystems.uk</url>

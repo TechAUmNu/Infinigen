@@ -162,7 +162,7 @@ public class MetaFile {
 	private void loadLineSizes() {
 		processNextLine();
 		int lineHeightPixels = getValueOfVariable("lineHeight") - paddingHeight;
-		verticalPerPixelSize = TextMeshCreator.LINE_HEIGHT / (double) lineHeightPixels;
+		verticalPerPixelSize = TextMeshCreator.LINE_HEIGHT / lineHeightPixels;
 		horizontalPerPixelSize = verticalPerPixelSize / aspectRatio;
 	}
 

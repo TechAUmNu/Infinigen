@@ -11,5 +11,4 @@ public class GuiTextElement extends GuiElement {
 		// TODO Auto-generated constructor stub
 	}
 
-	
 }

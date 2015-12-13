@@ -8,8 +8,6 @@ import javax.vecmath.Quat4f;
 import javax.vecmath.Vector3f;
 
 import com.bulletphysics.collision.shapes.CollisionShape;
-import com.bulletphysics.collision.shapes.ConvexHullShape;
-import com.bulletphysics.collision.shapes.StaticPlaneShape;
 import com.bulletphysics.dynamics.RigidBody;
 import com.bulletphysics.dynamics.RigidBodyConstructionInfo;
 import com.bulletphysics.linearmath.DefaultMotionState;
@@ -26,7 +24,6 @@ public class PhysicsModel extends RawModel implements Serializable {
 	private RigidBody body;
 	private String name, description, texture, fileName;
 	private float sizeX, sizeY, sizeZ, scale, mass;
-	
 
 	public String getName() {
 		return name;
@@ -108,21 +105,21 @@ public class PhysicsModel extends RawModel implements Serializable {
 		super(vaoID, vboIDs, vertexCount);
 		this.collisionShape = cs;
 	}
-	
+
 	public PhysicsModel(int vaoID, ArrayList<Integer> vboIDs, int vertexCount) {
-		super(vaoID, vboIDs, vertexCount);		
+		super(vaoID, vboIDs, vertexCount);
 	}
 
 	public CollisionShape getCollisionShape() {
 		return collisionShape;
 	}
-	
-	public RigidBody getBody(){
+
+	public RigidBody getBody() {
 		return body;
 	}
-	
-	public void generateWorldRigidBody(){
-		MotionState groundMotionState = new DefaultMotionState(new Transform(new Matrix4f(new Quat4f(0, 0, 0, 1), new Vector3f(0,-1, 0), 1.0f)));
+
+	public void generateWorldRigidBody() {
+		MotionState groundMotionState = new DefaultMotionState(new Transform(new Matrix4f(new Quat4f(0, 0, 0, 1), new Vector3f(0, -1, 0), 1.0f)));
 		// Initialise 'groundBodyConstructionInfo' to a value that contains the
 		// mass, the motion state, the shape, and the inertia (= resistance to
 		// change).

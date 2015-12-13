@@ -1,10 +1,11 @@
 #version 400 core
 
-in vec2 pass_textureCoords;
+
 in vec3 surfaceNormal;
 in vec3 toLightVector[4];
 in vec3 toCameraVector;
 in float visibility;
+
 
 out vec4 out_Color;
 
@@ -12,6 +13,7 @@ out vec4 out_Color;
 in vec4 shadowCoord;
 in vec4 worldPosition;
 uniform sampler2DShadow shadowMap;
+uniform float shadows;
 ////////////////////////////
 
 
@@ -81,21 +83,24 @@ void main(void){
 	
 	float shadow = 1.0;
 	
-	if(textureProj(shadowMap, shadowCoord) < 0.5){
-		shadow = 0.5;
+	if(shadows > 0.5){
+		if(textureProj(shadowMap, shadowCoord) < 0.5){
+			shadow = 0.5;
+		}
 	}
 	
 	
 	
 	
+	vec4 sampleX = texture(textureSampler, worldPosition.yz);
+	vec4 sampleY = texture(textureSampler, worldPosition.xz);
+	vec4 sampleZ = texture(textureSampler, worldPosition.xy);
 	
+	vec4 blendedColour = sampleX * surfaceNormal.x + sampleY * surfaceNormal.y + sampleZ * surfaceNormal.z;
 	
-	
-	
-	//
-	//out_Color = ;
-	out_Color = shadow * vec4(totalDiffuse, 1.0) * texture(textureSampler, pass_textureCoords) + shadow * vec4(totalSpecular, 1.0) ;
+	float ambient = 0.1;
+	out_Color = shadow * vec4(totalDiffuse, 1.0) * blendedColour + shadow * vec4(totalSpecular, 1.0) + ambient ;
 	//////////////
 	
-	//out_Color = mix(vec4(skyColour, 1.0), out_Color, visibility);
+	out_Color = mix(vec4(skyColour, 1.0), out_Color, visibility);
 }

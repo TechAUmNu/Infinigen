@@ -3,37 +3,32 @@ package main.java.com.ionsystems.infinigen.rendering;
 import java.util.List;
 import java.util.Map;
 
-import main.java.com.ionsystems.infinigen.entities.Entity;
 import main.java.com.ionsystems.infinigen.entities.PhysicsEntity;
+import main.java.com.ionsystems.infinigen.global.Globals;
 import main.java.com.ionsystems.infinigen.models.RawModel;
 import main.java.com.ionsystems.infinigen.models.TexturedModel;
 import main.java.com.ionsystems.infinigen.models.TexturedPhysicsModel;
 import main.java.com.ionsystems.infinigen.shaders.StaticShader;
 import main.java.com.ionsystems.infinigen.textures.ModelTexture;
-import main.java.com.ionsystems.infinigen.utility.Maths;
-
-import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Matrix4f;
-import org.lwjgl.util.vector.Vector3f;
 
 public class EntityRenderer {
 
-	private Matrix4f projectionMatrix;
 	private StaticShader shader;
 
 	public EntityRenderer(StaticShader shader, Matrix4f projectionMatrix) {
 		this.shader = shader;
-		this.projectionMatrix = projectionMatrix;
 		shader.start();
 		shader.loadProjectionMatrix(projectionMatrix);
 		shader.stop();
 	}
 
 	public void render(Map<TexturedPhysicsModel, List<PhysicsEntity>> entities) {
+		shader.loadUseShadows(Globals.switches.get("shadows"));
 		for (TexturedPhysicsModel model : entities.keySet()) {
 			prepareTexturedModel(model);
 			List<PhysicsEntity> batch = entities.get(model);
@@ -75,7 +70,7 @@ public class EntityRenderer {
 		if (entity.isPhysicsBody()) {
 			float[] transformationMatrix = entity.updateTransformationMatrixFloat();
 			shader.loadTransformationMatrix(transformationMatrix);
-			if(entity.isHighlighted()){			
+			if (entity.isHighlighted()) {
 				shader.highlightEntity(true);
 			}
 		} else {

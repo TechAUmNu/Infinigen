@@ -17,7 +17,6 @@ import main.java.com.ionsystems.infinigen.global.IModule;
 import main.java.com.ionsystems.infinigen.global.Units;
 import main.java.com.ionsystems.infinigen.models.PhysicsModel;
 import main.java.com.ionsystems.infinigen.models.TexturedPhysicsModel;
-import main.java.com.ionsystems.infinigen.objConverter.OBJFileLoader;
 import main.java.com.ionsystems.infinigen.textures.ModelTexture;
 import main.java.com.ionsystems.infinigen.utility.Maths;
 
@@ -36,15 +35,15 @@ public class UnitBuilderManager implements IModule {
 	int yOffset;
 	int zOffset;
 
-	
 	PhysicsModel pmodel;
+
 	// bind boxes to surrounding boxes
 	// make a method that makes a copy of boxes
 	// make a method that works out the size of the unit
 
 	@Override
 	public void setUp() {
-		
+
 		unit = new Unit();
 		unit.setup(Globals.getPhysics().getProcessor());
 		area = new ConstructionArea(unit);
@@ -229,26 +228,26 @@ public class UnitBuilderManager implements IModule {
 
 			if (baseEntity.getSizeX() > 1) {
 				if (xOffset > 0) {
-					offsets.x += (((float) pmodel.getSizeX() + 1) / 2.0) * placementOffset;
+					offsets.x += ((pmodel.getSizeX() + 1) / 2.0) * placementOffset;
 				}
 				if (xOffset < 0) {
-					offsets.x -= (((float) pmodel.getSizeX() + 1) / 2.0) * placementOffset;
+					offsets.x -= ((pmodel.getSizeX() + 1) / 2.0) * placementOffset;
 				}
 			}
 			if (baseEntity.getSizeY() > 1) {
 				if (yOffset > 0) {
-					offsets.y += (((float) pmodel.getSizeY() + 1) / 2.0) * placementOffset;
+					offsets.y += ((pmodel.getSizeY() + 1) / 2.0) * placementOffset;
 				}
 				if (yOffset < 0) {
-					offsets.y -= (((float) pmodel.getSizeY() + 1) / 2.0) * placementOffset;
+					offsets.y -= ((pmodel.getSizeY() + 1) / 2.0) * placementOffset;
 				}
 			}
 			if (baseEntity.getSizeZ() > 1) {
 				if (zOffset > 0) {
-					offsets.z += (((float) pmodel.getSizeZ() + 1) / 2.0) * placementOffset;
+					offsets.z += ((pmodel.getSizeZ() + 1) / 2.0) * placementOffset;
 				}
 				if (zOffset < 0) {
-					offsets.z -= (((float) pmodel.getSizeZ() + 1) / 2.0) * placementOffset;
+					offsets.z -= ((pmodel.getSizeZ() + 1) / 2.0) * placementOffset;
 				}
 			}
 			System.out.println("Offsets After Modification: " + offsets);

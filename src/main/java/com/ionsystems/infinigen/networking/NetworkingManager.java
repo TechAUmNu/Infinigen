@@ -18,44 +18,40 @@ import main.java.com.ionsystems.infinigen.global.IModule;
 
 public class NetworkingManager implements IModule {
 
-	private ServerSocket serverSocket; //The socket to listen for clients on.
+	private ServerSocket serverSocket; // The socket to listen for clients on.
 	private int noPlayers = 1;
 	private int connectedClients = 0;
 	private Client client;
-	
+
 	@Override
 	public void process() {
 		// TODO Auto-generated method stub
-		
-		
 
 	}
 
 	@Override
 	public void setUp() {
-		
-		
-		
-		
-		//In the setup we will need to connect to the server if we are a client and start the connection listener if we are the server.
-		if(Globals.isServer()){			
+
+		// In the setup we will need to connect to the server if we are a client
+		// and start the connection listener if we are the server.
+		if (Globals.isServer()) {
 			startListenServer();
-			waitForClients();		
-		}else{
+			waitForClients();
+		} else {
 			client = new Client();
 			client.username = "Euan";
 			connectToServer();
 		}
-	
+
 	}
 
 	private void connectToServer() {
 		(new Thread(new ConnectionToServer(client))).start();
-		
+
 	}
 
 	private void waitForClients() {
-		while (connectedClients < noPlayers )
+		while (connectedClients < noPlayers)
 			try {
 				System.out.println("Waiting on client connection");
 				System.out.println("Server listening on: " + serverSocket.getInetAddress());
@@ -77,14 +73,13 @@ public class NetworkingManager implements IModule {
 	private void startListenServer() {
 		try {
 			serverSocket = new ServerSocket(Globals.getPort());
-			serverSocket.setPerformancePreferences(0, 1, 2);			
+			serverSocket.setPerformancePreferences(0, 1, 2);
 			System.out.println("Successfully bound server to port " + Globals.getPort());
 		} catch (IOException e) {
-			System.err.println("Could not listen on port: " + + Globals.getPort());
+			System.err.println("Could not listen on port: " + +Globals.getPort());
 			System.exit(-1);
 		}
 	}
-	
 
 	@Override
 	public void cleanUp() {

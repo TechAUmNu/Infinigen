@@ -4,8 +4,8 @@ public class ModelFile {
 	private String filePath;
 	private String folder;
 	private String spawnName;
-	
-	public String getFilePath() {		
+
+	public String getFilePath() {
 		return filePath;
 	}
 

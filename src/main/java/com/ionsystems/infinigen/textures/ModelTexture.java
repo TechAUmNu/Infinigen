@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import javax.vecmath.Vector3f;
 
-public class ModelTexture implements Serializable{
+public class ModelTexture implements Serializable {
 
 	private Vector3f textureID;
 

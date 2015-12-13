@@ -9,14 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
-import org.lwjgl.util.vector.Matrix4f;
-
-import main.java.com.ionsystems.infinigen.models.RawModel;
-import main.java.com.ionsystems.infinigen.rendering.Loader;
-import main.java.com.ionsystems.infinigen.utility.Maths;
 
 public class GuiRenderer {
 

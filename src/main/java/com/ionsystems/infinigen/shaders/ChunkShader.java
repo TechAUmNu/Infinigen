@@ -35,8 +35,7 @@ public class ChunkShader extends ShaderProgram {
 	private int location_plane;
 	private int location_shadowMap;
 	private int location_depthBiasMatrix;
-
-
+	private int location_shadows;
 
 	public ChunkShader() {
 		super(VERTEX_FILE, FRAGMENT_FILE);
@@ -45,8 +44,7 @@ public class ChunkShader extends ShaderProgram {
 	@Override
 	protected void bindAttributes() {
 		super.bindAttribute(0, "position");
-		super.bindAttribute(1, "textureCoords");
-		super.bindAttribute(2, "normal");
+		super.bindAttribute(1, "normal");
 	}
 
 	@Override
@@ -57,11 +55,10 @@ public class ChunkShader extends ShaderProgram {
 		location_shineDamper = super.getUniformLocation("shineDamper");
 		location_reflectivity = super.getUniformLocation("reflectivity");
 		location_skyColour = super.getUniformLocation("skyColour");
-		location_plane = super.getUniformLocation("plane"); 
+		location_plane = super.getUniformLocation("plane");
 		location_shadowMap = super.getUniformLocation("shadowMap");
 		location_depthBiasMatrix = super.getUniformLocation("depthBiasMatrix");
-	
-		
+		location_shadows = super.getUniformLocation("shadows");
 
 		location_lightPosition = new int[MAX_LIGHTS];
 		location_lightColour = new int[MAX_LIGHTS];
@@ -73,18 +70,17 @@ public class ChunkShader extends ShaderProgram {
 		}
 	}
 
-	
-	public void loadShadowMap(ShadowMap shadowMap){
+	public void loadShadowMap(ShadowMap shadowMap) {
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, shadowMap.getShadowMapTexture());
 		super.loadInt(location_shadowMap, shadowMap.getShadowMapTexture());
 		super.loadMatrix(location_depthBiasMatrix, shadowMap.getDepthBiasMatrix());
 	}
-	
-	public void loadClipPlane(Vector4f clipPlane){
+
+	public void loadClipPlane(Vector4f clipPlane) {
 		super.loadVector(location_plane, clipPlane);
 	}
-	
+
 	public void loadSkyColour(float r, float g, float b) {
 		super.loadVector(location_skyColour, new Vector3f(r, g, b));
 	}
@@ -122,4 +118,7 @@ public class ChunkShader extends ShaderProgram {
 		super.loadMatrix(location_viewMatrix, viewMatrix);
 	}
 
+	public void loadUseShadows(Boolean shadows) {
+		super.loadBoolean(location_shadows, shadows);
+	}
 }

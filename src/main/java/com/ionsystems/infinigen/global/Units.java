@@ -19,41 +19,42 @@ public class Units {
 	public static void setUnits(HashMap<String, ArrayList<Unit>> units) {
 		Units.units = units;
 	}
-	
-	public static ArrayList<Unit> getAllType(String unit){
+
+	public static ArrayList<Unit> getAllType(String unit) {
 		return units.get(unit);
 	}
-	
-	public static ArrayList<Unit> getUnitList(){
+
+	public static ArrayList<Unit> getUnitList() {
 		return unitList;
 	}
-	
-	public static void addUnit(Unit unit){
-		try{
+
+	public static void addUnit(Unit unit) {
+		try {
 			units.get(unit.getName()).add(unit);
-		}catch(NullPointerException e){
-			//No list exists so make one
+		} catch (NullPointerException e) {
+			// No list exists so make one
 			units.put(unit.getName(), new ArrayList<Unit>());
-			units.get(unit.getName()).add(unit); //Then add it
+			units.get(unit.getName()).add(unit); // Then add it
 		}
 		unitList.add(unit);
 		unitTypes.add(unit.getName());
 	}
-	
-	public static void removeUnit(Unit unit){
+
+	public static void removeUnit(Unit unit) {
 		units.get(unit.getName()).remove(unit);
 		unitList.remove(unit);
-		if(units.get(unit.getName()).isEmpty()){ //There are no more of this unit currently.
+		if (units.get(unit.getName()).isEmpty()) { // There are no more of this
+													// unit currently.
 			unitTypes.remove(unit.getName());
 		}
 	}
 
 	public static ArrayList<PhysicsEntity> getEntities() {
 		ArrayList<PhysicsEntity> entities = new ArrayList<PhysicsEntity>();
-		for(Unit u : unitList){
+		for (Unit u : unitList) {
 			entities.addAll(u.getEntities());
 		}
 		return entities;
 	}
-		
+
 }

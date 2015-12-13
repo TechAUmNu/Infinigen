@@ -36,8 +36,8 @@ public class OSValidator {
 		}
 	}
 
-	public static void setCorrectNativesLocation() {		
-			System.setProperty("org.lwjgl.librarypath", new File("natives").getAbsolutePath());		
+	public static void setCorrectNativesLocation() {
+		System.setProperty("org.lwjgl.librarypath", new File("natives").getAbsolutePath());
 	}
 
 }

@@ -47,8 +47,8 @@ public class Character {
 	 *            - how far in pixels the cursor should advance after adding
 	 *            this character.
 	 */
-	protected Character(int id, double xTextureCoord, double yTextureCoord, double xTexSize, double yTexSize,
-			double xOffset, double yOffset, double sizeX, double sizeY, double xAdvance) {
+	protected Character(int id, double xTextureCoord, double yTextureCoord, double xTexSize, double yTexSize, double xOffset, double yOffset, double sizeX,
+			double sizeY, double xAdvance) {
 		this.id = id;
 		this.xTextureCoord = xTextureCoord;
 		this.yTextureCoord = yTextureCoord;

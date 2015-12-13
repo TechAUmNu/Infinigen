@@ -10,7 +10,6 @@ public class ModelData {
 	private float[] normals;
 	private int[] indices;
 	private float furthestPoint;
-	
 
 	public ModelData(float[] vertices, List<Vertex> verticesList, float[] textureCoords, float[] normals, int[] indices, float furthestPoint) {
 		this.vertices = vertices;

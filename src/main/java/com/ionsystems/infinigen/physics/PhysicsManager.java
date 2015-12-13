@@ -13,12 +13,10 @@ public class PhysicsManager implements IModule {
 	public PhysicsProcessor getProcessor() {
 		return processor;
 	}
-	
-	
-	
 
+	@Override
 	public void update() {
-		processor.simulate();				
+		processor.simulate();
 		Globals.setBodies(processor.getBodies());
 	}
 
@@ -31,7 +29,7 @@ public class PhysicsManager implements IModule {
 	@Override
 	public void setUp() {
 		processor = new PhysicsProcessor();
-		processor.setUpPhysics(true,true);
+		processor.setUpPhysics(false, true);
 
 	}
 
@@ -43,7 +41,7 @@ public class PhysicsManager implements IModule {
 
 	@Override
 	public void render() {
-		if(Globals.debugRendering()){
+		if (Globals.debugRendering()) {
 			System.out.println("Rendering Debug World");
 			processor.getDynamicsWorld().debugDrawWorld();
 		}

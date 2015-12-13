@@ -11,8 +11,6 @@ import main.java.com.ionsystems.infinigen.global.IModule;
 import main.java.com.ionsystems.infinigen.rendering.Loader;
 import main.java.com.ionsystems.infinigen.utility.Maths;
 
-
-
 public class GuiManager implements IModule {
 
 	private GuiRenderer renderer;
@@ -21,11 +19,10 @@ public class GuiManager implements IModule {
 	public void generateElement(float x, float y, String texture) {
 		renderer.addElement(new GuiElement(Maths.convertCoordinate(new Vector2f(x, y)), texture, loader));
 	}
-	
-	public void addElement(float x, float y, Vector3f texture){
-		renderer.addElement(new GuiElement(Maths.convertCoordinate(new Vector2f(x,y)), new Vector2f(1024,1024), new Vector2f(0,0), texture, loader));
-		
-	
+
+	public void addElement(float x, float y, Vector3f texture) {
+		renderer.addElement(new GuiElement(Maths.convertCoordinate(new Vector2f(x, y)), new Vector2f(1024, 1024), new Vector2f(0, 0), texture, loader));
+
 	}
 
 	public GuiManager(Loader loader) {

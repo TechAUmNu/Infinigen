@@ -34,46 +34,48 @@ public class ThirdPersonCamera implements IModule, ICamera {
 	private PhysicsEntity entity;
 	private boolean hasEntity = false;
 
-	public ThirdPersonCamera() {		
+	public ThirdPersonCamera() {
 		if (GLContext.getCapabilities().GL_ARB_depth_clamp) {
 			glEnable(GL_DEPTH_CLAMP);
 		}
 	}
-	
-	public void setEntity(PhysicsEntity entity){
+
+	public void setEntity(PhysicsEntity entity) {
 		this.entity = entity;
 		hasEntity = true;
 	}
 
+	@Override
 	public void update() {
-		if(Globals.getCameraEntity() != null){
+		if (Globals.getCameraEntity() != null) {
 			setEntity(Globals.getCameraEntity());
 		}
-		if(hasEntity){
-		calculateZoom();
-		calculatePitch();
-		calculateAngleAroundPlayer();
-		float horizontalDistance = calculateHorizontalDistance();
-		float verticalDistance = calculateVerticalDistance();
+		if (hasEntity) {
+			calculateZoom();
+			calculatePitch();
+			calculateAngleAroundPlayer();
+			float horizontalDistance = calculateHorizontalDistance();
+			float verticalDistance = calculateVerticalDistance();
 
-		Transform transform = entity.getBody().getWorldTransform(new Transform());
-		Quat4f rotation = new Quat4f();
-		float rotationDegrees = Maths.convertToHeading(transform.getRotation(rotation));
-		calculateCameraPosition(horizontalDistance, verticalDistance, rotationDegrees, transform);
-		
-		this.yaw = 180 - (angleAroundPlayer);
-		Globals.setCameraDirection(calculateDirectionVector());
-		Globals.setCameraPosition(position);
+			Transform transform = entity.getBody().getWorldTransform(new Transform());
+			Quat4f rotation = new Quat4f();
+			float rotationDegrees = Maths.convertToHeading(transform.getRotation(rotation));
+			calculateCameraPosition(horizontalDistance, verticalDistance, rotationDegrees, transform);
+
+			this.yaw = 180 - (angleAroundPlayer);
+			Globals.setCameraDirection(calculateDirectionVector());
+			Globals.setCameraPosition(position);
 		}
 	}
 
-	
 	@Override
 	public Vector3f getPosition() {
 		return position;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see newEntities.ICamera#getPitch()
 	 */
 	@Override
@@ -81,7 +83,9 @@ public class ThirdPersonCamera implements IModule, ICamera {
 		return pitch;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see newEntities.ICamera#getYaw()
 	 */
 	@Override
@@ -96,14 +100,14 @@ public class ThirdPersonCamera implements IModule, ICamera {
 	private void calculateCameraPosition(float horizontalDistance, float verticalDistance, float rotationDegrees, Transform transform) {
 
 		// System.out.println(yRotDeg);
-		float theta = (float) (angleAroundPlayer);
+		float theta = (angleAroundPlayer);
 		float offsetX = (float) (horizontalDistance * Math.sin(Math.toRadians(theta)));
 		float offsetZ = (float) (horizontalDistance * Math.cos(Math.toRadians(theta)));
 
 		position.x = transform.origin.x - offsetX;
 		position.z = transform.origin.z - offsetZ;
 		position.y = transform.origin.y + verticalDistance;
-		float terrainHeight = (float) -1;
+		float terrainHeight = -1;
 
 		if (position.y < terrainHeight) {
 			position.y = terrainHeight;
@@ -128,13 +132,13 @@ public class ThirdPersonCamera implements IModule, ICamera {
 		if (Mouse.isButtonDown(1)) {
 			float pitchChange = Mouse.getDY() * 0.2f;
 			pitch -= pitchChange;
-			if(pitch > 90){
+			if (pitch > 90) {
 				pitch = 90;
 			}
-			if(pitch < -25){
+			if (pitch < -25) {
 				pitch = -25;
 			}
-			
+
 		}
 	}
 
@@ -142,17 +146,17 @@ public class ThirdPersonCamera implements IModule, ICamera {
 		if (Mouse.isButtonDown(1)) {
 			float angleChange = Mouse.getDX() * 0.3f;
 			angleAroundPlayer -= angleChange;
-			
+
 		}
 	}
-	
-	private Vector3d calculateDirectionVector(){
-		
-		direction.x = cos(Math.toRadians(yaw))*cos(Math.toRadians(pitch));
-		direction.y = sin(Math.toRadians(yaw))*cos(Math.toRadians(pitch));
+
+	private Vector3d calculateDirectionVector() {
+
+		direction.x = cos(Math.toRadians(yaw)) * cos(Math.toRadians(pitch));
+		direction.y = sin(Math.toRadians(yaw)) * cos(Math.toRadians(pitch));
 		direction.z = sin(Math.toRadians(pitch));
-				
-		return direction;	
+
+		return direction;
 	}
 
 	@Override
@@ -184,11 +188,11 @@ public class ThirdPersonCamera implements IModule, ICamera {
 		// TODO Auto-generated method stub
 		return new ArrayList<PhysicsEntity>();
 	}
-	
+
 	@Override
 	public void invertPitch() {
 		this.pitch = -pitch;
-		
+
 	}
 
 }

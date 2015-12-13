@@ -14,7 +14,7 @@ public class DisplayManager {
 
 	private static final int WIDTH = 1280;
 	private static final int HEIGHT = 720;
-	private static final int FPS_CAP = 120;
+	private static final int FPS_CAP = 200;
 	private static float GUI_SCALE = 1f;
 	private static float GUI_SCALE_FACTOR = 0.5f;
 
@@ -61,8 +61,8 @@ public class DisplayManager {
 
 		if (getCurrentTime() - lastFPS > 1000f) {
 
-			if(Globals.showFPS()){
-				//System.out.println("FPS: " + fps);
+			if (Globals.showFPS()) {
+				// System.out.println("FPS: " + fps);
 			}
 			fpsCounter = fps;
 			fps = 0;
@@ -70,7 +70,7 @@ public class DisplayManager {
 		}
 		fps++;
 
-		 System.out.println("FPS: "+ fpsCounter);
+		System.out.println("FPS: " + fpsCounter);
 
 	}
 
@@ -88,7 +88,7 @@ public class DisplayManager {
 
 	public static void calcScale() {
 
-		GUI_SCALE = (float) (Display.getWidth() / 1920f) * GUI_SCALE_FACTOR;
+		GUI_SCALE = Display.getWidth() / 1920f * GUI_SCALE_FACTOR;
 	}
 
 	public static int getFpsCounter() {

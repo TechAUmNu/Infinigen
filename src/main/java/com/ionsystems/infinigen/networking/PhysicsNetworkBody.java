@@ -2,7 +2,6 @@ package main.java.com.ionsystems.infinigen.networking;
 
 import java.io.Serializable;
 
-
 import java.util.UUID;
 
 import javax.vecmath.Quat4f;

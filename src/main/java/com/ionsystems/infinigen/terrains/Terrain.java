@@ -11,7 +11,6 @@ import org.lwjgl.util.vector.Vector3f;
 
 import main.java.com.ionsystems.infinigen.models.RawModel;
 import main.java.com.ionsystems.infinigen.rendering.Loader;
-import main.java.com.ionsystems.infinigen.textures.ModelTexture;
 import main.java.com.ionsystems.infinigen.textures.TerrainTexture;
 import main.java.com.ionsystems.infinigen.textures.TerrainTexturePack;
 import main.java.com.ionsystems.infinigen.utility.Maths;
@@ -34,7 +33,7 @@ public class Terrain {
 		this.blendMap = blendMap;
 		this.x = gridX * SIZE;
 		this.z = gridZ * SIZE;
-		//this.model = generateTerrain(loader, heightMap);
+		// this.model = generateTerrain(loader, heightMap);
 	}
 
 	public float getX() {
@@ -100,7 +99,7 @@ public class Terrain {
 			}
 		}
 
-		//return loader.loadToVAO(vertices, textureCoords, normals, indices);
+		// return loader.loadToVAO(vertices, textureCoords, normals, indices);
 	}
 
 	private float getHeight(int x, int y, BufferedImage image) {
