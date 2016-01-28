@@ -26,7 +26,7 @@ public class ChunkManager implements Runnable {
 	Module terrainNoise;
 	WorldRenderer renderer;
 	Vector3f chunkLocation = new Vector3f();
-	public static int loadDistance = 10;
+	public static int loadDistance = 5;
 	long seed = 828382;
 	int state = 0;
 	int cameraX, cameraZ;
@@ -171,7 +171,7 @@ public class ChunkManager implements Runnable {
 		Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
 		setUp();
 
-		while (Globals.isRunning()) {
+		//while (Globals.isRunning()) {
 		process();
 		update();
 		state++;
@@ -181,7 +181,7 @@ public class ChunkManager implements Runnable {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		 }
+		// }
 
 	}
 

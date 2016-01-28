@@ -39,7 +39,7 @@ public class Globals {
 
 	private static ArrayList<ChunkData> chunkUpdate;
 	private static String ip;
-	private static int port;
+	private static int bandwidthPort, latencyPort;
 	private static ArrayList<RigidBody> bodies;
 	private static PhysicsManager physics;
 	private static ArrayList<PhysicsEntity> newEntities = new ArrayList<PhysicsEntity>();
@@ -78,12 +78,20 @@ public class Globals {
 		return bodies;
 	}
 
-	public static int getPort() {
-		return port;
+	public static int getBandwidthPort() {
+		return bandwidthPort;
 	}
 
-	public static void setPort(int port) {
-		Globals.port = port;
+	public static void setBandwidthPort(int port) {
+		Globals.bandwidthPort = port;
+	}
+	
+	public static int getLatencyPort() {
+		return latencyPort;
+	}
+
+	public static void setLatencyPort(int port) {
+		Globals.latencyPort = port;
 	}
 
 	public static String getIp() {
@@ -158,7 +166,6 @@ public class Globals {
 	}
 
 	public static boolean showFPS() {
-
 		return true;
 	}
 

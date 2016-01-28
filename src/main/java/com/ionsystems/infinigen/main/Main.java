@@ -279,9 +279,9 @@ public class Main {
 			e.printStackTrace();
 		}
 
-		AudioManager.loadOGGAudioFile("stalker.ogg");
+		AudioManager.loadOGGAudioFile("Stalker.ogg");
 
-		AudioManager.playSoundEffect("stalker.ogg", 1.0f, 0.4f, false);
+		AudioManager.playSoundEffect("Stalker.ogg", 1.0f, 0.4f, false);
 
 	}
 

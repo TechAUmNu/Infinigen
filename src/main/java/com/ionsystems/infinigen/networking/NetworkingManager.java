@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import main.java.com.ionsystems.infinigen.entities.PhysicsEntity;
 import main.java.com.ionsystems.infinigen.global.Globals;
 import main.java.com.ionsystems.infinigen.global.IModule;
+import main.java.com.ionsystems.infinigen.newNetworking.Client;
 
 //The basic idea for networking is that the game will be launched with a
 // command line argument by the lobby which will tell it what server to

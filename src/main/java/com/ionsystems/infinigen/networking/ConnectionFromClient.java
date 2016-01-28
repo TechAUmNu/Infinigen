@@ -23,6 +23,8 @@ import com.bulletphysics.linearmath.Transform;
 
 import main.java.com.ionsystems.infinigen.entities.PhysicsEntity;
 import main.java.com.ionsystems.infinigen.global.Globals;
+import main.java.com.ionsystems.infinigen.newNetworking.Client;
+import main.java.com.ionsystems.infinigen.newNetworking.NetworkMessage;
 import main.java.com.ionsystems.infinigen.world.Chunk;
 
 //For physics updates we will run a timer on the server that sends out the updated physics data every 1/10 of a second.

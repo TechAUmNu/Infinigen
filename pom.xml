@@ -58,7 +58,7 @@
                 <mainClass>main.java.com.ionsystems.infinigen.main.Main</mainClass>
             </manifest>
             <manifestEntries>
-                <Class-Path>lib/jbullet-1.0.jar lib/slick-1.0.jar lib/marytts-1.0.jar lib/marytts-en-1.0.jar</Class-Path>                
+                <Class-Path>lib/jbullet-1.0.jar lib/slick-1.0.jar lib/marytts-1.0.jar lib/marytts-en-1.0.jar lib/icu4j-54.1.1-1.0.jar lib/marytts-voice-cmu-1.0.jar</Class-Path>                
             </manifestEntries>
         </archive>
     </configuration>
@@ -138,6 +138,20 @@
 			<scope>system</scope>
 			<version>1.0</version>
 			<systemPath>${project.basedir}/lib/marytts/marytts-lang-en-5.1.2.jar</systemPath>
+		</dependency>
+		<dependency>
+			<groupId>marytts-voice-cmu</groupId>
+			<artifactId>marytts-voice-cmu</artifactId>
+			<scope>system</scope>
+			<version>1.0</version>
+			<systemPath>${project.basedir}/lib/marytts/voice-cmu-slt-hsmm-5.1.2.jar</systemPath>
+		</dependency>
+		<dependency>
+			<groupId>icu4j-54.1.1</groupId>
+			<artifactId>icu4j-54.1.1</artifactId>
+			<scope>system</scope>
+			<version>1.0</version>
+			<systemPath>${project.basedir}/lib/marytts/icu4j-54.1.1.jar</systemPath>
 		</dependency>
 		
 

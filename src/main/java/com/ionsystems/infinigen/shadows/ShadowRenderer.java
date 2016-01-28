@@ -10,9 +10,7 @@ import main.java.com.ionsystems.infinigen.global.Globals;
 import main.java.com.ionsystems.infinigen.models.RawModel;
 import main.java.com.ionsystems.infinigen.models.TexturedModel;
 import main.java.com.ionsystems.infinigen.models.TexturedPhysicsModel;
-import main.java.com.ionsystems.infinigen.utility.Maths;
 import main.java.com.ionsystems.infinigen.utility.MatrixHandler;
-import main.java.com.ionsystems.infinigen.world.Chunk;
 import static org.lwjgl.opengl.GL11.*;
 
 import org.lwjgl.opengl.GL11;
@@ -29,7 +27,7 @@ public class ShadowRenderer {
 
 	private MatrixHandler depthMatrix;
 	int calls = 0;
-	private Vector3f position = new Vector3f();
+//	private Vector3f position = new Vector3f();
 
 	public ShadowMap getShadowMap() {
 		MatrixHandler biasMatrix = new MatrixHandler();
@@ -64,14 +62,14 @@ public class ShadowRenderer {
 		}
 
 		// Render terrain
-		if (Globals.getLoadedChunks() != null) {
-			for (Chunk chunk : Globals.getLoadedChunks()) {
-				if (chunk.isRenderable()) {
-					loadModelMatrix(chunk);
-					renderFace(chunk.getModel());
-				}
-			}
-		}
+//		if (Globals.getLoadedChunks() != null) {
+//			for (Chunk chunk : Globals.getLoadedChunks()) {
+//				if (chunk.isRenderable()) {
+//					loadModelMatrix(chunk);
+//					renderFace(chunk.getModel());
+//				}
+//			}
+//		}
 
 		shader.stop();
 
@@ -79,33 +77,33 @@ public class ShadowRenderer {
 		glCullFace(GL_BACK);
 	}
 
-	private void renderFace(RawModel rawModel) {
-		prepareChunkFace(rawModel);
-		// System.out.println(rawModel.getVertexCount());
-		GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, rawModel.getVertexCount());
-		unbindFace();
-	}
+//	private void renderFace(RawModel rawModel) {
+//		prepareChunkFace(rawModel);
+//		// System.out.println(rawModel.getVertexCount());
+//		GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, rawModel.getVertexCount());
+//		unbindFace();
+//	}
 
-	private void prepareChunkFace(RawModel rawModel) {
-		GL30.glBindVertexArray(rawModel.getVaoID());
-		GL20.glEnableVertexAttribArray(0);
-
-	}
-
-	private void unbindFace() {
-		GL20.glDisableVertexAttribArray(0);
-		GL30.glBindVertexArray(0);
-	}
-
-	private void loadModelMatrix(Chunk chunk) {
-
-		position.x = chunk.x * chunk.size * chunk.blockSize;
-		position.y = chunk.y * chunk.size * chunk.blockSize;
-		position.z = chunk.z * chunk.size * chunk.blockSize;
-
-		Matrix4f transformationMatrix = Maths.createTransformationMatrix(position, 0, 0, 0, 1, 1, false);
-		shader.loadDepthModelMatrix(transformationMatrix);
-	}
+//	private void prepareChunkFace(RawModel rawModel) {
+//		GL30.glBindVertexArray(rawModel.getVaoID());
+//		GL20.glEnableVertexAttribArray(0);
+//
+//	}
+//
+//	private void unbindFace() {
+//		GL20.glDisableVertexAttribArray(0);
+//		GL30.glBindVertexArray(0);
+//	}
+//
+//	private void loadModelMatrix(Chunk chunk) {
+//
+//		position.x = chunk.x * chunk.size * chunk.blockSize;
+//		position.y = chunk.y * chunk.size * chunk.blockSize;
+//		position.z = chunk.z * chunk.size * chunk.blockSize;
+//
+//		Matrix4f transformationMatrix = Maths.createTransformationMatrix(position, 0, 0, 0, 1, 1, false);
+//		shader.loadDepthModelMatrix(transformationMatrix);
+//	}
 
 	private void prepareTexturedModel(TexturedModel model) {
 		RawModel rawModel = model.getPhysicsModel();

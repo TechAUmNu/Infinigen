@@ -18,8 +18,11 @@ import java.util.zip.GZIPOutputStream;
 import javax.swing.Timer;
 
 import com.bulletphysics.dynamics.RigidBody;
+
 import main.java.com.ionsystems.infinigen.entities.PhysicsEntity;
 import main.java.com.ionsystems.infinigen.global.Globals;
+import main.java.com.ionsystems.infinigen.newNetworking.Client;
+import main.java.com.ionsystems.infinigen.newNetworking.NetworkMessage;
 
 //For new objects and events we need to tell the server, once the object has been created and added on the server the client receives updates on its position to make sure everything is in sync across clients
 
