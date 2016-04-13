@@ -77,6 +77,10 @@ public class PhysicsEntity extends Entity implements Serializable {
 		Transform transform = body.getMotionState().getWorldTransform(new Transform());
 		float[] matrix = new float[16];
 		transform.getOpenGLMatrix(matrix);
+		for(float f : matrix){
+			System.out.println(f);
+		}
+		
 		return matrix;
 	}
 

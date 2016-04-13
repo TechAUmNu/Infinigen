@@ -47,11 +47,11 @@ public class ClientNetworkAdapter implements Runnable, ActionListener {
 			try {
 				// 1. creating a socket to connect to the server
 
-				System.out.println("about to connect to server at: " + Globals.getIp() + ":" + Globals.getPort());
-				socket = new Socket(Globals.getIp(), Globals.getPort());
+				System.out.println("about to connect to server at: " + Globals.getIp() + ":" + Globals.getLatencyPort());
+				socket = new Socket(Globals.getIp(), Globals.getLatencyPort());
 				socket.setPerformancePreferences(0, 1, 2);
 				socket.setTcpNoDelay(true);
-				System.out.println("Connected to localhost in port " + +Globals.getPort());
+				System.out.println("Connected to localhost in port " + +Globals.getLatencyPort());
 				// 2. get Input and Output streams
 				System.out.println("Creating output stream");
 				gzipOut = new GZIPOutputStream(socket.getOutputStream(), 4096, true);
@@ -153,18 +153,17 @@ public class ClientNetworkAdapter implements Runnable, ActionListener {
 
 			// System.out.println("Physics update: " + networkBodies.size());
 
-			for (PhysicsNetworkBody body : networkBodies) {
-				for (RigidBody rb : bodies) {
-					if (body.hash.equals(rb.bodyIdHash)) {
-						rb.setAngularVelocity(body.angularVelocity);
-						rb.setLinearVelocity(body.linearVelocity);
-						rb.setWorldTransform(body.worldTransform);
-						// System.out.println(body.worldTransform.origin);
-						break;
-					}
+			//for (PhysicsNetworkBody body : networkBodies) {
+			//	for (RigidBody rb : bodies) {
+			//		if (body.hash.equals(rb.bodyIdHash)) {
+			//			rb.setAngularVelocity(body.angularVelocity);
+			//			rb.setLinearVelocity(body.linearVelocity);
+			//			rb.setWorldTransform(body.worldTransform);
+			//			// System.out.println(body.worldTransform.origin);
+			//			break;
 
-				}
-			}
+			//	}
+			//}
 
 		}
 

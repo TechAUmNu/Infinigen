@@ -103,12 +103,12 @@ public class Main {
 		Main g = new Main();
 		if (args.length > 0) {
 			if (args[0].equals("server")) {
-				Globals.setPort(Integer.parseInt(args[1]));
+				Globals.setLatencyPort(Integer.parseInt(args[1]));
 				Globals.setServer(true);
 			} else if (args[0].equals("client")) {
 				Globals.setServer(false);
 				Globals.setIp(args[1]);
-				Globals.setPort(Integer.parseInt(args[2]));
+				Globals.setLatencyPort(Integer.parseInt(args[2]));
 			}
 
 		}

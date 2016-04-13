@@ -40,6 +40,7 @@ public class Globals {
 	private static ArrayList<ChunkData> chunkUpdate;
 	private static String ip;
 	private static int bandwidthPort, latencyPort;
+	private static int networkTickrate = 10;
 	private static ArrayList<RigidBody> bodies;
 	private static PhysicsManager physics;
 	private static ArrayList<PhysicsEntity> newEntities = new ArrayList<PhysicsEntity>();
@@ -331,6 +332,14 @@ public class Globals {
 
 	public static ReadWriteLock getUnloadingLock() {
 		return unloadingLock;
+	}
+
+	public static int getNetworkTickrate() {
+		return networkTickrate;
+	}
+
+	public static void setNetworkTickrate(int networkTickrate) {
+		Globals.networkTickrate = networkTickrate;
 	}
 
 	// public static ArrayList<TextElement> getTextElements() {

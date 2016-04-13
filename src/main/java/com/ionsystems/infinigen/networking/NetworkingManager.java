@@ -73,11 +73,11 @@ public class NetworkingManager implements IModule {
 
 	private void startListenServer() {
 		try {
-			serverSocket = new ServerSocket(Globals.getPort());
+			serverSocket = new ServerSocket(Globals.getLatencyPort());
 			serverSocket.setPerformancePreferences(0, 1, 2);
-			System.out.println("Successfully bound server to port " + Globals.getPort());
+			System.out.println("Successfully bound server to port " + Globals.getLatencyPort());
 		} catch (IOException e) {
-			System.err.println("Could not listen on port: " + +Globals.getPort());
+			System.err.println("Could not listen on port: " + +Globals.getLatencyPort());
 			System.exit(-1);
 		}
 	}

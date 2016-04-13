@@ -49,11 +49,11 @@ public class ConnectionToServer implements Runnable, ActionListener {
 		try {
 			// 1. creating a socket to connect to the server
 
-			System.out.println("about to connect to server at: " + Globals.getIp() + ":" + Globals.getPort());
-			socket = new Socket(Globals.getIp(), Globals.getPort());
+			System.out.println("about to connect to server at: " + Globals.getIp() + ":" + Globals.getLatencyPort());
+			socket = new Socket(Globals.getIp(), Globals.getLatencyPort());
 			socket.setPerformancePreferences(0, 1, 2);
 			socket.setTcpNoDelay(true);
-			System.out.println("Connected to localhost in port " + +Globals.getPort());
+			System.out.println("Connected to localhost in port " + +Globals.getLatencyPort());
 			// 2. get Input and Output streams
 			System.out.println("Creating output stream");
 			gzipOut = new GZIPOutputStream(socket.getOutputStream(), 4096, true);
@@ -106,13 +106,13 @@ public class ConnectionToServer implements Runnable, ActionListener {
 
 		} finally {
 			// 4: Closing connection
-			try {
+			//try {
 				// in.close();
 				// out.close();
 				// socket.close();
-			} catch (IOException ioException) {
-				ioException.printStackTrace();
-			}
+			//} catch (IOException ioException) {
+			//	ioException.printStackTrace();
+			//}
 		}
 	}
 
