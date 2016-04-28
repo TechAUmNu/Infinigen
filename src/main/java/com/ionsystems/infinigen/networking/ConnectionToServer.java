@@ -53,7 +53,7 @@ public class ConnectionToServer implements Runnable, ActionListener {
 			socket = new Socket(Globals.getIp(), Globals.getLatencyPort());
 			socket.setPerformancePreferences(0, 1, 2);
 			socket.setTcpNoDelay(true);
-			System.out.println("Connected to localhost in port " + +Globals.getLatencyPort());
+			System.out.println("Connected to "+Globals.getIp()+" on port " +Globals.getLatencyPort());
 			// 2. get Input and Output streams
 			System.out.println("Creating output stream");
 			gzipOut = new GZIPOutputStream(socket.getOutputStream(), 4096, true);

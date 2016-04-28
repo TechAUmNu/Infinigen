@@ -68,73 +68,74 @@ public class UnitBuilderManager implements IModule {
 	}
 
 	private void mousePointing() {
+		if (Globals.getMouseRay() != null) {
+			Vector3f rayFrom = Maths.convertVector(Globals.getCameraPosition());
+			Vector3f rayTo = Maths.convertVector(Globals.getMouseRay());
+			Vector3f shootRay = Maths.convertVector(Globals.getMouseRay());
 
-		Vector3f rayFrom = Maths.convertVector(Globals.getCameraPosition());
-		Vector3f rayTo = Maths.convertVector(Globals.getMouseRay());
-		Vector3f shootRay = Maths.convertVector(Globals.getMouseRay());
+			rayTo.scale(1000);
+			rayTo.add(rayFrom);
 
-		rayTo.scale(1000);
-		rayTo.add(rayFrom);
+			// SHOOTHING CODE /////////////////
+			// Vector3f camPos = new
+			// Vector3f(Maths.convertVector(Globals.getCameraPosition()));
+			//
+			// PhysicsEntity model = new PhysicsEntity(boxModel,
+			// Maths.convertVectorBtoL(camPos), 0, 0, 0, 1, 1,
+			// Globals.getPhysics().getProcessor());
+			// Globals.addEntity(model, false);
+			//
+			//
+			// RigidBody body = model.getBody();
+			//
+			// Vector3f linVel = shootRay;
+			// linVel.normalize();
+			// linVel.scale(10);
+			//
+			//
+			// body.setLinearVelocity(linVel);
+			// body.setAngularVelocity(new Vector3f(0f, 0f, 0f));
+			//
+			// body.setCcdMotionThreshold(1f);
+			// body.setCcdSweptSphereRadius(0.2f);
 
-		// SHOOTHING CODE /////////////////
-		// Vector3f camPos = new
-		// Vector3f(Maths.convertVector(Globals.getCameraPosition()));
-		//
-		// PhysicsEntity model = new PhysicsEntity(boxModel,
-		// Maths.convertVectorBtoL(camPos), 0, 0, 0, 1, 1,
-		// Globals.getPhysics().getProcessor());
-		// Globals.addEntity(model, false);
-		//
-		//
-		// RigidBody body = model.getBody();
-		//
-		// Vector3f linVel = shootRay;
-		// linVel.normalize();
-		// linVel.scale(10);
-		//
-		//
-		// body.setLinearVelocity(linVel);
-		// body.setAngularVelocity(new Vector3f(0f, 0f, 0f));
-		//
-		// body.setCcdMotionThreshold(1f);
-		// body.setCcdSweptSphereRadius(0.2f);
+			CollisionWorld.ClosestRayResultCallback rayCallback = new CollisionWorld.ClosestRayResultCallback(rayFrom, rayTo);
+			Globals.getPhysics().getProcessor().getDynamicsWorld().rayTest(rayFrom, rayTo, rayCallback);
 
-		CollisionWorld.ClosestRayResultCallback rayCallback = new CollisionWorld.ClosestRayResultCallback(rayFrom, rayTo);
-		Globals.getPhysics().getProcessor().getDynamicsWorld().rayTest(rayFrom, rayTo, rayCallback);
+			// System.out.println("RayFrom : " + rayFrom);
+			// System.out.println("RayTo : " + rayTo);
+			RigidBody body;
+			if (rayCallback.hasHit()) {
+				body = RigidBody.upcast(rayCallback.collisionObject);
+				area.getUnit().highlight(body);
 
-		// System.out.println("RayFrom : " + rayFrom);
-		// System.out.println("RayTo : " + rayTo);
-		RigidBody body;
-		if (rayCallback.hasHit()) {
-			body = RigidBody.upcast(rayCallback.collisionObject);
-			area.getUnit().highlight(body);
+				if (Mouse.isButtonDown(0) && timeLeft < 0) {
 
-			if (Mouse.isButtonDown(0) && timeLeft < 0) {
+					placeBoxWIthMouse(rayCallback, body);
+				}
 
-				placeBoxWIthMouse(rayCallback, body);
-			}
+				// Switch Camera
+				if (Mouse.isButtonDown(2) && cameraSwitchTimer < 0) {
 
-			// Switch Camera
-			if (Mouse.isButtonDown(2) && cameraSwitchTimer < 0) {
+					if (unit.IsBodyInUnit(body) != null) {
+						cameraSwitchTimer = 100;
 
-				if (unit.IsBodyInUnit(body) != null) {
-					cameraSwitchTimer = 100;
+						Globals.setCameraEntity(unit.IsBodyInUnit(body));
 
-					Globals.setCameraEntity(unit.IsBodyInUnit(body));
+					}
 
 				}
 
 			}
 
-		}
-
-		timeLeft--;
-		cameraSwitchTimer--;
-		if (Keyboard.isKeyDown(Keyboard.KEY_Q)) {
-			System.out.print("woops");
-			Unit cloneTest = unit.Clone(0, 10, 0);
-			Units.addUnit(cloneTest);
-			cloneTest.makeMass();
+			timeLeft--;
+			cameraSwitchTimer--;
+			if (Keyboard.isKeyDown(Keyboard.KEY_Q)) {
+				System.out.print("woops");
+				Unit cloneTest = unit.Clone(0, 10, 0);
+				Units.addUnit(cloneTest);
+				cloneTest.makeMass();
+			}
 		}
 	}
 
@@ -143,18 +144,12 @@ public class UnitBuilderManager implements IModule {
 		/**
 		 * This needs to be done with the LocationID not with center of mass.
 		 * 
-		 * It should find the unit that is being picked and then work out where
-		 * on that unit is being pointed at. Then it needs to know which way to
-		 * place the new object (ie some way to rotate it) Once the mouse is
-		 * clicked then it should work out what other objects are around the
-		 * placed object by searching the unit by distance from the center of
-		 * the placed object. (Or there could be a manual mode to select the
-		 * objects it gets joined too.)
+		 * It should find the unit that is being picked and then work out where on that unit is being pointed at. Then it needs to know which way to place the
+		 * new object (ie some way to rotate it) Once the mouse is clicked then it should work out what other objects are around the placed object by searching
+		 * the unit by distance from the center of the placed object. (Or there could be a manual mode to select the objects it gets joined too.)
 		 * 
-		 * Since we know the size of the object we can simply check the hashmap
-		 * for each of the locations that would be occupied by the object to be
-		 * placed, and once the object is placed we just fill those locations
-		 * with the placed object.
+		 * Since we know the size of the object we can simply check the hashmap for each of the locations that would be occupied by the object to be placed, and
+		 * once the object is placed we just fill those locations with the placed object.
 		 */
 		if (unit.IsBodyInUnit(body) != null) {
 			timeLeft = 10;

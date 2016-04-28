@@ -64,11 +64,13 @@ public class Globals {
 	private static float placementOffset;
 	private static boolean running = true;
 	public static HashMap<String, Boolean> switches = new HashMap<String, Boolean>();
+	
+	
 
 	// //////////////////////////////////////////////////////////////////////////////////////
 
 	public static Vector3d getCameraDirection() {
-		return cameraDirection;
+		return Globals.cameraDirection;
 	}
 
 	public static void setClientID(int clientID) {
@@ -76,11 +78,11 @@ public class Globals {
 	}
 
 	public static ArrayList<RigidBody> getBodies() {
-		return bodies;
+		return Globals.bodies;
 	}
 
 	public static int getBandwidthPort() {
-		return bandwidthPort;
+		return Globals.bandwidthPort;
 	}
 
 	public static void setBandwidthPort(int port) {
@@ -88,7 +90,7 @@ public class Globals {
 	}
 	
 	public static int getLatencyPort() {
-		return latencyPort;
+		return Globals.latencyPort;
 	}
 
 	public static void setLatencyPort(int port) {
@@ -96,7 +98,7 @@ public class Globals {
 	}
 
 	public static String getIp() {
-		return ip;
+		return Globals.ip;
 	}
 
 	public static void setIp(String ip) {
@@ -104,10 +106,10 @@ public class Globals {
 	}
 
 	public static ArrayList<ChunkData> getChunkUpdate() {
-		if (chunkUpdate == null) {
-			chunkUpdate = new ArrayList<ChunkData>();
+		if (Globals.chunkUpdate == null) {
+			Globals.chunkUpdate = new ArrayList<ChunkData>();
 		}
-		return chunkUpdate;
+		return Globals.chunkUpdate;
 	}
 
 	public static void setChunkUpdate(ArrayList<ChunkData> chunkUpdate) {
@@ -115,7 +117,7 @@ public class Globals {
 	}
 
 	public static float getGravity() {
-		return gravity;
+		return Globals.gravity;
 	}
 
 	public static void setGravity(float gravity) {
@@ -123,7 +125,7 @@ public class Globals {
 	}
 
 	public static Loader getLoader() {
-		return loader;
+		return Globals.loader;
 	}
 
 	public static void setLoader(Loader loader) {
@@ -135,7 +137,7 @@ public class Globals {
 	}
 
 	public static Vector3f getMouseRay() {
-		return mouseRay;
+		return Globals.mouseRay;
 	}
 
 	public static void setLoading(boolean loading) {
@@ -143,7 +145,7 @@ public class Globals {
 	}
 
 	public static boolean isServer() {
-		return isServer;
+		return Globals.isServer;
 	}
 
 	public static void setServer(boolean isServer) {
@@ -155,7 +157,7 @@ public class Globals {
 	}
 
 	public static CopyOnWriteArrayList<Chunk> getLoadedChunks() {
-		return visibleChunks;
+		return Globals.visibleChunks;
 	}
 
 	public static void setCameraPosition(Vector3f position) {
@@ -163,7 +165,10 @@ public class Globals {
 	}
 
 	public static Vector3f getCameraPosition() {
-		return cameraPosition;
+		if (Globals.cameraPosition == null){
+			Globals.setCameraPosition(Globals.getActiveCamera().getPosition());
+		}
+		return Globals.cameraPosition;
 	}
 
 	public static boolean showFPS() {
@@ -171,7 +176,7 @@ public class Globals {
 	}
 
 	public static boolean loading() {
-		return loading;
+		return Globals.loading;
 	}
 
 	public static void setBodies(ArrayList<RigidBody> bodies) {
@@ -179,7 +184,7 @@ public class Globals {
 	}
 
 	public static PhysicsManager getPhysics() {
-		return physics;
+		return Globals.physics;
 	}
 
 	public static void setPhysics(PhysicsManager physics) {
@@ -199,8 +204,8 @@ public class Globals {
 																		// on
 																		// newEntities
 																		// here?
-		ne.addAll(newEntities);
-		newEntities.clear();
+		ne.addAll(Globals.newEntities);
+		Globals.newEntities.clear();
 		return ne;
 	}
 
@@ -208,11 +213,11 @@ public class Globals {
 		if (!fromNetwork) {
 			Globals.newEntities.add(newEntity);
 		}
-		entities.add(newEntity);
+		Globals.entities.add(newEntity);
 	}
 
 	public static ArrayList<PhysicsEntity> getEntities() {
-		return entities;
+		return Globals.entities;
 	}
 
 	public static void setEntities(ArrayList<PhysicsEntity> entities) { // For

@@ -22,6 +22,8 @@ import main.java.com.ionsystems.infinigen.global.Units;
 import main.java.com.ionsystems.infinigen.gui.GuiManager;
 import main.java.com.ionsystems.infinigen.modelLoader.ModelLoaderManager;
 import main.java.com.ionsystems.infinigen.networking.NetworkingManager;
+import main.java.com.ionsystems.infinigen.newNetworking.ClientNetworkManager;
+import main.java.com.ionsystems.infinigen.newNetworking.ServerNetworkManager;
 import main.java.com.ionsystems.infinigen.physics.PhysicsManager;
 import main.java.com.ionsystems.infinigen.rendering.DisplayManager;
 import main.java.com.ionsystems.infinigen.rendering.Loader;
@@ -86,7 +88,8 @@ public class Main {
 	private WaterShader waterShader;
 	private WaterRenderer waterRenderer;
 	private List<WaterTile> waters;
-
+	private ServerNetworkManager serverNetworkManager;
+	private ClientNetworkManager clientNetworkManager;
 	private ShadowFrameBuffers sfbos;
 	private int debugKeyTimer;
 	FontType font;
@@ -104,11 +107,13 @@ public class Main {
 		if (args.length > 0) {
 			if (args[0].equals("server")) {
 				Globals.setLatencyPort(Integer.parseInt(args[1]));
+				Globals.setBandwidthPort(Integer.parseInt(args[2]));
 				Globals.setServer(true);
 			} else if (args[0].equals("client")) {
 				Globals.setServer(false);
 				Globals.setIp(args[1]);
 				Globals.setLatencyPort(Integer.parseInt(args[2]));
+				Globals.setBandwidthPort(Integer.parseInt(args[3]));
 			}
 
 		}
@@ -193,7 +198,8 @@ public class Main {
 			picker = new MousePicker(renderer.getProjectionMatrix());
 			picker.setCamera(rtsCamera);
 			// Networking
-			//networking = new NetworkingManager();
+			clientNetworkManager = new ClientNetworkManager();
+			loadedModules.add(clientNetworkManager);
 
 			// Core modules
 			loadedModules.add(modelLoader);
@@ -212,12 +218,12 @@ public class Main {
 			loadedModules.add(picker);
 			loadedModules.add(unitBuilder);
 
-			//loadedModules.add(networking);
+			
 
 			// Add anything to the globals that might be needed elsewhere.
 			Globals.setLoader(loader);
 
-			 loadAudio();
+			//loadAudio();
 
 			for (IModule module : loadedModules) {
 				module.setUp();
@@ -236,8 +242,8 @@ public class Main {
 			Globals.setPhysics(physics);
 			// Networking
 			Globals.setBodies(new ArrayList<RigidBody>());
-			//networking = new NetworkingManager();
-
+			serverNetworkManager = new ServerNetworkManager();
+			loadedModules.add(serverNetworkManager);
 			// Core modules
 			// loadedModules.add(loader);
 			loadedModules.add(physics);
@@ -250,8 +256,10 @@ public class Main {
 			for (IModule module : loadedModules) {
 				module.setUp();
 			}
-			world = new ChunkManager();
-			(new Thread(world)).start();
+			
+			//// NEED TO FIX! ///
+			//world = new ChunkManager();
+			//(new Thread(world)).start();
 		}
 
 	}
@@ -315,17 +323,24 @@ public class Main {
 	 * Called every frame Put anything that needs updated each frame here
 	 */
 	private void update() {
-		if (!Globals.isServer()) {
+		if (!Globals.isServer()) { // Client
 			DisplayManager.updateDisplay();
-		}
+			if (fpsCounter != null) {
+				TextMaster.removeText(fpsCounter);
+			}
+			fpsCounter = new GUIText("FPS: " + DisplayManager.getFpsCounter(), 2f, font, new Vector2f(0.85f, 0f), 1f, false);
+		
+			for (IModule module : loadedModules) {
+				module.update();
+			}
+			
+		}else{ // Server
 
-		for (IModule module : loadedModules) {
-			module.update();
+			for (IModule module : loadedModules) {
+				module.update();
+			}
 		}
-		if (fpsCounter != null) {
-			TextMaster.removeText(fpsCounter);
-		}
-		fpsCounter = new GUIText("FPS: " + DisplayManager.getFpsCounter(), 2f, font, new Vector2f(0.85f, 0f), 1f, false);
+		
 
 		// sun.setPosition(new Vector3f(activeCamera.getPosition().x + 500,
 		// 500,activeCamera.getPosition().z + 500));
