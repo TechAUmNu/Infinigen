@@ -3,19 +3,16 @@ package main.java.com.ionsystems.infinigen.newNetworking;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.concurrent.LinkedTransferQueue;
 
 import main.java.com.ionsystems.infinigen.entities.PhysicsEntity;
 import main.java.com.ionsystems.infinigen.global.Globals;
 import main.java.com.ionsystems.infinigen.global.IModule;
-import main.java.com.ionsystems.infinigen.messages.Messaging;
 import main.java.com.ionsystems.infinigen.messages.Tag;
 
 
 public class ClientNetworkManager implements IModule {
 
 	private Socket bandwidthSocketSend, bandwidthSocketRecieve, latencySocketSend, latencySocketRecieve;
-	private LinkedTransferQueue<Object> bandwidthSendQueue, bandwidthRecieveQueue, latencySendQueue, latencyRecieveQueue;
 	
 	@Override
 	public void process() {
@@ -49,27 +46,19 @@ public class ClientNetworkManager implements IModule {
 			latencySocketRecieve.connect(new InetSocketAddress(Globals.getIp(), Globals.getLatencyPort()));
 			System.out.println("Successfully connected latency recieve socket");
 			
-			System.out.println("Creating queues");
-			bandwidthSendQueue = new LinkedTransferQueue<Object>();
-			bandwidthRecieveQueue = new LinkedTransferQueue<Object>();
-			latencySendQueue = new LinkedTransferQueue<Object>();
-			latencyRecieveQueue = new LinkedTransferQueue<Object>();
 			
-			System.out.println("Linking queues to messaging system");
-			Messaging.addMessageQueue(Tag.NetworkBandwidthSend, bandwidthSendQueue);
-			Messaging.addMessageQueue(Tag.NetworkBandwidthRecieve, bandwidthRecieveQueue);
-			Messaging.addMessageQueue(Tag.NetworkLatencySend, latencySendQueue);
-			Messaging.addMessageQueue(Tag.NetworkLatencyRecieve, latencyRecieveQueue);
+			
+			
 			
 			System.out.println("Linking sockets to network adapters");
 			
-			(new Thread(new ClientNetworkAdapter(bandwidthSocketRecieve, 0, bandwidthRecieveQueue))).start();
+			(new Thread(new ClientNetworkAdapter(bandwidthSocketRecieve, 0, Tag.NetworkBandwidthRecieve))).start();
 			System.out.println("Linking bandwidthSocketRecieve to ServerNetworkAdapter");
-			(new Thread(new ClientNetworkAdapter(bandwidthSocketSend, 1, bandwidthSendQueue))).start();
+			(new Thread(new ClientNetworkAdapter(bandwidthSocketSend, 1, Tag.NetworkBandwidthSend))).start();
 			System.out.println("Linking bandwidthSocketSend to ServerNetworkAdapter");
-			(new Thread(new ClientNetworkAdapter(latencySocketRecieve, 0, latencyRecieveQueue))).start();
+			(new Thread(new ClientNetworkAdapter(latencySocketRecieve, 0, Tag.NetworkLatencyRecieve))).start();
 			System.out.println("Linking latencySocketRecieve to ServerNetworkAdapter");
-			(new Thread(new ClientNetworkAdapter(latencySocketSend, 1, latencySendQueue))).start();
+			(new Thread(new ClientNetworkAdapter(latencySocketSend, 1, Tag.NetworkLatencySend))).start();
 			System.out.println("Linking latencySocketSend to ServerNetworkAdapter");
 		}catch(Exception e){
 			System.exit(-1);

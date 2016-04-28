@@ -30,7 +30,7 @@ public class Globals {
 	private static Loader loader;
 	private static Vector3f mouseRay;
 	private static Vector3f cameraPosition;
-	private static CopyOnWriteArrayList<Chunk> visibleChunks;
+	private static ArrayList<Chunk> visibleChunks;
 	private static boolean isServer;
 	private static boolean loading;
 
@@ -152,8 +152,8 @@ public class Globals {
 		Globals.isServer = isServer;
 	}
 
-	public static void setLoadedChunks(CopyOnWriteArrayList<Chunk> visibleChunks) {
-		Globals.visibleChunks = visibleChunks;
+	public static void setLoadedChunks(ArrayList<Chunk> loadedChunks) {
+		Globals.visibleChunks = loadedChunks;
 	}
 
 	public static CopyOnWriteArrayList<Chunk> getLoadedChunks() {

@@ -5,7 +5,8 @@ public enum Tag {
 	NetworkBandwidthSend("networkBandwidthSend"),
 	NetworkBandwidthRecieve("networkBandwidthRecieve"),
 	NetworkLatencySend("networkLatencySend"),
-	NetworkLatencyRecieve("networkLatencyRecieve")
+	NetworkLatencyRecieve("networkLatencyRecieve"),
+	NetworkChunkUpdate("ChunkUpdate")
    
     ;
 

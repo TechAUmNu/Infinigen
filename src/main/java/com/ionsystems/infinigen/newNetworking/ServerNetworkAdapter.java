@@ -16,6 +16,8 @@ import java.util.zip.GZIPOutputStream;
 import javax.swing.Timer;
 
 import main.java.com.ionsystems.infinigen.global.Globals;
+import main.java.com.ionsystems.infinigen.messages.Messaging;
+import main.java.com.ionsystems.infinigen.messages.Tag;
 
 public class ServerNetworkAdapter implements Runnable {
 
@@ -23,22 +25,17 @@ public class ServerNetworkAdapter implements Runnable {
 
 	private ObjectOutputStream out;
 	private ObjectInputStream in;
-	LinkedTransferQueue<Object> inQueue;
-
-	private LinkedTransferQueue<Object> outQueue;
+	
 	private NetworkMessage inMessage;
 	Ack ack;
 	private Client client;
 	private int direction;
+	Tag tag;
 
-	public ServerNetworkAdapter(Socket socket, int direction, LinkedTransferQueue<Object> bandwidthRecieveQueue) {
+	public ServerNetworkAdapter(Socket socket, int direction, Tag tag) {
 		this.socket = socket;
 		this.direction = direction;
-		if (direction == 0) { // Receiving
-			inQueue = bandwidthRecieveQueue;
-		} else {
-			outQueue = bandwidthRecieveQueue;
-		}
+		this.tag = tag;
 	}
 
 	@Override
@@ -126,7 +123,8 @@ public class ServerNetworkAdapter implements Runnable {
 			do {
 				try {
 					System.out.println("sending message to client");
-					sendMessage(); // Send a message to the client
+					sendMessage(); // Send a message to the client 
+					// blocks until a message is sent
 
 					// Wait for an acknowledgement
 					Ack ack = (Ack) in.readObject();
@@ -165,11 +163,11 @@ public class ServerNetworkAdapter implements Runnable {
 	}
 
 	private void processMessage(NetworkMessage msg) {
-		inQueue.put(msg);
+		Messaging.addMessage(msg.tag, msg);
 	}
 	
 	private void sendMessage(){
-		NetworkMessage msg = (NetworkMessage) outQueue.poll();
+		NetworkMessage msg = (NetworkMessage) Messaging.takeLatestMessage(tag);
 		if(msg != null)
 			sendNetworkMessage(msg);
 	}

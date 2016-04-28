@@ -11,28 +11,29 @@ import java.util.concurrent.LinkedTransferQueue;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+import main.java.com.ionsystems.infinigen.messages.Messaging;
+import main.java.com.ionsystems.infinigen.messages.Tag;
+
 public class ClientNetworkAdapter implements Runnable {
 
 	private Socket socket;
 
 	private ObjectOutputStream out;
 	private ObjectInputStream in;
-	LinkedTransferQueue<Object> inQueue;
+	
 
-	private LinkedTransferQueue<Object> outQueue;
+	
 	private NetworkMessage inMessage;
 	Ack ack;
 	private Client client;
 	private int direction;
 
-	public ClientNetworkAdapter(Socket socket, int direction, LinkedTransferQueue<Object> bandwidthRecieveQueue) {
+	private Tag tag;
+
+	public ClientNetworkAdapter(Socket socket, int direction, Tag tag) {
 		this.socket = socket;
 		this.direction = direction;
-		if (direction == 0) { // Receiving
-			inQueue = bandwidthRecieveQueue;
-		} else {
-			outQueue = bandwidthRecieveQueue;
-		}
+		this.tag = tag;
 	}
 
 	@Override
@@ -159,11 +160,11 @@ public class ClientNetworkAdapter implements Runnable {
 	}
 
 	private void processMessage(NetworkMessage msg) {
-		inQueue.put(msg);
+		Messaging.addMessage(msg.tag, msg);
 	}
 	
 	private void sendMessage(){
-		NetworkMessage msg = (NetworkMessage) outQueue.poll();
+		NetworkMessage msg = (NetworkMessage) Messaging.takeLatestMessage(tag);
 		if(msg != null)
 			sendNetworkMessage(msg);
 	}

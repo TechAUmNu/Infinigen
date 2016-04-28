@@ -2,41 +2,48 @@ package main.java.com.ionsystems.infinigen.world;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.Callable;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
+import main.java.com.ionsystems.infinigen.global.Globals;
+import main.java.com.ionsystems.infinigen.networking.ChunkData;
 
 import org.lwjgl.util.vector.Vector3f;
 
 import com.sudoplay.joise.module.Module;
 import com.sudoplay.joise.module.ModuleAutoCorrect;
-import com.sudoplay.joise.module.ModuleFractal;
 import com.sudoplay.joise.module.ModuleBasisFunction.BasisType;
 import com.sudoplay.joise.module.ModuleBasisFunction.InterpolationType;
+import com.sudoplay.joise.module.ModuleFractal;
 import com.sudoplay.joise.module.ModuleFractal.FractalType;
-
-import main.java.com.ionsystems.infinigen.global.Globals;
-import main.java.com.ionsystems.infinigen.messages.Messaging;
-import main.java.com.ionsystems.infinigen.messages.Tag;
-import main.java.com.ionsystems.infinigen.networking.ChunkData;
 
 //This handles all loading and unloading of chunks. The chunks within the set range of each camera must be kept loaded so switching camera is fast.
 
-public class ChunkManager implements Runnable {
+public class ServerChunkManager implements Runnable {
 
 	public static int chunkSize = 64;
 	float blockSize = 1f;
-	CopyOnWriteArrayList<Chunk> loadedChunks;
+	ArrayList<Chunk> loadedChunks;
 	HashMap<ChunkID, Chunk> chunks;
 	Module terrainNoise;
-	WorldRenderer renderer;
+
 	Vector3f chunkLocation = new Vector3f();
-	public static int loadDistance = 5;
+	public static int loadDistance = 25;
 	long seed = 828382;
 	int state = 0;
-	int cameraX, cameraZ;
-	Vector3f cameraChunkLocation;
+	ExecutorService pool = Executors.newFixedThreadPool(24); // creates a pool of threads for the Future to draw from
 
 	public void process() {
-
+		try {
+			Thread.sleep(10000);
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		// Here we will decide which chunks to load/unload
 
 		// First we will do loading
@@ -54,35 +61,15 @@ public class ChunkManager implements Runnable {
 		}
 
 		// We don't want to let this thread use 100% CPU.
-
-		cameraChunkLocation = findContainingChunk(Globals.getCameraPosition());
-		// Where the camera is in chunk space
-		// System.out.println(cameraChunkLocation);
-
-		cameraX = (int) cameraChunkLocation.x;
-		cameraZ = (int) cameraChunkLocation.z;
-
-		ArrayList<ChunkID> toUnload = new ArrayList<ChunkID>();
-		for (ChunkID c : chunks.keySet()) {
-			if (!inCircle(cameraX, cameraZ, loadDistance, c.x, c.z)) {
-				toUnload.add(new ChunkID(c.x, c.y, c.z));
-			}
-		}
-		for (ChunkID c : toUnload) {
-			chunks.get(c).cleanUp();
-			loadedChunks.remove(chunks.get(c));
-			Globals.getLoadedChunks().remove(chunks.get(c));
-			chunks.remove(c);
-		}
-		toUnload = null;
-
-		for (int x = -loadDistance + cameraX; x < loadDistance + cameraX + 1; x++) {
-			for (int z = -loadDistance + cameraZ; z < loadDistance + cameraZ + 1; z++) {
-				if (inCircle(cameraX, cameraZ, loadDistance, x, z)) {
-					loadChunk(x, -1, z);
+		ArrayList<ChunkID> toLoad = new ArrayList<ChunkID>();
+		for (int x = -loadDistance; x < loadDistance + 1; x++) {
+			for (int z = -loadDistance; z < loadDistance + 1; z++) {
+				if (inCircle(0, 0, loadDistance, x, z)) {
+					toLoad.add(new ChunkID(x,-1,z));
 				}
 			}
 		}
+		loadChunks(toLoad);
 
 		Globals.setLoadedChunks(loadedChunks);
 
@@ -97,7 +84,7 @@ public class ChunkManager implements Runnable {
 	public void setUp() {
 
 		initNoiseGenerator();
-		loadedChunks = new CopyOnWriteArrayList<Chunk>();
+		loadedChunks = new ArrayList<Chunk>();
 		chunks = new HashMap<ChunkID, Chunk>();
 
 		Globals.setLoadedChunks(loadedChunks);
@@ -127,8 +114,7 @@ public class ChunkManager implements Runnable {
 		/*
 		 * ... route it through an autocorrection module...
 		 * 
-		 * This module will sample it's source multiple times and attempt to
-		 * auto-correct the output to the range specified.
+		 * This module will sample it's source multiple times and attempt to auto-correct the output to the range specified.
 		 */
 		ModuleAutoCorrect ac = new ModuleAutoCorrect();
 		ac.setSource(gen); // set source (can usually be either another Module
@@ -146,16 +132,6 @@ public class ChunkManager implements Runnable {
 			c.update();
 		}
 
-		// Here we will check for messages tagged with Tag.NetworkChunkUpdate
-		
-		while(Messaging.anyMessages(Tag.NetworkChunkUpdate)){
-			// The new chunk data comes in a form that can be rendered immediately with no further processing. So we can just add it directly to the loading queue.
-			NetworkChunkRenderingData ncrd = (NetworkChunkRenderingData) Messaging.takeLatestMessage(Tag.NetworkChunkUpdate);
-			Globals.getLoadingLock().writeLock().lock();
-			Globals.getLoader().addChunkToLoadQueue(ncrd.crd);
-			Globals.getLoadingLock().writeLock().unlock();
-		}
-		
 		if (!Globals.isServer()) {
 			if (!Globals.getChunkUpdate().isEmpty()) {
 				for (ChunkData cd : Globals.getChunkUpdate()) {
@@ -169,13 +145,39 @@ public class ChunkManager implements Runnable {
 		}
 	}
 
-	public void loadChunk(int x, int y, int z) {
+	public Future<Chunk> loadChunk(ChunkID chunkID) {
+		
+		return pool.submit(new Callable<Chunk>() {
+			@Override
+			public Chunk call() {
+				return new Chunk(chunkID, chunkID.x, chunkID.y, chunkID.z, chunkSize, blockSize, terrainNoise);
+			}
+		});
+		
+		
 
-		if (!chunks.containsKey(new ChunkID(x, y, z))) {
-			Chunk testChunk = new Chunk(x, y, z, chunkSize, blockSize, terrainNoise);
-			chunks.put(new ChunkID(x, y, z), testChunk);
-			loadedChunks.add(testChunk);
+	}
+
+	public void loadChunks(ArrayList<ChunkID> chunksToLoad) {
+		ArrayList<Future<Chunk>> loadingChunks = new ArrayList<Future<Chunk>>();
+		for (ChunkID cid : chunksToLoad) {
+			if (!chunks.containsKey(cid)) {
+				loadingChunks.add(loadChunk(cid));				
+			}
 		}
+		System.out.println("HER\n\n\n\n\n\n\n\n\n\n");
+		for (Future<Chunk> f : loadingChunks){
+			
+			try {
+				Chunk chunk = f.get();
+				chunks.put(chunk.chunkID, chunk);
+				loadedChunks.add(chunk);
+				System.out.println("Chunks Loaded: " + loadedChunks.size());
+			} catch (InterruptedException | ExecutionException e) {				
+				e.printStackTrace();
+			}
+			
+		}		
 	}
 
 	@Override
@@ -183,7 +185,7 @@ public class ChunkManager implements Runnable {
 		Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
 		setUp();
 
-		//while (Globals.isRunning()) {
+		// while (Globals.isRunning()) {
 		process();
 		update();
 		state++;
@@ -196,5 +198,7 @@ public class ChunkManager implements Runnable {
 		// }
 
 	}
+
+	
 
 }

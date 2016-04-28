@@ -37,6 +37,7 @@ import main.java.com.ionsystems.infinigen.water.WaterRenderer;
 import main.java.com.ionsystems.infinigen.water.WaterShader;
 import main.java.com.ionsystems.infinigen.water.WaterTile;
 import main.java.com.ionsystems.infinigen.world.ChunkManager;
+import main.java.com.ionsystems.infinigen.world.ServerChunkManager;
 import marytts.LocalMaryInterface;
 import marytts.MaryInterface;
 import marytts.exceptions.MaryConfigurationException;
@@ -83,6 +84,7 @@ public class Main {
 	//private NetworkingManager networking;
 
 	private List<IModule> loadedModules;
+	private ServerChunkManager serverWorld;
 	private ChunkManager world;
 	private WaterFrameBuffers fbos;
 	private WaterShader waterShader;
@@ -128,22 +130,12 @@ public class Main {
 	 * Main Game method
 	 */
 	public void mainGame() {
-		if (!Globals.isServer()) {
-			loadAssets();
-
-			// setUpTerrain();
-
-		}
+		
 		Globals.setLoading(false);
 
 		if (!Globals.isServer()) {
-
-			fbos = new WaterFrameBuffers();
-			waterShader = new WaterShader();
-			waterRenderer = new WaterRenderer(loader, waterShader, renderer.getProjectionMatrix(), fbos);
-
-			waters = new ArrayList<WaterTile>();
-			waters.add(new WaterTile(75, -75, 0));
+			loadAssets();
+			setupWater();
 
 			generateGui();
 
@@ -162,6 +154,15 @@ public class Main {
 		}
 		cleanUp();
 
+	}
+
+	private void setupWater() {
+		fbos = new WaterFrameBuffers();
+		waterShader = new WaterShader();
+		waterRenderer = new WaterRenderer(loader, waterShader, renderer.getProjectionMatrix(), fbos);
+
+		waters = new ArrayList<WaterTile>();
+		waters.add(new WaterTile(75, -75, 0));
 	}
 
 	/**
@@ -242,24 +243,27 @@ public class Main {
 			Globals.setPhysics(physics);
 			// Networking
 			Globals.setBodies(new ArrayList<RigidBody>());
-			serverNetworkManager = new ServerNetworkManager();
-			loadedModules.add(serverNetworkManager);
+			
+			
+			
 			// Core modules
-			// loadedModules.add(loader);
+			
 			loadedModules.add(physics);
 
-			//loadedModules.add(networking);
+			
 
 			// Add anything to the globals that might be needed elsewhere.
-			Globals.setLoader(loader);
+			//Globals.setLoader(loader);
 
 			for (IModule module : loadedModules) {
 				module.setUp();
 			}
 			
-			//// NEED TO FIX! ///
-			//world = new ChunkManager();
-			//(new Thread(world)).start();
+			
+			serverWorld = new ServerChunkManager();
+			serverNetworkManager = new ServerNetworkManager();
+			(new Thread(serverWorld)).start();
+			(new Thread(serverNetworkManager)).start();
 		}
 
 	}

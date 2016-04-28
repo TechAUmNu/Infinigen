@@ -13,19 +13,18 @@ import main.java.com.ionsystems.infinigen.global.IModule;
 import main.java.com.ionsystems.infinigen.messages.Messaging;
 import main.java.com.ionsystems.infinigen.messages.Tag;
 
-public class ServerNetworkManager implements IModule{
+public class ServerNetworkManager implements Runnable{
 	private ServerSocket bandwidthSocket, latencySocket;
-	private LinkedTransferQueue<Object> bandwidthSendQueue, bandwidthRecieveQueue, latencySendQueue, latencyRecieveQueue;
 	
 	
 	
 	public void acceptClient() {
 		try {
-			(new Thread(new ServerNetworkAdapter(bandwidthSocket.accept(), 0, bandwidthRecieveQueue))).start();
-			(new Thread(new ServerNetworkAdapter(bandwidthSocket.accept(), 1, bandwidthSendQueue))).start();
+			(new Thread(new ServerNetworkAdapter(bandwidthSocket.accept(), 0, Tag.NetworkBandwidthRecieve))).start();
+			(new Thread(new ServerNetworkAdapter(bandwidthSocket.accept(), 1, Tag.NetworkBandwidthSend))).start();
 
-			(new Thread(new ServerNetworkAdapter(latencySocket.accept(), 0, latencyRecieveQueue))).start();
-			(new Thread(new ServerNetworkAdapter(latencySocket.accept(), 1, latencySendQueue))).start();
+			(new Thread(new ServerNetworkAdapter(latencySocket.accept(), 0, Tag.NetworkLatencyRecieve))).start();
+			(new Thread(new ServerNetworkAdapter(latencySocket.accept(), 1, Tag.NetworkLatencySend))).start();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -43,30 +42,17 @@ public class ServerNetworkManager implements IModule{
 			latencySocket.bind(new InetSocketAddress(Globals.getLatencyPort()));
 			System.out.println("Successfully bound latency server to port " + Globals.getLatencyPort());
 			
-			System.out.println("Creating queues");
-			bandwidthSendQueue = new LinkedTransferQueue<Object>();
-			bandwidthRecieveQueue = new LinkedTransferQueue<Object>();
-			latencySendQueue = new LinkedTransferQueue<Object>();
-			latencyRecieveQueue = new LinkedTransferQueue<Object>();
 			
-			System.out.println("Linking queues to messaging system");
-			Messaging.addMessageQueue(Tag.NetworkBandwidthSend, bandwidthSendQueue);
-			Messaging.addMessageQueue(Tag.NetworkBandwidthRecieve, bandwidthRecieveQueue);
-			Messaging.addMessageQueue(Tag.NetworkLatencySend, latencySendQueue);
-			Messaging.addMessageQueue(Tag.NetworkLatencyRecieve, latencyRecieveQueue);
+
 		} catch (IOException e) {
 			System.err.println("Could not listen on ports: " + Globals.getBandwidthPort() + ", " + Globals.getLatencyPort());
 			System.exit(-1);
 		}
 	}
 
-	@Override
-	public void process() {
-		// TODO Auto-generated method stub
-		
-	}
+	
 
-	@Override
+	
 	public void setUp() {
 		startServer();
 		while(true){
@@ -74,27 +60,13 @@ public class ServerNetworkManager implements IModule{
 		}
 	}
 
-	@Override
-	public void cleanUp() {
-		// TODO Auto-generated method stub
-		
-	}
+	
+
 
 	@Override
-	public void render() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void update() {		
-		
-	}
-
-	@Override
-	public ArrayList<PhysicsEntity> prepare() {
-		// TODO Auto-generated method stub
-		return null;
+	public void run() {
+		Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
+		setUp();		
 	}
 	
 	

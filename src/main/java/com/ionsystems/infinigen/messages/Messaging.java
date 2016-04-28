@@ -15,36 +15,62 @@ public class Messaging {
 	// The main data storage for messages is a ConcurrentHashMap which provides very high performance for high concurrency applications
 	private static ConcurrentHashMap<String, LinkedTransferQueue<Object>> messageStorage = new ConcurrentHashMap<String, LinkedTransferQueue<Object>>();
 	
-	public static void addMessageQueue(Tag tag, LinkedTransferQueue<Object> queue){
-		messageStorage.put(tag.toString(), queue);
+	public static void addMessageQueue(Tag tag){
+		messageStorage.put(tag.toString(), new LinkedTransferQueue<Object>());		
+	}
+		
+	public static Object pollLatestMessage(Tag tag){
+		if(!messageStorage.containsKey(tag.toString()))
+			addMessageQueue(tag);
+		return messageStorage.get(tag.toString()).poll();	
+		
 	}
 	
-	public static LinkedTransferQueue<Object> getMessageQueue(String tag){
-		return messageStorage.get(tag);
+	public static Object peakLatestMessage(Tag tag){
+		if(!messageStorage.containsKey(tag.toString()))
+			addMessageQueue(tag);
+		return messageStorage.get(tag.toString()).peek();		
 	}
 	
-	public static Object pollLatestMessage(String tag){
-		return messageStorage.get(tag).poll();		
+	public static void addMessage(Tag tag, Object message){
+		if(!messageStorage.containsKey(tag.toString()))
+			addMessageQueue(tag);
+		messageStorage.get(tag.toString()).add(message);	
 	}
 	
-	public static Object peakLatestMessage(String tag){
-		return messageStorage.get(tag).peek();		
+	/**
+	 * Returns true if there are any messages in this queue
+	 * @param tag The queue to check
+	 * @return true if there are any messages in this queue
+	 */
+	public static boolean anyMessages(Tag tag){
+		if(!messageStorage.containsKey(tag.toString()))
+			addMessageQueue(tag);
+		return !messageStorage.get(tag.toString()).isEmpty();		
 	}
 	
-	public static void addMessage(String tag, Object message){
-		messageStorage.get(tag).add(message);	
+	/**
+	 * Retrieves and removes the head of this queue, waiting if necessary until an element becomes available.
+	 * @param tag The queue to take from
+	 * @return The head of the queue
+	 * @throws InterruptedException
+	 */
+	public static Object takeLatestMessage(Tag tag){
+		if(!messageStorage.containsKey(tag.toString()))
+			addMessageQueue(tag);
+		try {
+			return messageStorage.get(tag.toString()).take();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;	
 	}
 	
-	public static boolean anyMessages(String tag){
-		return messageStorage.get(tag).isEmpty();		
-	}
-	
-	public static Object takeLatestMessage(String tag) throws InterruptedException{
-		return messageStorage.get(tag).take();	
-	}
-	
-	public static Collection<Object> drainMessages(String tag, Collection<Object> c){
-		messageStorage.get(tag).drainTo(c);
+	public static Collection<Object> drainMessages(Tag tag, Collection<Object> c){
+		if(!messageStorage.containsKey(tag.toString()))
+			addMessageQueue(tag);
+		messageStorage.get(tag.toString()).drainTo(c);
 		return c;
 	}
 	

@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 import main.java.com.ionsystems.infinigen.entities.PhysicsEntity;
+import main.java.com.ionsystems.infinigen.messages.Tag;
 import main.java.com.ionsystems.infinigen.networking.ChunkData;
 import main.java.com.ionsystems.infinigen.networking.PhysicsNetworkBody;
 
@@ -25,4 +26,5 @@ public class NetworkMessage implements Serializable {
 	public ArrayList<PhysicsEntity> entityData;
 	public int clientID;
 	public boolean clientIDChange;
+	public Tag tag;
 }

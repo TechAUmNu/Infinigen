@@ -28,7 +28,7 @@ import main.java.com.ionsystems.infinigen.world.BlockType;
  *
  */
 public class Chunk {
-
+	public ChunkID chunkID;
 	private static float isolevel = 0.43f;
 	public ArrayList<Triangle> triangles = new ArrayList<Triangle>();
 	ArrayList<Float> positions = new ArrayList<Float>();
@@ -49,9 +49,11 @@ public class Chunk {
 
 	PhysicsModel model;
 	private int vertID;
+	
+	private NetworkChunkRenderingData ncrd;
 
-	public Chunk(int x, int y, int z, int size, float blockSize, Module terrainNoise) {
-
+	public Chunk(ChunkID chunkID, int x, int y, int z, int size, float blockSize, Module terrainNoise) {
+		this.chunkID = chunkID;
 		this.x = x;
 		this.y = y;
 		this.z = z;
@@ -67,6 +69,8 @@ public class Chunk {
 		if (!Globals.isServer()) {
 			// rebuild();
 		}
+		
+		
 
 	}
 
@@ -190,15 +194,20 @@ public class Chunk {
 		for (int ind : indicies) {
 			int_indicies[k++] = ind;
 		}
+		
+		// Now we can cleanup all the memory we just used!
+		triangles.clear();
+		for(Vertex v : verts.values()){
+			v.normal = null;			
+		}
+		verts.clear();
+		orderOfVerts.clear();
+		indicies.clear();
 
-		// System.out.println(indicies);
-
+		
+		// Add the rendering data for this chunk to a NetworkChunkRenderingData object.
 		ChunkRenderingData crd = new ChunkRenderingData(positions, int_indicies, normals, this);
-
-		Globals.getLoadingLock().writeLock().lock();
-		Globals.getLoader().addChunkToLoadQueue(crd);
-		Globals.getLoadingLock().writeLock().unlock();
-
+		ncrd = new NetworkChunkRenderingData(crd, x, y, z, blockSize, size);
 	}
 
 	private int addVertex(Vector3f position, Vector3f normal) {
