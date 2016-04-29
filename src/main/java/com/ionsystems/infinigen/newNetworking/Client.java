@@ -3,6 +3,9 @@ package main.java.com.ionsystems.infinigen.newNetworking;
 import java.io.Serializable;
 
 public class Client implements Serializable {
+	public Client(String string) {
+		username = string;
+	}
 	/**
 	 * 
 	 */

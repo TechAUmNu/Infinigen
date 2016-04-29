@@ -1,12 +1,18 @@
 package main.java.com.ionsystems.infinigen.world;
 
+import java.io.Serializable;
+
 /**
  * Used for identifying a chunk.
  * 
  * @author Euan
  *
  */
-public class ChunkID {
+public class ChunkID implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1089367847373162133L;
 	public int x, y, z;
 
 	public ChunkID(int x, int y, int z) {

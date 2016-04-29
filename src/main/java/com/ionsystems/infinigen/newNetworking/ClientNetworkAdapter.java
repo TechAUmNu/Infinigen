@@ -11,6 +11,7 @@ import java.util.concurrent.LinkedTransferQueue;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+import main.java.com.ionsystems.infinigen.global.Globals;
 import main.java.com.ionsystems.infinigen.messages.Messaging;
 import main.java.com.ionsystems.infinigen.messages.Tag;
 
@@ -30,10 +31,26 @@ public class ClientNetworkAdapter implements Runnable {
 
 	private Tag tag;
 
-	public ClientNetworkAdapter(Socket socket, int direction, Tag tag) {
+	/**
+	 * Used for send
+	 * @param socket
+	 * @param direction
+	 * @param tag
+	 */
+	public ClientNetworkAdapter(Socket socket, Tag tag) {
 		this.socket = socket;
-		this.direction = direction;
+		this.direction = 1;
 		this.tag = tag;
+	}
+
+	/**
+	 * Used for receive
+	 * @param socket
+	 * @param direction
+	 */
+	public ClientNetworkAdapter(Socket socket) {
+		this.socket = socket;
+		this.direction = 0;
 	}
 
 	@Override
@@ -55,10 +72,11 @@ public class ClientNetworkAdapter implements Runnable {
 
 		try {
 			System.out.println("Creating output stream");
-
+			//out = new ObjectOutputStream(new BufferedOutputStream(socket.getOutputStream()));
 			out = new ObjectOutputStream(new BufferedOutputStream(new GZIPOutputStream(socket.getOutputStream(), 4096, true)));
 			out.flush();
 
+			//in = new ObjectInputStream(new BufferedInputStream(socket.getInputStream()));
 			in = new ObjectInputStream(new BufferedInputStream(new GZIPInputStream(socket.getInputStream())));
 
 			/**
@@ -66,17 +84,21 @@ public class ClientNetworkAdapter implements Runnable {
 			 */
 			do {
 				try {
-					System.out.println("Waiting for message from server");
+					
 					inMessage = (NetworkMessage) in.readObject();
-					System.out.println("Message recieved from server");
-					if (inMessage.disconnect) {
-						System.out.println("Server disconnected");
-					} else {
-						processMessage(inMessage); // add the message from the
-													// server to the incoming
-													// queue
-						sendAck(false); // send an acknowledgement to the server
-										// saying there was no error
+					
+					if(inMessage != null){
+						if (inMessage.disconnect) {
+							System.out.println("Server disconnected");
+						} else {
+							processMessage(inMessage); // add the message from the
+														// server to the incoming
+														// queue
+							sendAck(false); // send an acknowledgement to the server
+											// saying there was no error
+						}
+					}else{
+						inMessage = new NetworkMessage();
 					}
 				} catch (ClassNotFoundException classnot) {
 					System.err.println("Data received in unknown format");
@@ -110,9 +132,11 @@ public class ClientNetworkAdapter implements Runnable {
 		try {
 			System.out.println("Creating output stream");
 
+			//out = new ObjectOutputStream(new BufferedOutputStream(socket.getOutputStream()));
 			out = new ObjectOutputStream(new BufferedOutputStream(new GZIPOutputStream(socket.getOutputStream(), 4096, true)));
 			out.flush();
 
+			//in = new ObjectInputStream(new BufferedInputStream(socket.getInputStream()));
 			in = new ObjectInputStream(new BufferedInputStream(new GZIPInputStream(socket.getInputStream())));
 
 			/**
@@ -120,11 +144,11 @@ public class ClientNetworkAdapter implements Runnable {
 			 */
 			do {
 				try {
-					System.out.println("sending message to server");
+					
 					sendMessage(); // Send a message to the server
 
 					// Wait for an acknowledgement
-					Ack ack = (Ack) in.readObject();
+					ack = (Ack) in.readObject();
 					System.out.println("ack recieved from server");
 					if (!ack.ack) {
 						System.out.println("Problem with message");
@@ -160,12 +184,16 @@ public class ClientNetworkAdapter implements Runnable {
 	}
 
 	private void processMessage(NetworkMessage msg) {
+		
+		System.out.println("Message recieved from server: " + msg.tag);
 		Messaging.addMessage(msg.tag, msg);
 	}
 	
 	private void sendMessage(){
 		NetworkMessage msg = (NetworkMessage) Messaging.takeLatestMessage(tag);
 		if(msg != null)
+			msg.client = Globals.getClient();
+			System.out.println("Sending message to server: " + msg.tag.toString());
 			sendNetworkMessage(msg);
 	}
 	

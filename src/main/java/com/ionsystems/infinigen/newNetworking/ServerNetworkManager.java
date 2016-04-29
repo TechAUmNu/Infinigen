@@ -15,16 +15,17 @@ import main.java.com.ionsystems.infinigen.messages.Tag;
 
 public class ServerNetworkManager implements Runnable{
 	private ServerSocket bandwidthSocket, latencySocket;
-	
-	
+
+	private int clientID = 0;
 	
 	public void acceptClient() {
 		try {
-			(new Thread(new ServerNetworkAdapter(bandwidthSocket.accept(), 0, Tag.NetworkBandwidthRecieve))).start();
-			(new Thread(new ServerNetworkAdapter(bandwidthSocket.accept(), 1, Tag.NetworkBandwidthSend))).start();
+			clientID++;
+			(new Thread(new ServerNetworkAdapter(bandwidthSocket.accept(), clientID))).start();
+			(new Thread(new ServerNetworkAdapter(bandwidthSocket.accept(), clientID, Tag.NetworkBandwidthSend.toString()))).start();
 
-			(new Thread(new ServerNetworkAdapter(latencySocket.accept(), 0, Tag.NetworkLatencyRecieve))).start();
-			(new Thread(new ServerNetworkAdapter(latencySocket.accept(), 1, Tag.NetworkLatencySend))).start();
+			(new Thread(new ServerNetworkAdapter(latencySocket.accept(), clientID))).start();
+			(new Thread(new ServerNetworkAdapter(latencySocket.accept(), clientID, Tag.NetworkLatencySend.toString()))).start();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

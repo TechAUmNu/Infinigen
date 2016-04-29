@@ -31,7 +31,7 @@ public class Chunk {
 	public ChunkID chunkID;
 	private static float isolevel = 0.43f;
 	public ArrayList<Triangle> triangles = new ArrayList<Triangle>();
-	ArrayList<Float> positions = new ArrayList<Float>();
+	
 	private boolean renderable = false;
 
 	HashMap<VertexID, Vertex> verts = new HashMap<VertexID, Vertex>();
@@ -203,11 +203,19 @@ public class Chunk {
 		verts.clear();
 		orderOfVerts.clear();
 		indicies.clear();
+		
+		verts = null;
+		orderOfVerts = null;
+		indicies = null;
+		triangles = null;
 
 		
 		// Add the rendering data for this chunk to a NetworkChunkRenderingData object.
-		ChunkRenderingData crd = new ChunkRenderingData(positions, int_indicies, normals, this);
-		ncrd = new NetworkChunkRenderingData(crd, x, y, z, blockSize, size);
+		ChunkRenderingData crd = new ChunkRenderingData(positions, int_indicies, normals);
+		setNcrd(new NetworkChunkRenderingData(crd, x, y, z, blockSize, size, chunkID));
+		positions = null;
+		normals = null;
+		int_indicies = null;
 	}
 
 	private int addVertex(Vector3f position, Vector3f normal) {
@@ -345,7 +353,7 @@ public class Chunk {
 	 * @return If the save was successful
 	 */
 	public Boolean save() {
-		System.out.println("Saving Chunk: " + x + "." + y + "." + z);
+		//System.out.println("Saving Chunk: " + x + "." + y + "." + z);
 		try (FileOutputStream file = new FileOutputStream("world/" + x + "." + y + "." + z + ".chunk")) {
 			byte[] buf = new byte[size * size * size * 5];
 			int i = 0;
@@ -371,6 +379,7 @@ public class Chunk {
 			out.write(buf);
 			out.finish();
 			out.close();
+			file.close();
 			return true;
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -388,7 +397,7 @@ public class Chunk {
 	 * @return If the load was successful
 	 */
 	public Boolean load() {
-		System.out.println("Loading Chunk: " + x + "." + y + "." + z);
+		//System.out.println("Loading Chunk: " + x + "." + y + "." + z);
 		blocks = new Block[size][size][size];
 		try (FileInputStream file = new FileInputStream("world/" + x + "." + y + "." + z + ".chunk")) {
 			XZInputStream in = new XZInputStream(file);
@@ -401,10 +410,11 @@ public class Chunk {
 						blocks[x][y][z] = new Block(BlockType.fromByte(fileContent[i++]));
 						byte[] bytes = { fileContent[i++], fileContent[i++], fileContent[i++], fileContent[i++] };
 						blocks[x][y][z].weight = ByteBuffer.wrap(bytes).order(ByteOrder.LITTLE_ENDIAN).getFloat();
-
+						bytes = null;
 					}
 				}
 			}
+			
 			fileContent = null;
 			in.close();
 			file.close();
@@ -585,6 +595,14 @@ public class Chunk {
 	public void setModel(PhysicsModel m) {
 		model = m;
 
+	}
+
+	public NetworkChunkRenderingData getNcrd() {
+		return ncrd;
+	}
+
+	public void setNcrd(NetworkChunkRenderingData ncrd) {
+		this.ncrd = ncrd;
 	}
 
 }

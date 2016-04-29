@@ -27,6 +27,7 @@ import main.java.com.ionsystems.infinigen.physics.PhysicsUtils;
 import main.java.com.ionsystems.infinigen.textures.TextureData;
 import main.java.com.ionsystems.infinigen.world.ChunkManager;
 import main.java.com.ionsystems.infinigen.world.ChunkRenderingData;
+import main.java.com.ionsystems.infinigen.world.NetworkChunkRenderingData;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
@@ -55,7 +56,7 @@ public class Loader implements IModule {
 	private List<Integer> vbos = new ArrayList<Integer>();
 	private List<Integer> textures = new ArrayList<Integer>();
 	private HashMap<String, Vector3f> loadedTextures = new HashMap<String, Vector3f>();
-	private ArrayList<ChunkRenderingData> chunkLoadingQueue = new ArrayList<ChunkRenderingData>();
+	private ArrayList<NetworkChunkRenderingData> chunkLoadingQueue = new ArrayList<NetworkChunkRenderingData>();
 	private ArrayList<PhysicsModel> modelUnloadingQueue = new ArrayList<PhysicsModel>();
 
 	private int bufferAllocationCount = 0;
@@ -121,32 +122,32 @@ public class Loader implements IModule {
 		unbindVAO();
 		// Generate a new physics object to represent the model;
 
-		ByteBuffer ind = ByteBuffer.allocateDirect(indices.length * 4).order(ByteOrder.nativeOrder());
-		for (int i : indices) {
-			ind.putInt(i);
-		}
-		ind.flip();
-		ByteBuffer verts = ByteBuffer.allocateDirect(positions.length * 4).order(ByteOrder.nativeOrder());
-
-		for (Float f : positions) {
-			verts.putFloat(f);
-		}
-		verts.flip();
-
-		IndexedMesh indexedMesh = new IndexedMesh();
-		indexedMesh.indexType = ScalarType.INTEGER;
-		indexedMesh.numTriangles = indices.length / 3;
-		indexedMesh.numVertices = positions.length / 3;
-		indexedMesh.triangleIndexStride = 3 * 4;
-		indexedMesh.vertexStride = 3 * 4;
-		indexedMesh.triangleIndexBase = ind;
-		indexedMesh.vertexBase = verts;
-
-		TriangleIndexVertexArray indexVertexArrays = new TriangleIndexVertexArray();
-
-		indexVertexArrays.addIndexedMesh(indexedMesh, ScalarType.INTEGER);
-		BvhTriangleMeshShape collisionShape = new BvhTriangleMeshShape(indexVertexArrays, true);
-
+//		ByteBuffer ind = ByteBuffer.allocateDirect(indices.length * 4).order(ByteOrder.nativeOrder());
+//		for (int i : indices) {
+//			ind.putInt(i);
+//		}
+//		ind.flip();
+//		ByteBuffer verts = ByteBuffer.allocateDirect(positions.length * 4).order(ByteOrder.nativeOrder());
+//
+//		for (Float f : positions) {
+//			verts.putFloat(f);
+//		}
+//		verts.flip();
+//
+//		IndexedMesh indexedMesh = new IndexedMesh();
+//		indexedMesh.indexType = ScalarType.INTEGER;
+//		indexedMesh.numTriangles = indices.length / 3;
+//		indexedMesh.numVertices = positions.length / 3;
+//		indexedMesh.triangleIndexStride = 3 * 4;
+//		indexedMesh.vertexStride = 3 * 4;
+//		indexedMesh.triangleIndexBase = ind;
+//		indexedMesh.vertexBase = verts;
+//
+//		TriangleIndexVertexArray indexVertexArrays = new TriangleIndexVertexArray();
+//
+//		indexVertexArrays.addIndexedMesh(indexedMesh, ScalarType.INTEGER);
+//		BvhTriangleMeshShape collisionShape = new BvhTriangleMeshShape(indexVertexArrays, true);
+		BvhTriangleMeshShape collisionShape = null;
 		return new PhysicsModel(vaoID, vboIDs, indices.length, collisionShape);
 	}
 
@@ -367,26 +368,26 @@ public class Loader implements IModule {
 	public void process() {
 		// Here we process all the models, etc to be loaded/unloaded
 		// We will only allocate a few ms to this each frame to stop the
-		// framerate from dipping when lots of stuff is happening.
+		// frame rate from dipping when lots of stuff is happening.
 
 		// Also need to be thread safe
 		long startTime = System.nanoTime();
 		if (Globals.getLoadingLock().readLock().tryLock()) {
-			ArrayList<ChunkRenderingData> crdRemove = new ArrayList<ChunkRenderingData>();
-			for (ChunkRenderingData crd : chunkLoadingQueue) {
-				PhysicsModel m = loadChunkToVAOWithGeneratedPhysics(crd.positions, crd.normals, crd.indicies);
-				crd.c.setModel(m);
-				crd.c.setRenderable(true);
-				m.generateWorldRigidBody();
-				m.getBody().translate(new Vector3f(crd.c.x * ChunkManager.chunkSize, crd.c.y * ChunkManager.chunkSize, crd.c.z * ChunkManager.chunkSize));
-				Globals.getPhysics().getProcessor().addRigidBody(m.getBody());
+			ArrayList<NetworkChunkRenderingData> ncrdRemove = new ArrayList<NetworkChunkRenderingData>();
+			for (NetworkChunkRenderingData ncrd : chunkLoadingQueue) {
+				PhysicsModel m = loadChunkToVAOWithGeneratedPhysics(ncrd.crd.positions, ncrd.crd.normals, ncrd.crd.indicies);
+				ncrd.crd.setModel(m);
+				ncrd.crd.setRenderable(true);
+//				m.generateWorldRigidBody();
+//				m.getBody().translate(new Vector3f(ncrd.x * ChunkManager.chunkSize, ncrd.y * ChunkManager.chunkSize, ncrd.z * ChunkManager.chunkSize));
+//				Globals.getPhysics().getProcessor().addRigidBody(m.getBody());
 
-				crdRemove.add(crd);
+				ncrdRemove.add(ncrd);
 				long elapsedTime = System.nanoTime() - startTime;
 				if (elapsedTime > 100000)
 					break;
 			}
-			chunkLoadingQueue.removeAll(crdRemove);
+			chunkLoadingQueue.removeAll(ncrdRemove);
 			Globals.getLoadingLock().readLock().unlock();
 		}
 		if (Globals.getUnloadingLock().readLock().tryLock()) {
@@ -431,7 +432,7 @@ public class Loader implements IModule {
 		return null;
 	}
 
-	public void addChunkToLoadQueue(ChunkRenderingData crd) {
+	public void addChunkToLoadQueue(NetworkChunkRenderingData crd) {
 		chunkLoadingQueue.add(crd);
 	}
 

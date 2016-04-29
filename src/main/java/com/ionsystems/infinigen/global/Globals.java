@@ -17,12 +17,15 @@ import main.java.com.ionsystems.infinigen.entities.PhysicsEntity;
 import main.java.com.ionsystems.infinigen.models.PhysicsModel;
 import main.java.com.ionsystems.infinigen.models.TexturedPhysicsModel;
 import main.java.com.ionsystems.infinigen.networking.ChunkData;
+import main.java.com.ionsystems.infinigen.newNetworking.Client;
 import main.java.com.ionsystems.infinigen.physics.DebugDrawer;
 import main.java.com.ionsystems.infinigen.physics.PhysicsManager;
 import main.java.com.ionsystems.infinigen.rendering.Loader;
 import main.java.com.ionsystems.infinigen.rendering.MasterRenderer;
 import main.java.com.ionsystems.infinigen.textures.ModelTexture;
 import main.java.com.ionsystems.infinigen.world.Chunk;
+import main.java.com.ionsystems.infinigen.world.ChunkRenderingData;
+import main.java.com.ionsystems.infinigen.world.NetworkChunkRenderingData;
 
 public class Globals {
 
@@ -30,7 +33,7 @@ public class Globals {
 	private static Loader loader;
 	private static Vector3f mouseRay;
 	private static Vector3f cameraPosition;
-	private static ArrayList<Chunk> visibleChunks;
+	private static CopyOnWriteArrayList<NetworkChunkRenderingData> visibleChunks;
 	private static boolean isServer;
 	private static boolean loading;
 
@@ -64,6 +67,9 @@ public class Globals {
 	private static float placementOffset;
 	private static boolean running = true;
 	public static HashMap<String, Boolean> switches = new HashMap<String, Boolean>();
+	private static HashMap<Integer, Client> clientMappings = new HashMap<Integer, Client>();
+	private static Client client;
+	private static CopyOnWriteArrayList<Chunk> serverLoadedChunks;
 	
 	
 
@@ -152,11 +158,11 @@ public class Globals {
 		Globals.isServer = isServer;
 	}
 
-	public static void setLoadedChunks(ArrayList<Chunk> loadedChunks) {
+	public static void setLoadedChunks(CopyOnWriteArrayList<NetworkChunkRenderingData> loadedChunks) {
 		Globals.visibleChunks = loadedChunks;
 	}
 
-	public static CopyOnWriteArrayList<Chunk> getLoadedChunks() {
+	public static CopyOnWriteArrayList<NetworkChunkRenderingData> getLoadedChunks() {
 		return Globals.visibleChunks;
 	}
 
@@ -345,6 +351,31 @@ public class Globals {
 
 	public static void setNetworkTickrate(int networkTickrate) {
 		Globals.networkTickrate = networkTickrate;
+	}
+
+	public static Client getClient() {		
+		return Globals.client;
+	}
+
+	public static void setServerLoadedChunks(CopyOnWriteArrayList<Chunk> serverLoadedChunks) {
+		Globals.serverLoadedChunks = serverLoadedChunks;		
+	}
+	
+	public static CopyOnWriteArrayList<Chunk> getServerLoadedChunks() {
+		return Globals.serverLoadedChunks;		
+	}
+
+	public static void mapClient(int clientID, Client client) {
+		Globals.clientMappings.put(clientID, client);
+	}
+	
+	public static Client getClientMapping(int clientID){
+		return Globals.clientMappings.get(clientID);
+	}
+
+	public static void setClient(Client client) {
+		Globals.client = client;
+		
 	}
 
 	// public static ArrayList<TextElement> getTextElements() {

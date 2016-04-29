@@ -1,5 +1,6 @@
 package main.java.com.ionsystems.infinigen.newNetworking;
 
+import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -15,80 +16,60 @@ public class ClientNetworkManager implements IModule {
 	private Socket bandwidthSocketSend, bandwidthSocketRecieve, latencySocketSend, latencySocketRecieve;
 	
 	@Override
-	public void process() {
-		// TODO Auto-generated method stub
-		
-	}
+	public void process() {	}
 
 	@Override
 	public void setUp() {
 		try{			
 			System.out.println("about to connect to server at: " + Globals.getIp() + ":" + Globals.getLatencyPort());
-			bandwidthSocketSend = new Socket();
-			bandwidthSocketSend.setPerformancePreferences(0, 0, 1);
-			bandwidthSocketSend.connect(new InetSocketAddress(Globals.getIp(), Globals.getBandwidthPort()));
+			bandwidthSocketSend = createSocket(0, 0, 1, Globals.getIp(), Globals.getBandwidthPort(), false);
 			System.out.println("Successfully connected bandwidth send socket");
 			
-			bandwidthSocketRecieve = new Socket();
-			bandwidthSocketRecieve.setPerformancePreferences(0, 0, 1);
-			bandwidthSocketRecieve.connect(new InetSocketAddress(Globals.getIp(), Globals.getBandwidthPort()));
+			bandwidthSocketRecieve = createSocket(0, 0, 1, Globals.getIp(), Globals.getBandwidthPort(), false);
 			System.out.println("Successfully connected bandwidth recieve socket");
 			
-			latencySocketSend = new Socket();
-			latencySocketSend.setPerformancePreferences(0, 1, 0);
-			latencySocketSend.setTcpNoDelay(true);
-			latencySocketSend.connect(new InetSocketAddress(Globals.getIp(), Globals.getLatencyPort()));
+			latencySocketSend = createSocket(0, 1, 0, Globals.getIp(), Globals.getLatencyPort(), true);			
 			System.out.println("Successfully connected latency send socket");
 							
-			latencySocketRecieve = new Socket();
-			latencySocketRecieve.setPerformancePreferences(0, 1, 0);
-			latencySocketRecieve.setTcpNoDelay(true);
-			latencySocketRecieve.connect(new InetSocketAddress(Globals.getIp(), Globals.getLatencyPort()));
+			latencySocketRecieve = createSocket(0, 1, 0, Globals.getIp(), Globals.getLatencyPort(), true);					
 			System.out.println("Successfully connected latency recieve socket");
-			
-			
-			
 			
 			
 			System.out.println("Linking sockets to network adapters");
 			
-			(new Thread(new ClientNetworkAdapter(bandwidthSocketRecieve, 0, Tag.NetworkBandwidthRecieve))).start();
-			System.out.println("Linking bandwidthSocketRecieve to ServerNetworkAdapter");
-			(new Thread(new ClientNetworkAdapter(bandwidthSocketSend, 1, Tag.NetworkBandwidthSend))).start();
-			System.out.println("Linking bandwidthSocketSend to ServerNetworkAdapter");
-			(new Thread(new ClientNetworkAdapter(latencySocketRecieve, 0, Tag.NetworkLatencyRecieve))).start();
-			System.out.println("Linking latencySocketRecieve to ServerNetworkAdapter");
-			(new Thread(new ClientNetworkAdapter(latencySocketSend, 1, Tag.NetworkLatencySend))).start();
-			System.out.println("Linking latencySocketSend to ServerNetworkAdapter");
+			(new Thread(new ClientNetworkAdapter(bandwidthSocketRecieve))).start();
+			System.out.println("Linking bandwidthSocketRecieve to ClientNetworkAdapter");
+			(new Thread(new ClientNetworkAdapter(bandwidthSocketSend, Tag.NetworkBandwidthSend))).start();
+			System.out.println("Linking bandwidthSocketSend to ClientNetworkAdapter");
+			(new Thread(new ClientNetworkAdapter(latencySocketRecieve))).start();
+			System.out.println("Linking latencySocketRecieve to ClientNetworkAdapter");
+			(new Thread(new ClientNetworkAdapter(latencySocketSend, Tag.NetworkLatencySend))).start();
+			System.out.println("Linking latencySocketSend to ClientNetworkAdapter");
 		}catch(Exception e){
 			System.exit(-1);
 		}
 		
 	}
 
-	@Override
-	public void cleanUp() {
-		// TODO Auto-generated method stub
-		
+	private Socket createSocket(int connectionTime, int latency, int bandwidth, String ip, int port, boolean tcpNoDelay) throws IOException {
+		Socket s = new Socket();
+		s.setPerformancePreferences(connectionTime, latency, bandwidth);
+		s.setTcpNoDelay(tcpNoDelay);
+		s.connect(new InetSocketAddress(ip, port));
+		return s;
 	}
 
 	@Override
-	public void render() {
-		// TODO Auto-generated method stub
-		
-	}
+	public void cleanUp() {}
 
 	@Override
-	public void update() {
-		// TODO Auto-generated method stub
-		
-	}
+	public void render() {}
 
 	@Override
-	public ArrayList<PhysicsEntity> prepare() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	public void update() {}
+
+	@Override
+	public ArrayList<PhysicsEntity> prepare() {return null;}
 	/*
 	 * The new networking system is responsible for a few things.
 	 * 

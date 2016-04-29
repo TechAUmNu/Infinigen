@@ -10,7 +10,11 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import main.java.com.ionsystems.infinigen.global.Globals;
+import main.java.com.ionsystems.infinigen.messages.Messaging;
+import main.java.com.ionsystems.infinigen.messages.Tag;
 import main.java.com.ionsystems.infinigen.networking.ChunkData;
+import main.java.com.ionsystems.infinigen.newNetworking.Client;
+import main.java.com.ionsystems.infinigen.newNetworking.NetworkMessage;
 
 import org.lwjgl.util.vector.Vector3f;
 
@@ -27,23 +31,20 @@ public class ServerChunkManager implements Runnable {
 
 	public static int chunkSize = 64;
 	float blockSize = 1f;
-	ArrayList<Chunk> loadedChunks;
+	CopyOnWriteArrayList<Chunk> loadedChunks;
 	HashMap<ChunkID, Chunk> chunks;
 	Module terrainNoise;
 
 	Vector3f chunkLocation = new Vector3f();
-	public static int loadDistance = 25;
+	public static int loadDistance = 10;
 	long seed = 828382;
 	int state = 0;
-	ExecutorService pool = Executors.newFixedThreadPool(24); // creates a pool of threads for the Future to draw from
+	HashMap<Client, ArrayList<ChunkID>> pendingChunks = new HashMap<Client, ArrayList<ChunkID>>();
+
+	ExecutorService pool = Executors.newFixedThreadPool(12); // creates a pool of threads for the Future to draw from
 
 	public void process() {
-		try {
-			Thread.sleep(10000);
-		} catch (InterruptedException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+		
 		// Here we will decide which chunks to load/unload
 
 		// First we will do loading
@@ -51,27 +52,32 @@ public class ServerChunkManager implements Runnable {
 		// loadDistance is how far away in a circle to load chunks
 		// So first we shall just loop through every chunk in the area and load
 		// the chunk if it isn't already.
-		while (Globals.loading() && Globals.getCameraPosition() == null) {
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+//		while (Globals.loading() && Globals.getCameraPosition() == null) {
+//			try {
+//				Thread.sleep(1000);
+//			} catch (InterruptedException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//		}
 
 		// We don't want to let this thread use 100% CPU.
+
+		// We want to load chunks as clients request them. No point in loading things we don't need.
+
+		//The client is added to the interested list here
 		ArrayList<ChunkID> toLoad = new ArrayList<ChunkID>();
-		for (int x = -loadDistance; x < loadDistance + 1; x++) {
-			for (int z = -loadDistance; z < loadDistance + 1; z++) {
-				if (inCircle(0, 0, loadDistance, x, z)) {
-					toLoad.add(new ChunkID(x,-1,z));
-				}
-			}
+		while (Messaging.anyMessages(Tag.NetworkChunkRequest)) {
+			// The new chunk data comes in a form that can be rendered immediately with no further processing. So we can just add it directly to the loading
+			// queue.
+			NetworkMessage msg = (NetworkMessage) Messaging.takeLatestMessage(Tag.NetworkChunkRequest);
+			System.out.println("Loading " + msg.chunkRequest.size() + " chunks for " + msg.client.username);
+			toLoad.addAll(msg.chunkRequest);
+			pendingChunks.put(msg.client, msg.chunkRequest);
 		}
 		loadChunks(toLoad);
 
-		Globals.setLoadedChunks(loadedChunks);
+		Globals.setServerLoadedChunks(loadedChunks);
 
 	}
 
@@ -84,22 +90,11 @@ public class ServerChunkManager implements Runnable {
 	public void setUp() {
 
 		initNoiseGenerator();
-		loadedChunks = new ArrayList<Chunk>();
+		loadedChunks = new CopyOnWriteArrayList<Chunk>();
 		chunks = new HashMap<ChunkID, Chunk>();
 
-		Globals.setLoadedChunks(loadedChunks);
+		Globals.setServerLoadedChunks(loadedChunks);
 
-	}
-
-	private Vector3f findContainingChunk(Vector3f location) {
-		// To find the chunk we just divide the coord by the chunk size * block
-		// size
-		float multiplyer = chunkSize * blockSize;
-
-		chunkLocation.x = (float) Math.floor(location.x / multiplyer);
-		chunkLocation.y = (float) Math.floor(location.y / multiplyer);
-		chunkLocation.z = (float) Math.floor(location.z / multiplyer);
-		return chunkLocation;
 	}
 
 	private void initNoiseGenerator() {
@@ -122,7 +117,7 @@ public class ServerChunkManager implements Runnable {
 							// double value; see specific module for details)
 		ac.setRange(0.0f, chunkSize); // set the range to auto-correct to
 		ac.setSamples(10000); // set how many samples to take
-		ac.calculate(); // perform the caclulations
+		ac.calculate(); // perform the calculations
 
 		terrainNoise = ac;
 	}
@@ -131,53 +126,55 @@ public class ServerChunkManager implements Runnable {
 		for (Chunk c : loadedChunks) {
 			c.update();
 		}
-
-		if (!Globals.isServer()) {
-			if (!Globals.getChunkUpdate().isEmpty()) {
-				for (ChunkData cd : Globals.getChunkUpdate()) {
-					Chunk c = new Chunk(cd);
-					chunks.put(new ChunkID(cd.x, cd.y, cd.z), c);
-					loadedChunks.add(c);
-				}
-				Globals.setLoadedChunks(loadedChunks);
-				Globals.getChunkUpdate().clear();
-			}
-		}
 	}
 
 	public Future<Chunk> loadChunk(ChunkID chunkID) {
-		
 		return pool.submit(new Callable<Chunk>() {
 			@Override
 			public Chunk call() {
 				return new Chunk(chunkID, chunkID.x, chunkID.y, chunkID.z, chunkSize, blockSize, terrainNoise);
 			}
 		});
-		
-		
-
 	}
 
 	public void loadChunks(ArrayList<ChunkID> chunksToLoad) {
 		ArrayList<Future<Chunk>> loadingChunks = new ArrayList<Future<Chunk>>();
 		for (ChunkID cid : chunksToLoad) {
 			if (!chunks.containsKey(cid)) {
-				loadingChunks.add(loadChunk(cid));				
+				loadingChunks.add(loadChunk(cid));
 			}
 		}
-		System.out.println("HER\n\n\n\n\n\n\n\n\n\n");
-		for (Future<Chunk> f : loadingChunks){
-			
+		
+		for (Future<Chunk> f : loadingChunks) {
+
 			try {
 				Chunk chunk = f.get();
 				chunks.put(chunk.chunkID, chunk);
-				loadedChunks.add(chunk);
+				loadedChunks.add(chunk);				
 				System.out.println("Chunks Loaded: " + loadedChunks.size());
-			} catch (InterruptedException | ExecutionException e) {				
+			} catch (InterruptedException | ExecutionException e) {
 				e.printStackTrace();
 			}
+
+		}
+		
+		for(Client c : pendingChunks.keySet()){
+			ArrayList<NetworkChunkRenderingData> ncrdList = new ArrayList<NetworkChunkRenderingData>();
+			for(ChunkID cid : pendingChunks.get(c)){
+				ncrdList.add(chunks.get(cid).getNcrd());
+				
+			}		
 			
-		}		
+			pendingChunks.get(c).clear();;
+			NetworkMessage msg = new NetworkMessage();
+			msg.ncrd = ncrdList;			
+			msg.tag = Tag.NetworkChunkUpdate;
+			Messaging.addMessage(c.username + Tag.NetworkBandwidthSend.toString(), msg);	
+			
+		}
+		pendingChunks.clear(); // This stops the server spamming updates back to the client
+				
+		
 	}
 
 	@Override
@@ -185,20 +182,18 @@ public class ServerChunkManager implements Runnable {
 		Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
 		setUp();
 
-		// while (Globals.isRunning()) {
-		process();
-		update();
-		state++;
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		while (Globals.isRunning()) {
+			process();
+			update();
+			state++;
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
-		// }
 
 	}
-
-	
 
 }

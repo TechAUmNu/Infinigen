@@ -18,6 +18,10 @@ public class Messaging {
 	public static void addMessageQueue(Tag tag){
 		messageStorage.put(tag.toString(), new LinkedTransferQueue<Object>());		
 	}
+	
+	public static void addMessageQueue(String tag){
+		messageStorage.put(tag, new LinkedTransferQueue<Object>());		
+	}
 		
 	public static Object pollLatestMessage(Tag tag){
 		if(!messageStorage.containsKey(tag.toString()))
@@ -36,6 +40,12 @@ public class Messaging {
 		if(!messageStorage.containsKey(tag.toString()))
 			addMessageQueue(tag);
 		messageStorage.get(tag.toString()).add(message);	
+	}
+	
+	public static void addMessage(String tag, Object message){
+		if(!messageStorage.containsKey(tag))
+			addMessageQueue(tag);
+		messageStorage.get(tag).add(message);	
 	}
 	
 	/**
@@ -60,6 +70,24 @@ public class Messaging {
 			addMessageQueue(tag);
 		try {
 			return messageStorage.get(tag.toString()).take();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;	
+	}
+	
+	/**
+	 * Retrieves and removes the head of this queue, waiting if necessary until an element becomes available.
+	 * @param tag The queue to take from
+	 * @return The head of the queue
+	 * @throws InterruptedException
+	 */
+	public static Object takeLatestMessage(String tag){
+		if(!messageStorage.containsKey(tag))
+			addMessageQueue(tag);
+		try {
+			return messageStorage.get(tag).take();
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

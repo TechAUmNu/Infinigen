@@ -3,11 +3,9 @@ package main.java.com.ionsystems.infinigen.messages;
 public enum Tag {
 	
 	NetworkBandwidthSend("networkBandwidthSend"),
-	NetworkBandwidthRecieve("networkBandwidthRecieve"),
 	NetworkLatencySend("networkLatencySend"),
-	NetworkLatencyRecieve("networkLatencyRecieve"),
-	NetworkChunkUpdate("ChunkUpdate")
-   
+	NetworkChunkUpdate("ChunkUpdate"),
+	NetworkChunkRequest("ChunkRequest")
     ;
 
     private final String text;

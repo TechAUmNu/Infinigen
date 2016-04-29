@@ -17,6 +17,7 @@ import main.java.com.ionsystems.infinigen.global.Globals;
 import main.java.com.ionsystems.infinigen.messages.Messaging;
 import main.java.com.ionsystems.infinigen.messages.Tag;
 import main.java.com.ionsystems.infinigen.networking.ChunkData;
+import main.java.com.ionsystems.infinigen.newNetworking.NetworkMessage;
 
 //This handles all loading and unloading of chunks. The chunks within the set range of each camera must be kept loaded so switching camera is fast.
 
@@ -24,8 +25,9 @@ public class ChunkManager implements Runnable {
 
 	public static int chunkSize = 64;
 	float blockSize = 1f;
-	CopyOnWriteArrayList<Chunk> loadedChunks;
-	HashMap<ChunkID, Chunk> chunks;
+	CopyOnWriteArrayList<NetworkChunkRenderingData> loadedChunks;
+	HashMap<ChunkID, NetworkChunkRenderingData> chunks;
+	ArrayList<ChunkID> pendingChunks = new ArrayList<ChunkID>();
 	Module terrainNoise;
 	WorldRenderer renderer;
 	Vector3f chunkLocation = new Vector3f();
@@ -62,27 +64,61 @@ public class ChunkManager implements Runnable {
 		cameraX = (int) cameraChunkLocation.x;
 		cameraZ = (int) cameraChunkLocation.z;
 
-		ArrayList<ChunkID> toUnload = new ArrayList<ChunkID>();
-		for (ChunkID c : chunks.keySet()) {
-			if (!inCircle(cameraX, cameraZ, loadDistance, c.x, c.z)) {
-				toUnload.add(new ChunkID(c.x, c.y, c.z));
-			}
-		}
-		for (ChunkID c : toUnload) {
-			chunks.get(c).cleanUp();
-			loadedChunks.remove(chunks.get(c));
-			Globals.getLoadedChunks().remove(chunks.get(c));
-			chunks.remove(c);
-		}
-		toUnload = null;
+//		ArrayList<ChunkID> toUnload = new ArrayList<ChunkID>();
+//		for (ChunkID c : chunks.keySet()) {
+//			if (!inCircle(cameraX, cameraZ, loadDistance, c.x, c.z)) {
+//				toUnload.add(new ChunkID(c.x, c.y, c.z));
+//			}
+//		}
+//		for (ChunkID c : toUnload) {			
+//			loadedChunks.remove(chunks.get(c));
+//			Globals.getLoadedChunks().remove(chunks.get(c));
+//			chunks.remove(c);
+//		}
+//		toUnload = null;
 
+		ArrayList<ChunkID> toLoad = new ArrayList<ChunkID>();
 		for (int x = -loadDistance + cameraX; x < loadDistance + cameraX + 1; x++) {
 			for (int z = -loadDistance + cameraZ; z < loadDistance + cameraZ + 1; z++) {
 				if (inCircle(cameraX, cameraZ, loadDistance, x, z)) {
-					loadChunk(x, -1, z);
+					if(!chunks.containsKey(new ChunkID(x,-1,z)) &&  !pendingChunks.contains(new ChunkID(x,-1,z))){
+						toLoad.add(new ChunkID(x,-1,z));
+						pendingChunks.add(new ChunkID(x,-1,z));
+					}
 				}
 			}
 		}
+		if(!toLoad.isEmpty()){
+			// Send the chunk request off to the networking system
+			NetworkMessage msg = new NetworkMessage();
+			ArrayList<ChunkID> toBeLoaded = new ArrayList<ChunkID>();
+			toBeLoaded.addAll(toLoad);
+			msg.chunkRequest = toBeLoaded;
+			msg.client = Globals.getClient();	
+			msg.tag = Tag.NetworkChunkRequest;
+			Messaging.addMessage(Tag.NetworkLatencySend, msg);
+			toLoad.clear();
+		}
+		
+		while(Messaging.anyMessages(Tag.NetworkChunkUpdate)){
+			// The new chunk data comes in a form that can be rendered immediately with no further processing. So we can just add it directly to the loading queue.
+			NetworkMessage incomingMsg = (NetworkMessage) Messaging.takeLatestMessage(Tag.NetworkChunkUpdate);
+			System.out.println("Processing " + incomingMsg.ncrd.size() + " Chunks : " + Tag.NetworkChunkUpdate);
+			for(NetworkChunkRenderingData ncrd : incomingMsg.ncrd){
+				
+				if(!chunks.containsKey(ncrd.chunkID)){
+				
+					Globals.getLoadingLock().writeLock().lock();
+					Globals.getLoader().addChunkToLoadQueue(ncrd);
+					Globals.getLoadingLock().writeLock().unlock();
+					
+					chunks.put(ncrd.chunkID, ncrd);
+					loadedChunks.add(ncrd);
+					pendingChunks.remove(ncrd.chunkID);
+				}
+			}
+		}
+		
 
 		Globals.setLoadedChunks(loadedChunks);
 
@@ -95,13 +131,9 @@ public class ChunkManager implements Runnable {
 	}
 
 	public void setUp() {
-
-		initNoiseGenerator();
-		loadedChunks = new CopyOnWriteArrayList<Chunk>();
-		chunks = new HashMap<ChunkID, Chunk>();
-
+		loadedChunks = new CopyOnWriteArrayList<NetworkChunkRenderingData>();
+		chunks = new HashMap<ChunkID, NetworkChunkRenderingData>();
 		Globals.setLoadedChunks(loadedChunks);
-
 	}
 
 	private Vector3f findContainingChunk(Vector3f location) {
@@ -115,85 +147,33 @@ public class ChunkManager implements Runnable {
 		return chunkLocation;
 	}
 
-	private void initNoiseGenerator() {
-		ModuleFractal gen = new ModuleFractal();
-		gen.setAllSourceBasisTypes(BasisType.SIMPLEX);
-		gen.setAllSourceInterpolationTypes(InterpolationType.CUBIC);
-		gen.setNumOctaves(2);
-		gen.setFrequency(1);
-		gen.setType(FractalType.RIDGEMULTI);
-		gen.setSeed(seed);
-
-		/*
-		 * ... route it through an autocorrection module...
-		 * 
-		 * This module will sample it's source multiple times and attempt to
-		 * auto-correct the output to the range specified.
-		 */
-		ModuleAutoCorrect ac = new ModuleAutoCorrect();
-		ac.setSource(gen); // set source (can usually be either another Module
-							// or a
-							// double value; see specific module for details)
-		ac.setRange(0.0f, chunkSize); // set the range to auto-correct to
-		ac.setSamples(10000); // set how many samples to take
-		ac.calculate(); // perform the caclulations
-
-		terrainNoise = ac;
-	}
+	
 
 	public void update() {
-		for (Chunk c : loadedChunks) {
-			c.update();
-		}
-
 		// Here we will check for messages tagged with Tag.NetworkChunkUpdate
 		
-		while(Messaging.anyMessages(Tag.NetworkChunkUpdate)){
-			// The new chunk data comes in a form that can be rendered immediately with no further processing. So we can just add it directly to the loading queue.
-			NetworkChunkRenderingData ncrd = (NetworkChunkRenderingData) Messaging.takeLatestMessage(Tag.NetworkChunkUpdate);
-			Globals.getLoadingLock().writeLock().lock();
-			Globals.getLoader().addChunkToLoadQueue(ncrd.crd);
-			Globals.getLoadingLock().writeLock().unlock();
-		}
 		
-		if (!Globals.isServer()) {
-			if (!Globals.getChunkUpdate().isEmpty()) {
-				for (ChunkData cd : Globals.getChunkUpdate()) {
-					Chunk c = new Chunk(cd);
-					chunks.put(new ChunkID(cd.x, cd.y, cd.z), c);
-					loadedChunks.add(c);
-				}
-				Globals.setLoadedChunks(loadedChunks);
-				Globals.getChunkUpdate().clear();
-			}
-		}
+		
+		
 	}
-
-	public void loadChunk(int x, int y, int z) {
-
-		if (!chunks.containsKey(new ChunkID(x, y, z))) {
-			Chunk testChunk = new Chunk(x, y, z, chunkSize, blockSize, terrainNoise);
-			chunks.put(new ChunkID(x, y, z), testChunk);
-			loadedChunks.add(testChunk);
-		}
-	}
+	
 
 	@Override
 	public void run() {
 		Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
 		setUp();
 
-		//while (Globals.isRunning()) {
-		process();
-		update();
-		state++;
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		while (Globals.isRunning()) {
+			process();
+			update();
+			state++;
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
-		// }
 
 	}
 

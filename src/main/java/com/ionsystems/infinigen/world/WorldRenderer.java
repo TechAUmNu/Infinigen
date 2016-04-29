@@ -36,15 +36,15 @@ public class WorldRenderer implements IModule {
 
 		bindTextures();
 		if (Globals.getLoadedChunks() != null) {
-			for (Chunk chunk : Globals.getLoadedChunks()) {
-				if (chunk.isRenderable()) {
+			for (NetworkChunkRenderingData chunk : Globals.getLoadedChunks()) {
+				if (chunk.crd.isRenderable()) {
 					// if(Globals.getCameraDirection() ){
 					//
 					// }
 
 					loadModelMatrix(chunk);
 
-					renderFace(chunk.getModel());
+					renderFace(chunk.crd.getModel());
 
 				}
 			}
@@ -80,7 +80,7 @@ public class WorldRenderer implements IModule {
 		GL30.glBindVertexArray(0);
 	}
 
-	private void loadModelMatrix(Chunk chunk) {
+	private void loadModelMatrix(NetworkChunkRenderingData chunk) {
 		position.x = chunk.x * ChunkManager.chunkSize * chunk.blockSize;
 		position.y = chunk.y * ChunkManager.chunkSize * chunk.blockSize;
 		position.z = chunk.z * ChunkManager.chunkSize * chunk.blockSize;

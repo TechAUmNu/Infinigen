@@ -22,6 +22,7 @@ import main.java.com.ionsystems.infinigen.global.Units;
 import main.java.com.ionsystems.infinigen.gui.GuiManager;
 import main.java.com.ionsystems.infinigen.modelLoader.ModelLoaderManager;
 import main.java.com.ionsystems.infinigen.networking.NetworkingManager;
+import main.java.com.ionsystems.infinigen.newNetworking.Client;
 import main.java.com.ionsystems.infinigen.newNetworking.ClientNetworkManager;
 import main.java.com.ionsystems.infinigen.newNetworking.ServerNetworkManager;
 import main.java.com.ionsystems.infinigen.physics.PhysicsManager;
@@ -116,6 +117,7 @@ public class Main {
 				Globals.setIp(args[1]);
 				Globals.setLatencyPort(Integer.parseInt(args[2]));
 				Globals.setBandwidthPort(Integer.parseInt(args[3]));
+				Globals.setClient(new Client(args[4]));
 			}
 
 		}

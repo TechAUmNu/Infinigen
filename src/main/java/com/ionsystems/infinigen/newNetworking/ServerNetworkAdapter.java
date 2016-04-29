@@ -29,13 +29,26 @@ public class ServerNetworkAdapter implements Runnable {
 	private NetworkMessage inMessage;
 	Ack ack;
 	private Client client;
+	private int clientID;
 	private int direction;
-	Tag tag;
+	String tag;
+	String networkType;
 
-	public ServerNetworkAdapter(Socket socket, int direction, Tag tag) {
+	
+	// Send
+	public ServerNetworkAdapter(Socket socket, int clientID, String networkType) {
 		this.socket = socket;
-		this.direction = direction;
-		this.tag = tag;
+		this.direction = 1;		
+		this.clientID = clientID;
+		this.networkType = networkType;
+	}
+
+	
+	// Receive
+	public ServerNetworkAdapter(Socket socket, int clientID) {
+		this.socket = socket;
+		this.direction = 0;		
+		this.clientID = clientID;		
 	}
 
 	@Override
@@ -58,9 +71,11 @@ public class ServerNetworkAdapter implements Runnable {
 		try {
 			System.out.println("Creating output stream");
 
+			//out = new ObjectOutputStream(new BufferedOutputStream(socket.getOutputStream()));
 			out = new ObjectOutputStream(new BufferedOutputStream(new GZIPOutputStream(socket.getOutputStream(), 4096, true)));
 			out.flush();
 
+			//in = new ObjectInputStream(new BufferedInputStream(socket.getInputStream()));
 			in = new ObjectInputStream(new BufferedInputStream(new GZIPInputStream(socket.getInputStream())));
 
 			/**
@@ -68,18 +83,23 @@ public class ServerNetworkAdapter implements Runnable {
 			 */
 			do {
 				try {
-					System.out.println("Waiting for message from client");
+					
 					inMessage = (NetworkMessage) in.readObject();
-					System.out.println("Message recieved from client");
-					if (inMessage.disconnect) {
-						System.out.println(client.username + " diconnected");
-					} else {
-						processMessage(inMessage); // add the message from the
-													// client to the incoming
-													// queue
-						sendAck(false); // send an acknowledgement to the client
-										// saying there was no error
+					
+					if(inMessage != null){
+						if (inMessage.disconnect) {
+							System.out.println(client.username + " diconnected");
+						} else {
+							processMessage(inMessage); // add the message from the
+														// client to the incoming
+														// queue
+							sendAck(false); // send an acknowledgement to the client
+											// saying there was no error
+						}
+					}else{
+						inMessage = new NetworkMessage();
 					}
+					
 				} catch (ClassNotFoundException classnot) {
 					System.err.println("Data received in unknown format");
 					sendAck(true); // send an acknowledgement to the client
@@ -112,22 +132,36 @@ public class ServerNetworkAdapter implements Runnable {
 		try {
 			System.out.println("Creating output stream");
 
+			//out = new ObjectOutputStream(new BufferedOutputStream(socket.getOutputStream()));
 			out = new ObjectOutputStream(new BufferedOutputStream(new GZIPOutputStream(socket.getOutputStream(), 4096, true)));
 			out.flush();
 
+			
+			//in = new ObjectInputStream(new BufferedInputStream(socket.getInputStream()));
 			in = new ObjectInputStream(new BufferedInputStream(new GZIPInputStream(socket.getInputStream())));
+			
+			// wait for client to send username
+			while(Globals.getClientMapping(clientID) == null){
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			//in = new ObjectInputStream(new BufferedInputStream(new GZIPInputStream(socket.getInputStream())));
 
 			/**
 			 * This do loop runs until a client disconnects
 			 */
 			do {
 				try {
-					System.out.println("sending message to client");
+					
 					sendMessage(); // Send a message to the client 
 					// blocks until a message is sent
 
 					// Wait for an acknowledgement
-					Ack ack = (Ack) in.readObject();
+					ack = (Ack) in.readObject();
 					System.out.println("ack recieved from client");
 					if (!ack.ack) {
 						System.out.println("Problem with previously sent message");
@@ -163,12 +197,26 @@ public class ServerNetworkAdapter implements Runnable {
 	}
 
 	private void processMessage(NetworkMessage msg) {
+		if (msg.client != null){
+			client = msg.client;
+			Globals.mapClient(clientID, client);
+		}
+		System.out.println(networkType != null ? networkType : "Recieve" + ": Message recieved from client: " + msg.tag.toString());
+		
 		Messaging.addMessage(msg.tag, msg);
 	}
 	
 	private void sendMessage(){
-		NetworkMessage msg = (NetworkMessage) Messaging.takeLatestMessage(tag);
+		
+		if(tag == null && Globals.getClientMapping(clientID) != null){
+			tag = Globals.getClientMapping(clientID).username + networkType;
+		}
+		NetworkMessage msg = null;
+		if(tag != null){
+			msg = (NetworkMessage) Messaging.takeLatestMessage(tag);
+		}
 		if(msg != null)
+			System.out.println(networkType + ": Sending message to client: " + msg.tag.toString());
 			sendNetworkMessage(msg);
 	}
 	

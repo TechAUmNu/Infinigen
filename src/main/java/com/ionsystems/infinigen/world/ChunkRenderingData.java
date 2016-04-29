@@ -1,17 +1,48 @@
 package main.java.com.ionsystems.infinigen.world;
 
-public class ChunkRenderingData {
+import java.io.Serializable;
+
+import main.java.com.ionsystems.infinigen.models.PhysicsModel;
+
+public class ChunkRenderingData implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4339934303631815156L;
 	public float[] positions;
 	public float[] normals;
 	public int[] indicies;
-	public Chunk c;
+	private boolean renderable;
+	private PhysicsModel model;
+	
+	
 
-	public ChunkRenderingData(float[] positions, int[] int_indicies, float[] normals, Chunk c) {
+	public ChunkRenderingData(float[] positions, int[] int_indicies, float[] normals) {
 		super();
 		this.positions = positions;
 		this.indicies = int_indicies;
 		this.normals = normals;
-		this.c = c;
+		
 	}
 
+	
+	public void setRenderable(boolean b) {
+		renderable = b;
+	}
+
+	public boolean isRenderable() {
+		return renderable;
+	}
+
+
+	public PhysicsModel getModel() {
+		return model;
+	}
+
+
+	public void setModel(PhysicsModel model) {
+		this.model = model;
+	}
+
+	
 }

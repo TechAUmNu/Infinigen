@@ -57,6 +57,7 @@ public class ConnectionToServer implements Runnable, ActionListener {
 			// 2. get Input and Output streams
 			System.out.println("Creating output stream");
 			gzipOut = new GZIPOutputStream(socket.getOutputStream(), 4096, true);
+			gzipOut.
 			out = new ObjectOutputStream(new BufferedOutputStream(gzipOut));
 			System.out.println("Flushing output");
 			out.flush();
