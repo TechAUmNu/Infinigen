@@ -40,6 +40,7 @@ public class ServerChunkManager implements Runnable {
 	long seed = 828382;
 	int state = 0;
 	HashMap<Client, ArrayList<ChunkID>> pendingChunks = new HashMap<Client, ArrayList<ChunkID>>();
+	ArrayList<ChunkID> chunksToBeLoaded = new ArrayList<ChunkID>();
 
 	ExecutorService pool = Executors.newFixedThreadPool(12); // creates a pool of threads for the Future to draw from
 
@@ -72,7 +73,11 @@ public class ServerChunkManager implements Runnable {
 			// queue.
 			NetworkMessage msg = (NetworkMessage) Messaging.takeLatestMessage(Tag.NetworkChunkRequest);
 			System.out.println("Loading " + msg.chunkRequest.size() + " chunks for " + msg.client.username);
-			toLoad.addAll(msg.chunkRequest);
+			for(ChunkID cid : msg.chunkRequest){
+				if(!chunksToBeLoaded.contains(cid)){
+					toLoad.add(cid);
+				}
+			}			
 			pendingChunks.put(msg.client, msg.chunkRequest);
 		}
 		loadChunks(toLoad);
@@ -173,7 +178,7 @@ public class ServerChunkManager implements Runnable {
 			
 		}
 		pendingChunks.clear(); // This stops the server spamming updates back to the client
-				
+		chunksToBeLoaded.clear(); // This stops the server loading chunks multiple times		
 		
 	}
 
