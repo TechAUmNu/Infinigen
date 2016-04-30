@@ -10,11 +10,19 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.concurrent.LinkedTransferQueue;
+import java.util.zip.CRC32;
+import java.util.zip.Checksum;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 import javax.swing.Timer;
 
+import net.jpountz.lz4.LZ4BlockInputStream;
+import net.jpountz.lz4.LZ4BlockOutputStream;
+import net.jpountz.lz4.LZ4Compressor;
+import net.jpountz.lz4.LZ4Factory;
+import net.jpountz.lz4.LZ4FastDecompressor;
+import net.jpountz.xxhash.XXHashFactory;
 import main.java.com.ionsystems.infinigen.global.Globals;
 import main.java.com.ionsystems.infinigen.messages.Messaging;
 import main.java.com.ionsystems.infinigen.messages.Tag;
@@ -25,7 +33,7 @@ public class ServerNetworkAdapter implements Runnable {
 
 	private ObjectOutputStream out;
 	private ObjectInputStream in;
-	
+	final LZ4Compressor compressor = LZ4Factory.nativeInstance().fastCompressor();
 	private NetworkMessage inMessage;
 	Ack ack;
 	private Client client;
@@ -33,7 +41,8 @@ public class ServerNetworkAdapter implements Runnable {
 	private int direction;
 	String tag;
 	String networkType;
-
+	private Checksum checksum = new CRC32();
+	final LZ4FastDecompressor decompressor = LZ4Factory.nativeInstance().fastDecompressor();
 	
 	// Send
 	public ServerNetworkAdapter(Socket socket, int clientID, String networkType) {
@@ -71,12 +80,13 @@ public class ServerNetworkAdapter implements Runnable {
 		try {
 			System.out.println("Creating output stream");
 
-			//out = new ObjectOutputStream(new BufferedOutputStream(socket.getOutputStream()));
-			out = new ObjectOutputStream(new BufferedOutputStream(new GZIPOutputStream(socket.getOutputStream(), 4096, true)));
+			
+			out = new ObjectOutputStream(new BufferedOutputStream(new LZ4BlockOutputStream( socket.getOutputStream(), 64 * 1024, compressor, XXHashFactory.fastestInstance().newStreamingHash32(128313).asChecksum(), true )));
 			out.flush();
 
 			//in = new ObjectInputStream(new BufferedInputStream(socket.getInputStream()));
-			in = new ObjectInputStream(new BufferedInputStream(new GZIPInputStream(socket.getInputStream())));
+			in = new ObjectInputStream(new BufferedInputStream(new LZ4BlockInputStream(socket.getInputStream(), decompressor, XXHashFactory.fastestInstance().newStreamingHash32(128313).asChecksum())));
+
 
 			/**
 			 * This do loop runs until a client disconnects
@@ -132,13 +142,13 @@ public class ServerNetworkAdapter implements Runnable {
 		try {
 			System.out.println("Creating output stream");
 
-			//out = new ObjectOutputStream(new BufferedOutputStream(socket.getOutputStream()));
-			out = new ObjectOutputStream(new BufferedOutputStream(new GZIPOutputStream(socket.getOutputStream(), 4096, true)));
+			out = new ObjectOutputStream(new BufferedOutputStream(new LZ4BlockOutputStream( socket.getOutputStream(), 64 * 1024, compressor, XXHashFactory.fastestInstance().newStreamingHash32(128313).asChecksum(), true )));
 			out.flush();
 
-			
 			//in = new ObjectInputStream(new BufferedInputStream(socket.getInputStream()));
-			in = new ObjectInputStream(new BufferedInputStream(new GZIPInputStream(socket.getInputStream())));
+			in = new ObjectInputStream(new BufferedInputStream(new LZ4BlockInputStream(socket.getInputStream(), decompressor, XXHashFactory.fastestInstance().newStreamingHash32(128313).asChecksum())));
+
+
 			
 			// wait for client to send username
 			while(Globals.getClientMapping(clientID) == null){
