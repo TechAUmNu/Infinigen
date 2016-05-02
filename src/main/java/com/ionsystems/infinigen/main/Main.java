@@ -152,6 +152,12 @@ public class Main {
 		} else {
 			while (!gameEnd) {
 				update();
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		}
 		cleanUp();
@@ -347,7 +353,7 @@ public class Main {
 			}
 		}
 		
-
+		
 		// sun.setPosition(new Vector3f(activeCamera.getPosition().x + 500,
 		// 500,activeCamera.getPosition().z + 500));
 

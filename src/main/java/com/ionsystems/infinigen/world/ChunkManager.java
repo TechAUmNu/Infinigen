@@ -2,9 +2,15 @@ package main.java.com.ionsystems.infinigen.world;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.Callable;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import org.lwjgl.util.vector.Vector3f;
+import org.omg.CORBA.Object;
 
 import com.sudoplay.joise.module.Module;
 import com.sudoplay.joise.module.ModuleAutoCorrect;
@@ -17,6 +23,7 @@ import main.java.com.ionsystems.infinigen.global.Globals;
 import main.java.com.ionsystems.infinigen.messages.Messaging;
 import main.java.com.ionsystems.infinigen.messages.Tag;
 import main.java.com.ionsystems.infinigen.networking.ChunkData;
+import main.java.com.ionsystems.infinigen.newNetworking.Client;
 import main.java.com.ionsystems.infinigen.newNetworking.NetworkMessage;
 
 //This handles all loading and unloading of chunks. The chunks within the set range of each camera must be kept loaded so switching camera is fast.
@@ -25,8 +32,8 @@ public class ChunkManager implements Runnable {
 
 	public static int chunkSize = 64;
 	float blockSize = 1f;
-	CopyOnWriteArrayList<NetworkChunkRenderingData> loadedChunks;
-	HashMap<ChunkID, NetworkChunkRenderingData> chunks;
+	CopyOnWriteArrayList<Chunk> loadedChunks;
+	HashMap<ChunkID, Chunk> chunks;
 	ArrayList<ChunkID> pendingChunks = new ArrayList<ChunkID>();
 	Module terrainNoise;
 	WorldRenderer renderer;
@@ -36,6 +43,7 @@ public class ChunkManager implements Runnable {
 	int state = 0;
 	int cameraX, cameraZ;
 	Vector3f cameraChunkLocation;
+	ExecutorService pool = Executors.newFixedThreadPool(12); // creates a pool of threads for the Future to draw from
 
 	public void process() {
 
@@ -99,31 +107,58 @@ public class ChunkManager implements Runnable {
 			Messaging.addMessage(Tag.NetworkLatencySend, msg);
 			toLoad.clear();
 		}
-		
+		ArrayList<NetworkChunkData> chunksToLoad = new ArrayList<NetworkChunkData>();
 		while(Messaging.anyMessages(Tag.NetworkChunkUpdate)){
 			// The new chunk data comes in a form that can be rendered immediately with no further processing. So we can just add it directly to the loading queue.
 			NetworkMessage incomingMsg = (NetworkMessage) Messaging.takeLatestMessage(Tag.NetworkChunkUpdate);
-			System.out.println("Processing " + incomingMsg.ncrd.size() + " Chunks : " + Tag.NetworkChunkUpdate);
-			for(NetworkChunkRenderingData ncrd : incomingMsg.ncrd){
+			System.out.println("Processing " + incomingMsg.ncd.size() + " Chunks : " + Tag.NetworkChunkUpdate);
+			for(NetworkChunkData ncd : incomingMsg.ncd){
 				
-				if(!chunks.containsKey(ncrd.chunkID)){
-				
-					Globals.getLoadingLock().writeLock().lock();
-					Globals.getLoader().addChunkToLoadQueue(ncrd);
-					Globals.getLoadingLock().writeLock().unlock();
-					
-					chunks.put(ncrd.chunkID, ncrd);
-					loadedChunks.add(ncrd);
-					pendingChunks.remove(ncrd.chunkID);
+				if(!chunks.containsKey(ncd.chunkID)){				
+					chunksToLoad.add(ncd);
 				}
 			}
 		}
 		
-
+				
+		loadChunks(chunksToLoad);
 		Globals.setLoadedChunks(loadedChunks);
+		
 
 	}
+	
+	
+	
+	public void loadChunks(ArrayList<NetworkChunkData> chunksToLoad) {
+		ArrayList<Future<Chunk>> loadingChunks = new ArrayList<Future<Chunk>>();
+		for (NetworkChunkData ncd : chunksToLoad) {				
+				loadingChunks.add(loadChunk(ncd));
+		}		
+		for (Future<Chunk> f : loadingChunks) {
 
+			try {
+				Chunk chunk = f.get();
+				chunks.put(chunk.chunkID, chunk);
+				loadedChunks.add(chunk);	
+				pendingChunks.remove(chunk.chunkID);
+				System.out.println("Chunks Loaded: " + loadedChunks.size());
+			} catch (InterruptedException | ExecutionException e) {
+				e.printStackTrace();
+			}
+
+		}		
+	}
+
+	public Future<Chunk> loadChunk(NetworkChunkData ncd) {
+		return pool.submit(new Callable<Chunk>() {
+			@Override
+			public Chunk call() {
+				return new Chunk(ncd);
+			}
+		});
+	}
+	
+	
 	boolean inCircle(double centerX, double centerY, double radius, double x, double y) {
 		double square_dist = Math.pow((centerX - x), 2) + Math.pow((centerY - y), 2);
 		return square_dist <= Math.pow(radius, 2);
@@ -131,8 +166,8 @@ public class ChunkManager implements Runnable {
 	}
 
 	public void setUp() {
-		loadedChunks = new CopyOnWriteArrayList<NetworkChunkRenderingData>();
-		chunks = new HashMap<ChunkID, NetworkChunkRenderingData>();
+		loadedChunks = new CopyOnWriteArrayList<Chunk>();
+		chunks = new HashMap<ChunkID, Chunk>();
 		Globals.setLoadedChunks(loadedChunks);
 	}
 
@@ -168,7 +203,7 @@ public class ChunkManager implements Runnable {
 			update();
 			state++;
 			try {
-				Thread.sleep(100);
+				Thread.sleep(10);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

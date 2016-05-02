@@ -35,11 +35,11 @@ public class ServerNetworkManager implements Runnable{
 	private void startServer() {
 		try {
 			bandwidthSocket = new ServerSocket();
-			bandwidthSocket.setPerformancePreferences(0, 0, 1);
+			bandwidthSocket.setPerformancePreferences(0, 0, 1);			
 			bandwidthSocket.bind(new InetSocketAddress(Globals.getBandwidthPort()));			
 			System.out.println("Successfully bound bandwidth server to port " + Globals.getBandwidthPort());
 			latencySocket = new ServerSocket();	
-			latencySocket.setPerformancePreferences(0, 1, 0);			
+			latencySocket.setPerformancePreferences(0, 1, 0);					
 			latencySocket.bind(new InetSocketAddress(Globals.getLatencyPort()));
 			System.out.println("Successfully bound latency server to port " + Globals.getLatencyPort());
 			

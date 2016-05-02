@@ -22,10 +22,10 @@ public class ClientNetworkManager implements IModule {
 	public void setUp() {
 		try{			
 			System.out.println("about to connect to server at: " + Globals.getIp() + ":" + Globals.getLatencyPort());
-			bandwidthSocketSend = createSocket(0, 0, 1, Globals.getIp(), Globals.getBandwidthPort(), false);
+			bandwidthSocketSend = createSocket(0, 0, 1, Globals.getIp(), Globals.getBandwidthPort(), true);
 			System.out.println("Successfully connected bandwidth send socket");
 			
-			bandwidthSocketRecieve = createSocket(0, 0, 1, Globals.getIp(), Globals.getBandwidthPort(), false);
+			bandwidthSocketRecieve = createSocket(0, 0, 1, Globals.getIp(), Globals.getBandwidthPort(), true);
 			System.out.println("Successfully connected bandwidth recieve socket");
 			
 			latencySocketSend = createSocket(0, 1, 0, Globals.getIp(), Globals.getLatencyPort(), true);			

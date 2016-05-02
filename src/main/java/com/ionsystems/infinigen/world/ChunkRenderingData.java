@@ -3,6 +3,7 @@ package main.java.com.ionsystems.infinigen.world;
 import java.io.Serializable;
 
 import main.java.com.ionsystems.infinigen.models.PhysicsModel;
+import main.java.com.ionsystems.infinigen.utility.Utils;
 
 public class ChunkRenderingData implements Serializable {
 	/**
@@ -21,8 +22,12 @@ public class ChunkRenderingData implements Serializable {
 		super();
 		this.positions = positions;
 		this.indicies = int_indicies;
-		this.normals = normals;
-		
+		this.normals = normals;		
+	}
+	
+	public void reducePrecision(){
+		positions = Utils.reduceFloatPrecision(positions);
+		normals = Utils.reduceFloatPrecision(normals);
 	}
 
 	

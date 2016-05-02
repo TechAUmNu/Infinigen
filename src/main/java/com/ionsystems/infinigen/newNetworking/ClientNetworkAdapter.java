@@ -4,6 +4,8 @@ package main.java.com.ionsystems.infinigen.newNetworking;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -15,10 +17,13 @@ import java.util.zip.Checksum;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+import org.nustaq.serialization.FSTConfiguration;
+import org.nustaq.serialization.FSTObjectInput;
+import org.nustaq.serialization.FSTObjectOutput;
+
 import net.jpountz.lz4.LZ4BlockInputStream;
 import net.jpountz.lz4.LZ4BlockOutputStream;
 import net.jpountz.lz4.LZ4Compressor;
-
 import net.jpountz.lz4.LZ4Factory;
 import net.jpountz.lz4.LZ4FastDecompressor;
 import net.jpountz.xxhash.XXHashFactory;
@@ -30,8 +35,8 @@ public class ClientNetworkAdapter implements Runnable {
 
 	private Socket socket;
 
-	private ObjectOutputStream out;
-	private ObjectInputStream in;
+	private DataOutputStream out;
+	private DataInputStream in;
 	
 	private Checksum checksum = new CRC32();
 	final LZ4Compressor compressor = LZ4Factory.nativeInstance().fastCompressor();
@@ -84,12 +89,12 @@ public class ClientNetworkAdapter implements Runnable {
 
 		try {
 			System.out.println("Creating output stream");
-			//out = new ObjectOutputStream(new BufferedOutputStream(socket.getOutputStream()));
-			out = new ObjectOutputStream(new BufferedOutputStream(new LZ4BlockOutputStream( socket.getOutputStream(), 64 * 1024, compressor, XXHashFactory.fastestInstance().newStreamingHash32(128313).asChecksum(), true )));
+			//out = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
+			out = new DataOutputStream(new BufferedOutputStream(new LZ4BlockOutputStream( socket.getOutputStream(), 64 * 1024, compressor, XXHashFactory.fastestInstance().newStreamingHash32(128313).asChecksum(), true )));
 			out.flush();
 
-			//in = new ObjectInputStream(new BufferedInputStream(socket.getInputStream()));
-			in = new ObjectInputStream(new BufferedInputStream(new LZ4BlockInputStream(socket.getInputStream(), decompressor, XXHashFactory.fastestInstance().newStreamingHash32(128313).asChecksum())));
+			//in = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
+			in = new DataInputStream(new BufferedInputStream(new LZ4BlockInputStream(socket.getInputStream(), decompressor, XXHashFactory.fastestInstance().newStreamingHash32(128313).asChecksum())));
 
 			/**
 			 * This do loop runs until the server disconnects
@@ -97,7 +102,7 @@ public class ClientNetworkAdapter implements Runnable {
 			do {
 				try {
 					
-					inMessage = (NetworkMessage) in.readObject();
+					inMessage = (NetworkMessage) readObjectFromStream(in);
 					
 					if(inMessage != null){
 						if (inMessage.disconnect) {
@@ -144,11 +149,12 @@ public class ClientNetworkAdapter implements Runnable {
 		try {
 			System.out.println("Creating output stream");
 
-			out = new ObjectOutputStream(new BufferedOutputStream(new LZ4BlockOutputStream( socket.getOutputStream(), 64 * 1024, compressor, XXHashFactory.fastestInstance().newStreamingHash32(128313).asChecksum(), true )));
+			//out = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
+			out = new DataOutputStream(new BufferedOutputStream(new LZ4BlockOutputStream( socket.getOutputStream(), 64 * 1024, compressor, XXHashFactory.fastestInstance().newStreamingHash32(128313).asChecksum(), true )));
 			out.flush();
 
-			//in = new ObjectInputStream(new BufferedInputStream(socket.getInputStream()));
-			in = new ObjectInputStream(new BufferedInputStream(new LZ4BlockInputStream(socket.getInputStream(), decompressor, XXHashFactory.fastestInstance().newStreamingHash32(128313).asChecksum())));
+			//in = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
+			in = new DataInputStream(new BufferedInputStream(new LZ4BlockInputStream(socket.getInputStream(), decompressor, XXHashFactory.fastestInstance().newStreamingHash32(128313).asChecksum())));
 
 
 
@@ -161,7 +167,7 @@ public class ClientNetworkAdapter implements Runnable {
 					sendMessage(); // Send a message to the server
 
 					// Wait for an acknowledgement
-					ack = (Ack) in.readObject();
+					ack = (Ack) readObjectFromStream(in);
 					System.out.println("ack recieved from server");
 					if (!ack.ack) {
 						System.out.println("Problem with message");
@@ -213,15 +219,51 @@ public class ClientNetworkAdapter implements Runnable {
 	
 	private void sendNetworkMessage(Object o){
 		try {			
-			out.writeObject(o);
+			writeObjectToStream(out,o);
 			out.flush();
-			out.reset();
+			
 		} catch (IOException ioException) {
 			ioException.printStackTrace();
 			System.exit(0);
 		}
 	}
 
+	
+    static boolean UseStdStreams = false;
+    
+    static FSTConfiguration conf = FSTConfiguration.createDefaultConfiguration();
+
+    protected static Object readObjectFromStream(DataInputStream inputStream) throws IOException, ClassNotFoundException {
+        if ( UseStdStreams ) {
+            ObjectInputStream in = new ObjectInputStream(inputStream);
+            return in.readObject();
+        } else {
+            int len = inputStream.readInt();
+            byte buffer[] = new byte[len]; // this could be reused !
+            while (len > 0)
+                len -= inputStream.read(buffer, buffer.length - len, len);
+            return ClientNetworkAdapter.conf.getObjectInput(buffer).readObject();
+        }
+    }
+
+    protected static void writeObjectToStream(DataOutputStream outputStream, Object toWrite) throws IOException {
+        if ( UseStdStreams ) {
+            ObjectOutputStream out = new ObjectOutputStream(outputStream);
+            out.writeObject(toWrite);
+            out.flush();
+        } else {
+            // write object 
+            FSTObjectOutput objectOutput = conf.getObjectOutput(); // could also do new with minor perf impact
+            // write object to internal buffer
+            objectOutput.writeObject(toWrite);
+            // write length
+            outputStream.writeInt(objectOutput.getWritten());
+            // write bytes
+            outputStream.write(objectOutput.getBuffer(), 0, objectOutput.getWritten());
+
+            objectOutput.flush(); // return for reuse to conf
+        }
+    }
 
 	
 }

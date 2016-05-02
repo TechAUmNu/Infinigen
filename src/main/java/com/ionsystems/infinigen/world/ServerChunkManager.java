@@ -27,6 +27,8 @@ import com.sudoplay.joise.module.ModuleFractal.FractalType;
 
 //This handles all loading and unloading of chunks. The chunks within the set range of each camera must be kept loaded so switching camera is fast.
 
+// Current network usage per chunk: 280KB
+
 public class ServerChunkManager implements Runnable {
 
 	public static int chunkSize = 64;
@@ -164,15 +166,14 @@ public class ServerChunkManager implements Runnable {
 		}
 		
 		for(Client c : pendingChunks.keySet()){
-			ArrayList<NetworkChunkRenderingData> ncrdList = new ArrayList<NetworkChunkRenderingData>();
+			ArrayList<NetworkChunkData> ncdList = new ArrayList<NetworkChunkData>();
 			for(ChunkID cid : pendingChunks.get(c)){
-				ncrdList.add(chunks.get(cid).getNcrd());
-				
+				ncdList.add(chunks.get(cid).getNcd());			
 			}		
 			
 			pendingChunks.get(c).clear();;
 			NetworkMessage msg = new NetworkMessage();
-			msg.ncrd = ncrdList;			
+			msg.ncd = ncdList;			
 			msg.tag = Tag.NetworkChunkUpdate;
 			Messaging.addMessage(c.username + Tag.NetworkBandwidthSend.toString(), msg);	
 			

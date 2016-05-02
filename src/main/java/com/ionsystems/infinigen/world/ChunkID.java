@@ -8,7 +8,7 @@ import java.io.Serializable;
  * @author Euan
  *
  */
-public class ChunkID implements Serializable{
+public class ChunkID implements Serializable, Cloneable{
 	/**
 	 * 
 	 */

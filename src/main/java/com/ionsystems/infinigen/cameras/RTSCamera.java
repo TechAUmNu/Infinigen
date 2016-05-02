@@ -104,7 +104,7 @@ public class RTSCamera implements IModule, ICamera {
 	}
 
 	private void calculateZoom() {
-		float zoomLevel = Mouse.getDWheel() * 0.01f;
+		float zoomLevel = Mouse.getDWheel() * 0.03f;
 		position.y -= zoomLevel;
 	}
 

@@ -25,9 +25,10 @@ import main.java.com.ionsystems.infinigen.models.RawModel;
 import main.java.com.ionsystems.infinigen.objConverter.Vertex;
 import main.java.com.ionsystems.infinigen.physics.PhysicsUtils;
 import main.java.com.ionsystems.infinigen.textures.TextureData;
+import main.java.com.ionsystems.infinigen.world.Chunk;
 import main.java.com.ionsystems.infinigen.world.ChunkManager;
 import main.java.com.ionsystems.infinigen.world.ChunkRenderingData;
-import main.java.com.ionsystems.infinigen.world.NetworkChunkRenderingData;
+import main.java.com.ionsystems.infinigen.world.NetworkChunkData;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
@@ -56,7 +57,7 @@ public class Loader implements IModule {
 	private List<Integer> vbos = new ArrayList<Integer>();
 	private List<Integer> textures = new ArrayList<Integer>();
 	private HashMap<String, Vector3f> loadedTextures = new HashMap<String, Vector3f>();
-	private ArrayList<NetworkChunkRenderingData> chunkLoadingQueue = new ArrayList<NetworkChunkRenderingData>();
+	private ArrayList<Chunk> chunkLoadingQueue = new ArrayList<Chunk>();
 	private ArrayList<PhysicsModel> modelUnloadingQueue = new ArrayList<PhysicsModel>();
 
 	private int bufferAllocationCount = 0;
@@ -373,21 +374,21 @@ public class Loader implements IModule {
 		// Also need to be thread safe
 		long startTime = System.nanoTime();
 		if (Globals.getLoadingLock().readLock().tryLock()) {
-			ArrayList<NetworkChunkRenderingData> ncrdRemove = new ArrayList<NetworkChunkRenderingData>();
-			for (NetworkChunkRenderingData ncrd : chunkLoadingQueue) {
-				PhysicsModel m = loadChunkToVAOWithGeneratedPhysics(ncrd.crd.positions, ncrd.crd.normals, ncrd.crd.indicies);
-				ncrd.crd.setModel(m);
-				ncrd.crd.setRenderable(true);
+			ArrayList<Chunk> chunkRemove = new ArrayList<Chunk>();
+			for (Chunk chunk : chunkLoadingQueue) {
+				PhysicsModel m = loadChunkToVAOWithGeneratedPhysics(chunk.getCrd().positions, chunk.getCrd().normals, chunk.getCrd().indicies);
+				chunk.setModel(m);
+				chunk.setRenderable(true);
 //				m.generateWorldRigidBody();
 //				m.getBody().translate(new Vector3f(ncrd.x * ChunkManager.chunkSize, ncrd.y * ChunkManager.chunkSize, ncrd.z * ChunkManager.chunkSize));
 //				Globals.getPhysics().getProcessor().addRigidBody(m.getBody());
 
-				ncrdRemove.add(ncrd);
+				chunkRemove.add(chunk);
 				long elapsedTime = System.nanoTime() - startTime;
 				if (elapsedTime > 100000)
 					break;
 			}
-			chunkLoadingQueue.removeAll(ncrdRemove);
+			chunkLoadingQueue.removeAll(chunkRemove);
 			Globals.getLoadingLock().readLock().unlock();
 		}
 		if (Globals.getUnloadingLock().readLock().tryLock()) {
@@ -432,8 +433,8 @@ public class Loader implements IModule {
 		return null;
 	}
 
-	public void addChunkToLoadQueue(NetworkChunkRenderingData crd) {
-		chunkLoadingQueue.add(crd);
+	public void addChunkToLoadQueue(Chunk c) {
+		chunkLoadingQueue.add(c);
 	}
 
 	public void addModelToUnloadQueue(PhysicsModel model) {

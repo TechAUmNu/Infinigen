@@ -25,7 +25,7 @@ import main.java.com.ionsystems.infinigen.rendering.MasterRenderer;
 import main.java.com.ionsystems.infinigen.textures.ModelTexture;
 import main.java.com.ionsystems.infinigen.world.Chunk;
 import main.java.com.ionsystems.infinigen.world.ChunkRenderingData;
-import main.java.com.ionsystems.infinigen.world.NetworkChunkRenderingData;
+import main.java.com.ionsystems.infinigen.world.NetworkChunkData;
 
 public class Globals {
 
@@ -33,7 +33,7 @@ public class Globals {
 	private static Loader loader;
 	private static Vector3f mouseRay;
 	private static Vector3f cameraPosition;
-	private static CopyOnWriteArrayList<NetworkChunkRenderingData> visibleChunks;
+	private static CopyOnWriteArrayList<Chunk> visibleChunks;
 	private static boolean isServer;
 	private static boolean loading;
 
@@ -158,11 +158,11 @@ public class Globals {
 		Globals.isServer = isServer;
 	}
 
-	public static void setLoadedChunks(CopyOnWriteArrayList<NetworkChunkRenderingData> loadedChunks) {
+	public static void setLoadedChunks(CopyOnWriteArrayList<Chunk> loadedChunks) {
 		Globals.visibleChunks = loadedChunks;
 	}
 
-	public static CopyOnWriteArrayList<NetworkChunkRenderingData> getLoadedChunks() {
+	public static CopyOnWriteArrayList<Chunk> getLoadedChunks() {
 		return Globals.visibleChunks;
 	}
 
