@@ -278,17 +278,19 @@ public class Chunk {
 				zWorld = z + (ChunkManager.chunkSize * this.z);
 				// System.out.println(xWorld / 300);
 
-				height = terrainNoise.get(xWorld / 300f, zWorld / 300f);
+				height = 64 - terrainNoise.get(xWorld/100, 0.5, zWorld/100);
 				// height = 5;
 				float weight;
 				for (int y = 0; y < size; y++) {
 					weight = 0;
 					if (y < height) {
 						weight = (float) (height / 10f);
-						// System.out.println(weight);
+						blocks[x][y][z] = new Block(type);
+						blocks[x][y][z].weight = weight;
+					}else{
+						blocks[x][y][z] = new Block(BlockType.BlockType_Air);
 					}
-					blocks[x][y][z] = new Block(type);
-					blocks[x][y][z].weight = weight;
+					
 				}
 			}
 		}
