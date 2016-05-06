@@ -271,26 +271,39 @@ public class Chunk {
 		float xWorld;
 		float zWorld;
 		double height;
+		int terrainChunkHeight = 8;
+	
 		for (int x = 0; x < size; x++) {
 			for (int z = 0; z < size; z++) {
 
 				xWorld = x + (ChunkManager.chunkSize * this.x);
 				zWorld = z + (ChunkManager.chunkSize * this.z);
 				// System.out.println(xWorld / 300);
-
-				height = 64 - terrainNoise.get(xWorld/100, 0.5, zWorld/100);
-				// height = 5;
-				float weight;
-				for (int y = 0; y < size; y++) {
-					weight = 0;
-					if (y < height) {
-						weight = (float) (height / 10f);
+				if(this.y <= -(terrainChunkHeight+1)){
+					for (int y = 0; y < size; y++) {
 						blocks[x][y][z] = new Block(type);
-						blocks[x][y][z].weight = weight;
-					}else{
+						blocks[x][y][z].weight = y;
+					}					
+				}else if(this.y >=-terrainChunkHeight && this.y < 0){
+					int chunkHeight = this.y + terrainChunkHeight; //1-4
+					height = (size * terrainChunkHeight) - terrainNoise.get(xWorld/100, 0.5, zWorld/100);
+					// height = 5;
+					float weight;
+					for (int y = 0; y < size; y++) {
+						weight = 0;
+						if (y + (chunkHeight * size)  < height) {
+							weight = (float) (height / 10f);
+							blocks[x][y][z] = new Block(type);
+							blocks[x][y][z].weight = weight;
+						}else{
+							blocks[x][y][z] = new Block(BlockType.BlockType_Air);
+						}
+						
+					}
+				}else{
+					for (int y = 0; y < size; y++) {
 						blocks[x][y][z] = new Block(BlockType.BlockType_Air);
 					}
-					
 				}
 			}
 		}

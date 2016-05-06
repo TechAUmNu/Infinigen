@@ -38,10 +38,10 @@ public class ChunkManager implements Runnable {
 	Module terrainNoise;
 	WorldRenderer renderer;
 	Vector3f chunkLocation = new Vector3f();
-	public static int loadDistance = 5;
+	public static int loadDistance = 2;
 	long seed = 828382;
 	int state = 0;
-	int cameraX, cameraZ;
+	int cameraX, cameraY, cameraZ;
 	Vector3f cameraChunkLocation;
 	ExecutorService pool = Executors.newFixedThreadPool(12); // creates a pool of threads for the Future to draw from
 
@@ -71,6 +71,8 @@ public class ChunkManager implements Runnable {
 
 		cameraX = (int) cameraChunkLocation.x;
 		cameraZ = (int) cameraChunkLocation.z;
+		cameraY = (int) cameraChunkLocation.y;
+
 
 //		ArrayList<ChunkID> toUnload = new ArrayList<ChunkID>();
 //		for (ChunkID c : chunks.keySet()) {
@@ -88,10 +90,13 @@ public class ChunkManager implements Runnable {
 		ArrayList<ChunkID> toLoad = new ArrayList<ChunkID>();
 		for (int x = -loadDistance + cameraX; x < loadDistance + cameraX + 1; x++) {
 			for (int z = -loadDistance + cameraZ; z < loadDistance + cameraZ + 1; z++) {
-				if (inCircle(cameraX, cameraZ, loadDistance, x, z)) {
-					if(!chunks.containsKey(new ChunkID(x,-1,z)) &&  !pendingChunks.contains(new ChunkID(x,-1,z))){
-						toLoad.add(new ChunkID(x,-1,z));
-						pendingChunks.add(new ChunkID(x,-1,z));
+				
+					if (inCircle(cameraX, cameraZ, loadDistance, x, z)) {
+						for(int y = -8; y < 0 +1; y++){
+						if(!chunks.containsKey(new ChunkID(x,y,z)) &&  !pendingChunks.contains(new ChunkID(x,y,z))){
+							toLoad.add(new ChunkID(x,y,z));
+							pendingChunks.add(new ChunkID(x,y,z));
+						}
 					}
 				}
 			}
@@ -159,10 +164,9 @@ public class ChunkManager implements Runnable {
 	}
 	
 	
-	boolean inCircle(double centerX, double centerY, double radius, double x, double y) {
-		double square_dist = Math.pow((centerX - x), 2) + Math.pow((centerY - y), 2);
+	boolean inCircle(double centerX, double centerZ, double radius, double x, double z) {
+		double square_dist = Math.pow((centerX - x), 2)  + Math.pow((centerZ - z), 2);
 		return square_dist <= Math.pow(radius, 2);
-
 	}
 
 	public void setUp() {

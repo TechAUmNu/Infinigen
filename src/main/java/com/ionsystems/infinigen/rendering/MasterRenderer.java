@@ -34,9 +34,9 @@ public class MasterRenderer implements IModule {
 	private static final float NEAR_PLANE = 0.1f;
 	private static final float FAR_PLANE = 10000f;
 
-	private static final float RED = 0f;
-	private static final float GREEN = 0f;
-	private static final float BLUE = 0f;
+	private static final float RED = 126f;
+	private static final float GREEN = 169f;
+	private static final float BLUE = 255f;
 
 	private Matrix4f projectionMatrix;
 

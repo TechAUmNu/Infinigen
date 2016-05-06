@@ -112,7 +112,7 @@ public class ServerChunkManager implements Runnable {
 	}
 
 	private void initNoiseGenerator() {
-		 // ground_gradient
+		// ground_gradient
 	    ModuleGradient groundGradient = new ModuleGradient();
 	    groundGradient.setGradient(0, 0, 0, 1);
 
@@ -127,14 +127,14 @@ public class ServerChunkManager implements Runnable {
 	    lowlandShapeFractal.setSeed(seed);
 
 	    // lowland_autocorrect
-	    ModuleAutoCorrect lowlandAutoCorrect = new ModuleAutoCorrect(0, 24);
+	    ModuleAutoCorrect lowlandAutoCorrect = new ModuleAutoCorrect(0, 128);
 	    lowlandAutoCorrect.setSource(lowlandShapeFractal);
 	    lowlandAutoCorrect.calculate();
 
 	    // lowland_scale
 	    ModuleScaleOffset lowlandScale = new ModuleScaleOffset();
-	    lowlandScale.setScale(0.125);
-	    lowlandScale.setOffset(40);
+	    lowlandScale.setScale(0.25);
+	    lowlandScale.setOffset(384);
 	    lowlandScale.setSource(lowlandAutoCorrect);
 
 	    // lowland_y_scale
@@ -155,18 +155,18 @@ public class ServerChunkManager implements Runnable {
 	    // highland_shape_fractal
 	    ModuleFractal highlandShapeFractal = new ModuleFractal(FractalType.FBM, BasisType.GRADIENT, InterpolationType.QUINTIC);
 	    highlandShapeFractal.setNumOctaves(4);
-	    highlandShapeFractal.setFrequency(2);
+	    highlandShapeFractal.setFrequency(1);
 	    highlandShapeFractal.setSeed(seed);
 
 	    // highland_autocorrect
-	    ModuleAutoCorrect highlandAutoCorrect = new ModuleAutoCorrect(32, 49);
+	    ModuleAutoCorrect highlandAutoCorrect = new ModuleAutoCorrect(-128, 128);
 	    highlandAutoCorrect.setSource(highlandShapeFractal);
 	    highlandAutoCorrect.calculate();
 
 	    // highland_scale
 	    ModuleScaleOffset highlandScale = new ModuleScaleOffset();
 	    highlandScale.setScale(0.25);
-	    highlandScale.setOffset(15);
+	    highlandScale.setOffset(384);
 	    highlandScale.setSource(highlandAutoCorrect);
 
 	    // highland_y_scale
@@ -187,18 +187,18 @@ public class ServerChunkManager implements Runnable {
 	    // mountain_shape_fractal
 	    ModuleFractal mountainShapeFractal = new ModuleFractal(FractalType.RIDGEMULTI, BasisType.GRADIENT, InterpolationType.QUINTIC);
 	    mountainShapeFractal.setNumOctaves(8);
-	    mountainShapeFractal.setFrequency(1);
+	    mountainShapeFractal.setFrequency(0.5);
 	    mountainShapeFractal.setSeed(seed);
 
 	    // mountain_autocorrect
-	    ModuleAutoCorrect mountainAutoCorrect = new ModuleAutoCorrect(16, 79);
+	    ModuleAutoCorrect mountainAutoCorrect = new ModuleAutoCorrect(128, 384);
 	    mountainAutoCorrect.setSource(mountainShapeFractal);
 	    mountainAutoCorrect.calculate();
 
 	    // mountain_scale
 	    ModuleScaleOffset mountainScale = new ModuleScaleOffset();
 	    mountainScale.setScale(1);
-	    mountainScale.setOffset(-15);
+	    mountainScale.setOffset(-128);
 	    mountainScale.setSource(mountainAutoCorrect);
 
 	    // mountain_y_scale
@@ -217,8 +217,8 @@ public class ServerChunkManager implements Runnable {
 
 	    // terrain_type_fractal
 	    ModuleFractal terrainTypeFractal = new ModuleFractal(FractalType.FBM, BasisType.GRADIENT, InterpolationType.QUINTIC);
-	    terrainTypeFractal.setNumOctaves(3);
-	    terrainTypeFractal.setFrequency(0.125);
+	    terrainTypeFractal.setNumOctaves(6);
+	    terrainTypeFractal.setFrequency(0.2);
 	    terrainTypeFractal.setSeed(seed);
 
 	    // terrain_autocorrect
@@ -240,16 +240,16 @@ public class ServerChunkManager implements Runnable {
 	    highlandMountainSelect.setLowSource(highlandTerrain);
 	    highlandMountainSelect.setHighSource(mountainTerrain);
 	    highlandMountainSelect.setControlSource(terrainTypeCache);
-	    highlandMountainSelect.setThreshold(0.65);
-	    highlandMountainSelect.setFalloff(0.2);
+	    highlandMountainSelect.setThreshold(0.95);
+	    highlandMountainSelect.setFalloff(0.5);
 
 	    // highland_lowland_select
 	    ModuleSelect highlandLowlandSelect = new ModuleSelect();
 	    highlandLowlandSelect.setLowSource(lowlandTerrain);
 	    highlandLowlandSelect.setHighSource(highlandMountainSelect);
 	    highlandLowlandSelect.setControlSource(terrainTypeCache);
-	    highlandLowlandSelect.setThreshold(0.25);
-	    highlandLowlandSelect.setFalloff(0.15);
+	    highlandLowlandSelect.setThreshold(0.6);
+	    highlandLowlandSelect.setFalloff(0.5);
 
 	    // highland_lowland_select_cache
 	    ModuleCache highlandLowlandSelectCache = new ModuleCache();
