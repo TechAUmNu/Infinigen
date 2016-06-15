@@ -30,7 +30,8 @@ import main.java.com.ionsystems.infinigen.newNetworking.NetworkMessage;
 
 public class ChunkManager implements Runnable {
 
-	public static int chunkSize = 64;
+	public static int chunkSize = 16;
+	public static int chunkHeight = 512;
 	float blockSize = 1f;
 	CopyOnWriteArrayList<Chunk> loadedChunks;
 	HashMap<ChunkID, Chunk> chunks;
@@ -92,7 +93,7 @@ public class ChunkManager implements Runnable {
 			for (int z = -loadDistance + cameraZ; z < loadDistance + cameraZ + 1; z++) {
 				
 					if (inCircle(cameraX, cameraZ, loadDistance, x, z)) {
-						for(int y = -8; y < 0 +1; y++){
+						for(int y = -1; y < 0+1; y++){
 						if(!chunks.containsKey(new ChunkID(x,y,z)) &&  !pendingChunks.contains(new ChunkID(x,y,z))){
 							toLoad.add(new ChunkID(x,y,z));
 							pendingChunks.add(new ChunkID(x,y,z));
@@ -178,11 +179,11 @@ public class ChunkManager implements Runnable {
 	private Vector3f findContainingChunk(Vector3f location) {
 		// To find the chunk we just divide the coord by the chunk size * block
 		// size
-		float multiplyer = chunkSize * blockSize;
+		
 
-		chunkLocation.x = (float) Math.floor(location.x / multiplyer);
-		chunkLocation.y = (float) Math.floor(location.y / multiplyer);
-		chunkLocation.z = (float) Math.floor(location.z / multiplyer);
+		chunkLocation.x = (float) Math.floor(location.x / chunkSize * blockSize);
+		chunkLocation.y = (float) Math.floor(location.y / chunkHeight * blockSize);
+		chunkLocation.z = (float) Math.floor(location.z / chunkSize * blockSize);
 		return chunkLocation;
 	}
 

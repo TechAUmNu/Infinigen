@@ -36,7 +36,7 @@ import main.java.com.ionsystems.infinigen.world.BlockType;
  */
 public class Chunk {
 	public ChunkID chunkID;
-	private static float isolevel = 0.43f;
+	private static float isolevel = 10f;
 
 	private boolean renderable = false;
 
@@ -49,6 +49,7 @@ public class Chunk {
 	public int y;
 	public int z;
 	public int size;
+	public int sizey;
 	public float blockSize;
 	public boolean visible;
 	public boolean changed = false;
@@ -75,12 +76,13 @@ public class Chunk {
 	 * @param blockSize
 	 * @param terrainNoise
 	 */
-	public Chunk(ChunkID chunkID, int x, int y, int z, int size, float blockSize, Module terrainNoise) {
+	public Chunk(ChunkID chunkID, int x, int y, int z, int size, int sizey, float blockSize, Module terrainNoise) {
 		this.chunkID = chunkID;
 		this.x = x;
 		this.y = y;
 		this.z = z;
 		this.size = size + 1;
+		this.sizey = sizey + 1;
 		this.blockSize = blockSize;
 		this.terrainNoise = terrainNoise;		
 		if (Globals.isServer()) {
@@ -97,7 +99,8 @@ public class Chunk {
 		this.x = ncd.x;
 		this.y = ncd.y;
 		this.z = ncd.z;
-		this.size = ncd.size;	
+		this.size = ncd.size;
+		this.sizey = ncd.sizey;
 		this.blockSize = ncd.blockSize;		
 		this.uncompressedData = ncd.uncompressedData;
 		this.chunkID = ncd.chunkID;		
@@ -113,7 +116,7 @@ public class Chunk {
 		if (!loadToDataFile()) {
 			generateType(BlockType.BlockType_Grass);
 		}
-		setNcd(new NetworkChunkData(uncompressedData, x, y, z, blockSize, size, chunkID));
+		setNcd(new NetworkChunkData(uncompressedData, x, y, z, blockSize, size, sizey, chunkID));
 	}
 
 	/**
@@ -125,13 +128,13 @@ public class Chunk {
 		System.out.println("Saving Chunk: " + x + "." + y + "." + z);
 		// System.out.println("Saving Chunk: " + x + "." + y + "." + z);
 		try (FileOutputStream file = new FileOutputStream("world/" + x + "." + y + "." + z + ".chunk")) {
-			byte[] buf = new byte[size * size * size * 5];
+			byte[] buf = new byte[size * sizey * size * 5];
 			int i = 0;
 
 			// Add all blocks to a buffer
 			int bits;
 			for (int x = 0; x < size; x++) {
-				for (int y = 0; y < size; y++) {
+				for (int y = 0; y < sizey; y++) {
 					for (int z = 0; z < size; z++) {
 						buf[i++] = blocks[x][y][z].GetType();
 						bits = Float.floatToIntBits(blocks[x][y][z].weight);
@@ -193,7 +196,7 @@ public class Chunk {
 		try (FileInputStream file = new FileInputStream("world/" + x + "." + y + "." + z + ".chunk")) {
 			//Block[][][] tempBlocks = new Block[size][size][size];
 			LZ4BlockInputStream in = new LZ4BlockInputStream(file, decompressor, XXHashFactory.fastestInstance().newStreamingHash32(128313).asChecksum());
-			byte fileContent[] = new byte[size * size * size * 5];
+			byte fileContent[] = new byte[size * sizey * size * 5];
 			in.read(fileContent);
 //			int i = 0;
 //			for (int x = 0; x < size; x++) {
@@ -234,11 +237,11 @@ public class Chunk {
 	 */
 	public void load(byte[] uncompressedData) {
 		System.out.println("Loading Chunk: " + x + "." + y + "." + z);
-		blocks = new Block[size][size][size];
+		blocks = new Block[size][sizey][size];
 
 		int i = 0;
 		for (int x = 0; x < size; x++) {
-			for (int y = 0; y < size; y++) {
+			for (int y = 0; y < sizey; y++) {
 				for (int z = 0; z < size; z++) {
 					blocks[x][y][z] = new Block(BlockType.fromByte(uncompressedData[i++]));
 					byte[] bytes = { uncompressedData[i++], uncompressedData[i++], uncompressedData[i++], uncompressedData[i++] };
@@ -267,11 +270,11 @@ public class Chunk {
 	}
 
 	private void generateType(BlockType type) {
-		blocks = new Block[this.size][this.size][this.size];
+		blocks = new Block[this.size][this.sizey][this.size];
 		float xWorld;
 		float zWorld;
 		double height;
-		int terrainChunkHeight = 8;
+		int terrainChunkHeight = 1;
 	
 		for (int x = 0; x < size; x++) {
 			for (int z = 0; z < size; z++) {
@@ -280,18 +283,18 @@ public class Chunk {
 				zWorld = z + (ChunkManager.chunkSize * this.z);
 				// System.out.println(xWorld / 300);
 				if(this.y <= -(terrainChunkHeight+1)){
-					for (int y = 0; y < size; y++) {
+					for (int y = 0; y < sizey; y++) {
 						blocks[x][y][z] = new Block(type);
 						blocks[x][y][z].weight = y;
 					}					
 				}else if(this.y >=-terrainChunkHeight && this.y < 0){
-					int chunkHeight = this.y + terrainChunkHeight; //1-4
-					height = (size * terrainChunkHeight) - terrainNoise.get(xWorld/100, 0.5, zWorld/100);
+					int chunkHeight = this.y + terrainChunkHeight; //1-8
+					height = (sizey * terrainChunkHeight) - terrainNoise.get(xWorld/100, 0.5, zWorld/100);
 					// height = 5;
 					float weight;
-					for (int y = 0; y < size; y++) {
+					for (int y = 0; y < sizey; y++) {
 						weight = 0;
-						if (y + (chunkHeight * size)  < height) {
+						if (y + (chunkHeight * sizey)  < height) {
 							weight = (float) (height / 10f);
 							blocks[x][y][z] = new Block(type);
 							blocks[x][y][z].weight = weight;
@@ -301,7 +304,7 @@ public class Chunk {
 						
 					}
 				}else{
-					for (int y = 0; y < size; y++) {
+					for (int y = 0; y < sizey; y++) {
 						blocks[x][y][z] = new Block(BlockType.BlockType_Air);
 					}
 				}
@@ -331,7 +334,7 @@ public class Chunk {
 		triangles = new ArrayList<Triangle>();
 
 		for (int x = 0; x < size - 1; x++) {
-			for (int y = 0; y < size - 1; y++) {
+			for (int y = 0; y < sizey - 1; y++) {
 				for (int z = 0; z < size - 1; z++) {
 					triangulate(x, y, z);
 				}

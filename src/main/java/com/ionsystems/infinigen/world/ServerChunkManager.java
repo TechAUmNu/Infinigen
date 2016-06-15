@@ -38,7 +38,8 @@ import com.sudoplay.joise.module.ModuleFractal.FractalType;
 
 public class ServerChunkManager implements Runnable {
 
-	public static int chunkSize = 64;
+	public static int chunkSize = 16;
+	public static int chunkHeight = 512;
 	float blockSize = 1f;
 	CopyOnWriteArrayList<Chunk> loadedChunks;
 	HashMap<ChunkID, Chunk> chunks;
@@ -285,7 +286,7 @@ public class ServerChunkManager implements Runnable {
 		return pool.submit(new Callable<Chunk>() {
 			@Override
 			public Chunk call() {
-				return new Chunk(chunkID, chunkID.x, chunkID.y, chunkID.z, chunkSize, blockSize, terrainNoise);
+				return new Chunk(chunkID, chunkID.x, chunkID.y, chunkID.z, chunkSize, chunkHeight, blockSize, terrainNoise);
 			}
 		});
 	}

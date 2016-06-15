@@ -12,8 +12,9 @@ public class NetworkChunkData implements Serializable, Cloneable{
 	public float blockSize;
 	public int size;
 	public ChunkID chunkID;
+	public int sizey;
 	
-	public NetworkChunkData(byte[] uncompressedData, int x, int y, int z, float blockSize, int size, ChunkID id) {
+	public NetworkChunkData(byte[] uncompressedData, int x, int y, int z, float blockSize, int size, int sizey, ChunkID id) {
 		super();
 		this.uncompressedData = uncompressedData;		
 		this.x = x;
@@ -21,6 +22,7 @@ public class NetworkChunkData implements Serializable, Cloneable{
 		this.z = z;
 		this.blockSize = blockSize;
 		this.size = size;
+		this.sizey = sizey;
 		this.chunkID = id;
 	}
 	
